@@ -5,6 +5,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import ComponentsRoutes from './ComponentsRoutes';
 import LoginRoutes from './LoginRoutes';
 import MainRoutes from './MainRoutes';
+import { TeacherRoutes } from 'teacher-dashboard';
 
 import Loadable from 'components/Loadable';
 import { SimpleLayoutType } from 'config';
@@ -29,7 +30,8 @@ const router = createBrowserRouter(
     },
     LoginRoutes,
     ComponentsRoutes,
-    MainRoutes
+    MainRoutes,
+    TeacherRoutes
   ],
   { basename: import.meta.env.VITE_APP_BASE_NAME }
 );
