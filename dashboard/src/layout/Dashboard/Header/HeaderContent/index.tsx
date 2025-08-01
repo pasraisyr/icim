@@ -15,6 +15,9 @@ import Notification from './Notification';
 import Profile from './Profile';
 import Search from './Search';
 
+// theme toggle components
+import ThemeToggleButton from 'components/ThemeToggleButton';
+
 import { MenuOrientation } from 'config';
 import useConfig from 'hooks/useConfig';
 import DrawerHeader from 'layout/Dashboard/Drawer/DrawerHeader';
@@ -38,6 +41,7 @@ export default function HeaderContent() {
       {!downLG && localization}
       {downLG && <Box sx={{ width: 1, ml: 1 }} />}
 
+      <ThemeToggleButton />
       <Notification />
       {!downLG && <FullScreen />}
       <Message />
