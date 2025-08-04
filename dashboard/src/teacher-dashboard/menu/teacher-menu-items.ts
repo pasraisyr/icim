@@ -30,14 +30,14 @@ const teacherMenuItems: { items: NavItemType[] } = {
           icon: icons.classes,
           breadcrumbs: true
         },
-        {
-          id: 'teacher-students',
-          title: 'My Students',
-          type: 'item',
-          url: '/teacher/students',
-          icon: icons.students,
-          breadcrumbs: true
-        },
+        // {
+        //   id: 'teacher-students',
+        //   title: 'My Students',
+        //   type: 'item',
+        //   url: '/teacher/students',
+        //   icon: icons.students,
+        //   breadcrumbs: true
+        // },
         {
           id: 'teacher-attendance',
           title: 'Attendance',

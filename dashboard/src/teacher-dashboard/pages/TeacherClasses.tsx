@@ -30,8 +30,8 @@ import type { ClassData } from '../types/teacher-types';
 const mockClasses: ClassData[] = [
   {
     id: '1',
-    name: 'Mathematics 101',
-    subject: 'Mathematics',
+    name: 'Alpha',
+    subject: 'Jawi',
     schedule: 'Mon, Wed, Fri - 9:00 AM',
     students: 25,
     room: 'Room 201',
@@ -39,8 +39,8 @@ const mockClasses: ClassData[] = [
   },
   {
     id: '2',
-    name: 'Physics Advanced',
-    subject: 'Physics',
+    name: 'Beta',
+    subject: 'Arabic',
     schedule: 'Tue, Thu - 2:00 PM',
     students: 18,
     room: 'Lab 105',
@@ -48,8 +48,8 @@ const mockClasses: ClassData[] = [
   },
   {
     id: '3',
-    name: 'Chemistry Basics',
-    subject: 'Chemistry',
+    name: 'Gamma',
+    subject: 'Sirah',
     schedule: 'Mon, Wed - 11:00 AM',
     students: 22,
     room: 'Lab 203',
@@ -81,14 +81,14 @@ export default function TeacherClasses() {
       <Grid item xs={12}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h4">My Classes</Typography>
-          <Button variant="contained" startIcon={<Book />}>
+          {/* <Button variant="contained" startIcon={<Book />}>
             Create New Class
-          </Button>
+          </Button> */}
         </Stack>
       </Grid>
 
       {/* Class Cards Overview */}
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Grid container spacing={3}>
           {classes.map((classItem) => (
             <Grid item xs={12} sm={6} md={4} key={classItem.id}>
@@ -135,7 +135,7 @@ export default function TeacherClasses() {
             </Grid>
           ))}
         </Grid>
-      </Grid>
+      </Grid> */}
 
       {/* Classes Table */}
       <Grid item xs={12}>

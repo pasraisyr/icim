@@ -40,7 +40,7 @@ const mockAttendance: AttendanceRecord[] = [
     studentId: '1',
     studentName: 'John Smith',
     date: '2024-01-15',
-    class: 'Mathematics 101',
+    class: 'Jawi',
     status: 'present',
     timeIn: '09:00 AM'
   },
@@ -49,7 +49,7 @@ const mockAttendance: AttendanceRecord[] = [
     studentId: '2',
     studentName: 'Sarah Johnson',
     date: '2024-01-15',
-    class: 'Mathematics 101',
+    class: 'Jawi',
     status: 'late',
     timeIn: '09:15 AM'
   },
@@ -58,7 +58,7 @@ const mockAttendance: AttendanceRecord[] = [
     studentId: '3',
     studentName: 'Michael Brown',
     date: '2024-01-15',
-    class: 'Mathematics 101',
+    class: 'Jawi',
     status: 'absent'
   },
   {
@@ -66,20 +66,20 @@ const mockAttendance: AttendanceRecord[] = [
     studentId: '4',
     studentName: 'Emily Davis',
     date: '2024-01-15',
-    class: 'Mathematics 101',
+    class: 'Jawi',
     status: 'excused',
     notes: 'Medical appointment'
   }
 ];
 
-const mockClasses = ['Mathematics 101', 'Physics Advanced', 'Chemistry Basics'];
+const mockClasses = ['Jawi', 'Arabic', 'Sirah'];
 
 // ==============================|| TEACHER DASHBOARD - ATTENDANCE ||============================== //
 
 export default function TeacherAttendance() {
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(mockAttendance);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [selectedClass, setSelectedClass] = useState<string>('Mathematics 101');
+  const [selectedClass, setSelectedClass] = useState<string>('Jawi');
   const [isRecording, setIsRecording] = useState(false);
 
   const getStatusColor = (status: string) => {
@@ -122,7 +122,7 @@ export default function TeacherAttendance() {
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h4">Attendance Management</Typography>
           <Stack direction="row" spacing={2}>
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Switch
                   checked={isRecording}
@@ -130,10 +130,10 @@ export default function TeacherAttendance() {
                 />
               }
               label="Live Recording Mode"
-            />
-            <Button variant="contained" startIcon={<Calendar />}>
+            /> */}
+            {/* <Button variant="contained" startIcon={<Calendar />}>
               Generate Report
-            </Button>
+            </Button> */}
           </Stack>
         </Stack>
       </Grid>
@@ -245,7 +245,7 @@ export default function TeacherAttendance() {
                   <TableCell>Status</TableCell>
                   <TableCell>Time In</TableCell>
                   <TableCell>Actions</TableCell>
-                  <TableCell>Notes</TableCell>
+                  {/* <TableCell>Notes</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -302,11 +302,11 @@ export default function TeacherAttendance() {
                         </Button>
                       </Stack>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Typography variant="body2">
                         {record.notes || '-'}
                       </Typography>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

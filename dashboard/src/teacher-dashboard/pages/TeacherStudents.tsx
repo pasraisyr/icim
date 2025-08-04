@@ -101,14 +101,14 @@ export default function TeacherStudents() {
   return (
     <Grid container spacing={3}>
       {/* Header */}
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h4">My Students</Typography>
           <Button variant="contained" startIcon={<Profile2User />}>
             Add Student
           </Button>
         </Stack>
-      </Grid>
+      </Grid> */}
 
       {/* Search Bar */}
       <Grid item xs={12}>
@@ -128,7 +128,7 @@ export default function TeacherStudents() {
       </Grid>
 
       {/* Student Cards */}
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Grid container spacing={3}>
           {filteredStudents.map((student) => (
             <Grid item xs={12} sm={6} md={4} key={student.id}>
@@ -188,7 +188,7 @@ export default function TeacherStudents() {
             </Grid>
           ))}
         </Grid>
-      </Grid>
+      </Grid> */} 
 
       {/* Students Table */}
       <Grid item xs={12}>
@@ -199,9 +199,9 @@ export default function TeacherStudents() {
                 <TableRow>
                   <TableCell>Student</TableCell>
                   <TableCell>Class</TableCell>
-                  <TableCell>Grade</TableCell>
-                  <TableCell>Attendance</TableCell>
-                  <TableCell>Last Active</TableCell>
+                  {/* <TableCell>Grade</TableCell>
+                  <TableCell>Attendance</TableCell> */}
+                  {/* <TableCell>Last Active</TableCell> */}
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
@@ -228,7 +228,7 @@ export default function TeacherStudents() {
                         <Typography variant="body2">{student.class}</Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Chip 
                         label={student.grade} 
                         color={getGradeColor(student.grade) as any}
@@ -241,10 +241,10 @@ export default function TeacherStudents() {
                         color={getAttendanceColor(student.attendance) as any}
                         size="small" 
                       />
-                    </TableCell>
-                    <TableCell>
+                    </TableCell> */}
+                    {/* <TableCell>
                       <Typography variant="body2">{student.lastActive}</Typography>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Chip 
                         label={student.status} 

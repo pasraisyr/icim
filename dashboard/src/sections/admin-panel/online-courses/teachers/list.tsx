@@ -100,10 +100,10 @@ function ReactTable({ data, columns }: Props) {
         />
 
         <Stack direction="row" sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Button size="large" variant="outlined" component={Link} to={'/admin-panel/online-course/teacher/applied'}>
+          <Button size="large" variant="outlined" component={Link} to={'/admin-panel/online-course/applied'}>
             Applied Teacher List
           </Button>
-          <Button variant="contained" startIcon={<Add />} size="large" component={Link} to={'/admin-panel/online-course/teacher/add'}>
+          <Button variant="contained" startIcon={<Add />} size="large" component={Link} to={'/admin-panel/online-course/add'}>
             Add Teacher
           </Button>
           <CSVExport
