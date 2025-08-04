@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 // project-imports
 import FullScreen from './FullScreen';
@@ -22,16 +24,24 @@ import { MenuOrientation } from 'config';
 import useConfig from 'hooks/useConfig';
 import DrawerHeader from 'layout/Dashboard/Drawer/DrawerHeader';
 
+// assets
+import { Profile2User } from 'iconsax-react';
+
 // ==============================|| HEADER - CONTENT ||============================== //
 
 export default function HeaderContent() {
   const { menuOrientation } = useConfig();
+  const navigate = useNavigate();
 
   const downLG = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
 
   const localization = useMemo(() => <Localization />, []);
 
   const megaMenu = useMemo(() => <MegaMenuSection />, []);
+
+  const handleTeacherDashboard = () => {
+    navigate('/teacher/classes');
+  };
 
   return (
     <>
@@ -40,6 +50,18 @@ export default function HeaderContent() {
       {!downLG && megaMenu}
       {!downLG && localization}
       {downLG && <Box sx={{ width: 1, ml: 1 }} />}
+
+      {!downLG && (
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<Profile2User />}
+          onClick={handleTeacherDashboard}
+          sx={{ mr: 2 }}
+        >
+          Teacher Dashboard
+        </Button>
+      )}
 
       <ThemeToggleButton />
       <Notification />
