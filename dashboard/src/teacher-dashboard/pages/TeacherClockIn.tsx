@@ -302,7 +302,7 @@ export default function TeacherClockIn() {
                   <TableCell>Clock In</TableCell>
                   <TableCell>Clock Out</TableCell>
                   <TableCell>Total Hours</TableCell>
-                  <TableCell>Location</TableCell>
+                  {/* <TableCell>Location</TableCell> */}
                   <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
@@ -333,14 +333,14 @@ export default function TeacherClockIn() {
                         {record.totalHours ? `${record.totalHours}h` : 'N/A'}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <Location size="16" />
                         <Typography variant="body2">
                           {record.location || 'N/A'}
                         </Typography>
                       </Stack>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Chip 
                         label={record.status} 
