@@ -123,7 +123,7 @@ export default function ManagerDashboard() {
       </Grid>
 
       {/* Quick Actions */}
-      <Grid size={{ xs: 12, md: 6 }}>
+      {/* <Grid size={{ xs: 12, md: 6 }}>
         <MainCard title="Quick Actions">
           <Stack spacing={2}>
             <Card variant="outlined">
@@ -169,9 +169,9 @@ export default function ManagerDashboard() {
             </Card>
           </Stack>
         </MainCard>
-      </Grid>
+      </Grid> */}
 
-      {/* Recent Activities */}
+      {/* Recent Activities
       <Grid size={{ xs: 12, md: 6 }}>
         <MainCard title="Recent Activities">
           <Stack spacing={2}>
@@ -208,7 +208,7 @@ export default function ManagerDashboard() {
             </Box>
           </Stack>
         </MainCard>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

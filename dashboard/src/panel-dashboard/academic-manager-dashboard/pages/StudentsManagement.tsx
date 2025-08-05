@@ -35,6 +35,7 @@ interface Student {
   email: string;
   phone: string;
   class: string;
+  level: 'Standard 5' | 'Standard 6';
   status: 'active' | 'inactive';
   enrollmentDate: string;
 }
@@ -47,6 +48,7 @@ const mockStudents: Student[] = [
     email: 'ahmad.rahman@school.edu',
     phone: '+60123456789',
     class: 'Form 5 Science',
+    level: 'Standard 5',
     status: 'active',
     enrollmentDate: '2024-01-15'
   },
@@ -56,6 +58,7 @@ const mockStudents: Student[] = [
     email: 'siti.aminah@school.edu',
     phone: '+60987654321',
     class: 'Form 4 Arts',
+    level: 'Standard 6',
     status: 'active',
     enrollmentDate: '2024-01-20'
   },
@@ -65,6 +68,7 @@ const mockStudents: Student[] = [
     email: 'muhammad.ali@school.edu',
     phone: '+60555123456',
     class: 'Form 3 Science',
+    level: 'Standard 5',
     status: 'inactive',
     enrollmentDate: '2023-09-10'
   }
@@ -75,6 +79,7 @@ const initialStudent: Omit<Student, 'id'> = {
   email: '',
   phone: '',
   class: '',
+  level: 'Standard 5',
   status: 'active',
   enrollmentDate: new Date().toISOString().split('T')[0]
 };
@@ -103,6 +108,7 @@ export default function StudentsManagement() {
       email: student.email,
       phone: student.phone,
       class: student.class,
+      level: student.level,
       status: student.status,
       enrollmentDate: student.enrollmentDate
     });
@@ -176,6 +182,7 @@ export default function StudentsManagement() {
                   <TableCell>Email</TableCell>
                   <TableCell>Phone</TableCell>
                   <TableCell>Class</TableCell>
+                  <TableCell>Level</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Enrollment Date</TableCell>
                   <TableCell align="center">Actions</TableCell>
@@ -193,6 +200,7 @@ export default function StudentsManagement() {
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.phone}</TableCell>
                     <TableCell>{student.class}</TableCell>
+                    <TableCell>{student.level}</TableCell>
                     <TableCell>
                       <Chip 
                         label={student.status}
@@ -259,6 +267,16 @@ export default function StudentsManagement() {
               value={currentStudent.class}
               onChange={(e) => handleChange('class', e.target.value)}
             />
+            <TextField
+              label="Level"
+              select
+              fullWidth
+              value={currentStudent.level}
+              onChange={(e) => handleChange('level', e.target.value)}
+            >
+              <MenuItem value="Standard 5">Standard 5</MenuItem>
+              <MenuItem value="Standard 6">Standard 6</MenuItem>
+            </TextField>
             <TextField
               label="Status"
               select
