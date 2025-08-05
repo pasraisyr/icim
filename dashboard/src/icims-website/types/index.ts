@@ -1,3 +1,10 @@
+import { ReactNode } from 'react';
+
+// Layout types
+export interface IcimsWebsiteLayoutProps {
+  children: ReactNode;
+}
+
 // types
 export interface StudentRegistration {
   fullName: string;

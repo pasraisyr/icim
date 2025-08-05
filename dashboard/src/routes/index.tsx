@@ -7,6 +7,7 @@ import LoginRoutes from './LoginRoutes';
 import MainRoutes from './MainRoutes';
 import { TeacherRoutes } from 'panel-dashboard/teacher-dashboard';
 import { AcademicManagerRoutes } from 'panel-dashboard/academic-manager-dashboard';
+import { IcimsWebsiteRoutes } from 'icims-website';
 
 import Loadable from 'components/Loadable';
 import { SimpleLayoutType } from 'config';
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
     LoginRoutes,
     ComponentsRoutes,
     MainRoutes,
+    IcimsWebsiteRoutes,
     TeacherRoutes,
     AcademicManagerRoutes
   ],
