@@ -22,6 +22,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 
 // project-imports
 import MainCard from 'components/MainCard';
@@ -34,11 +35,13 @@ interface TeacherAllocationData {
   id: string;
   teacherId: string;
   teacherName: string;
-  subjectId: string;
-  subjectName: string;
+  subjects: {
+    subjectId: string;
+    subjectName: string;
+    schedule: string;
+  }[];
   classId: string;
   className: string;
-  schedule: string;
   room: string;
   status: 'active' | 'inactive';
 }
@@ -65,19 +68,27 @@ interface Class {
 const mockTeachers: Teacher[] = [
   { id: '1', name: 'Dr. Sarah Johnson', subject: 'Mathematics' },
   { id: '2', name: 'Prof. Ahmad Hassan', subject: 'Physics' },
-  { id: '3', name: 'Ms. Fatimah Ali', subject: 'Chemistry' }
+  { id: '3', name: 'Ms. Fatimah Ali', subject: 'Chemistry' },
+  { id: '4', name: 'Mr. John Smith', subject: 'Biology' },
+  { id: '5', name: 'Dr. Maria Garcia', subject: 'Computer Science' }
 ];
 
 const mockSubjects: Subject[] = [
   { id: '1', name: 'Advanced Mathematics', code: 'MATH501' },
   { id: '2', name: 'Physics', code: 'PHY401' },
-  { id: '3', name: 'Chemistry', code: 'CHEM401' }
+  { id: '3', name: 'Chemistry', code: 'CHEM401' },
+  { id: '4', name: 'Biology', code: 'BIO401' },
+  { id: '5', name: 'Computer Science', code: 'CS401' },
+  { id: '6', name: 'Statistics', code: 'STAT301' },
+  { id: '7', name: 'Calculus', code: 'MATH401' }
 ];
 
 const mockClasses: Class[] = [
   { id: '1', name: 'Form 5 Science A', room: 'Lab 101' },
   { id: '2', name: 'Form 4 Science B', room: 'Room 205' },
-  { id: '3', name: 'Form 3 Science C', room: 'Lab 203' }
+  { id: '3', name: 'Form 3 Science C', room: 'Lab 203' },
+  { id: '4', name: 'Form 5 Computer A', room: 'Computer Lab' },
+  { id: '5', name: 'Form 4 Mathematics', room: 'Room 301' }
 ];
 
 const mockAllocations: TeacherAllocationData[] = [
@@ -85,11 +96,15 @@ const mockAllocations: TeacherAllocationData[] = [
     id: '1',
     teacherId: '1',
     teacherName: 'Dr. Sarah Johnson',
-    subjectId: '1',
-    subjectName: 'Advanced Mathematics',
+    subjects: [
+      {
+        subjectId: '1',
+        subjectName: 'Advanced Mathematics',
+        schedule: 'Mon, Wed, Fri - 9:00 AM'
+      }
+    ],
     classId: '1',
     className: 'Form 5 Science A',
-    schedule: 'Mon, Wed, Fri - 9:00 AM',
     room: 'Lab 101',
     status: 'active'
   },
@@ -97,12 +112,58 @@ const mockAllocations: TeacherAllocationData[] = [
     id: '2',
     teacherId: '2',
     teacherName: 'Prof. Ahmad Hassan',
-    subjectId: '2',
-    subjectName: 'Physics',
+    subjects: [
+      {
+        subjectId: '2',
+        subjectName: 'Physics',
+        schedule: 'Tue, Thu - 2:00 PM'
+      }
+    ],
     classId: '2',
     className: 'Form 4 Science B',
-    schedule: 'Tue, Thu - 2:00 PM',
     room: 'Room 205',
+    status: 'active'
+  },
+  {
+    id: '3',
+    teacherId: '1',
+    teacherName: 'Dr. Sarah Johnson',
+    subjects: [
+      {
+        subjectId: '1',
+        subjectName: 'Advanced Mathematics',
+        schedule: 'Mon, Wed - 10:00 AM'
+      },
+      {
+        subjectId: '6',
+        subjectName: 'Statistics',
+        schedule: 'Tue, Thu - 11:00 AM'
+      }
+    ],
+    classId: '5',
+    className: 'Form 4 Mathematics',
+    room: 'Room 301',
+    status: 'active'
+  },
+  {
+    id: '4',
+    teacherId: '5',
+    teacherName: 'Dr. Maria Garcia',
+    subjects: [
+      {
+        subjectId: '5',
+        subjectName: 'Computer Science',
+        schedule: 'Mon, Wed, Fri - 1:00 PM'
+      },
+      {
+        subjectId: '1',
+        subjectName: 'Advanced Mathematics',
+        schedule: 'Tue, Thu - 3:00 PM'
+      }
+    ],
+    classId: '4',
+    className: 'Form 5 Computer A',
+    room: 'Computer Lab',
     status: 'active'
   }
 ];
@@ -110,11 +171,9 @@ const mockAllocations: TeacherAllocationData[] = [
 const initialAllocation: Omit<TeacherAllocationData, 'id'> = {
   teacherId: '',
   teacherName: '',
-  subjectId: '',
-  subjectName: '',
+  subjects: [],
   classId: '',
   className: '',
-  schedule: '',
   room: '',
   status: 'active'
 };
@@ -131,7 +190,10 @@ export default function TeacherAllocation() {
   const handleOpen = () => {
     setOpen(true);
     setEditMode(false);
-    setCurrentAllocation(initialAllocation);
+    setCurrentAllocation({
+      ...initialAllocation,
+      subjects: [{ subjectId: '', subjectName: '', schedule: '' }]
+    });
   };
 
   const handleEdit = (allocation: TeacherAllocationData) => {
@@ -141,11 +203,9 @@ export default function TeacherAllocation() {
     setCurrentAllocation({
       teacherId: allocation.teacherId,
       teacherName: allocation.teacherName,
-      subjectId: allocation.subjectId,
-      subjectName: allocation.subjectName,
+      subjects: [...allocation.subjects],
       classId: allocation.classId,
       className: allocation.className,
-      schedule: allocation.schedule,
       room: allocation.room,
       status: allocation.status
     });
@@ -154,7 +214,10 @@ export default function TeacherAllocation() {
   const handleClose = () => {
     setOpen(false);
     setEditMode(false);
-    setCurrentAllocation(initialAllocation);
+    setCurrentAllocation({
+      ...initialAllocation,
+      subjects: [{ subjectId: '', subjectName: '', schedule: '' }]
+    });
     setEditingId('');
   };
 
@@ -188,11 +251,6 @@ export default function TeacherAllocation() {
       if (teacher) {
         updatedAllocation.teacherName = teacher.name;
       }
-    } else if (field === 'subjectId') {
-      const subject = mockSubjects.find(s => s.id === value);
-      if (subject) {
-        updatedAllocation.subjectName = subject.name;
-      }
     } else if (field === 'classId') {
       const classData = mockClasses.find(c => c.id === value);
       if (classData) {
@@ -202,6 +260,42 @@ export default function TeacherAllocation() {
     }
 
     setCurrentAllocation(updatedAllocation);
+  };
+
+  // Handle adding a new subject to the allocation
+  const handleAddSubject = () => {
+    setCurrentAllocation({
+      ...currentAllocation,
+      subjects: [...currentAllocation.subjects, { subjectId: '', subjectName: '', schedule: '' }]
+    });
+  };
+
+  // Handle removing a subject from the allocation
+  const handleRemoveSubject = (index: number) => {
+    const updatedSubjects = currentAllocation.subjects.filter((_, i) => i !== index);
+    setCurrentAllocation({
+      ...currentAllocation,
+      subjects: updatedSubjects
+    });
+  };
+
+  // Handle changing subject details
+  const handleSubjectChange = (index: number, field: 'subjectId' | 'subjectName' | 'schedule', value: string) => {
+    const updatedSubjects = [...currentAllocation.subjects];
+    updatedSubjects[index] = { ...updatedSubjects[index], [field]: value };
+
+    // Auto-populate subject name when subject ID changes
+    if (field === 'subjectId') {
+      const subject = mockSubjects.find(s => s.id === value);
+      if (subject) {
+        updatedSubjects[index].subjectName = subject.name;
+      }
+    }
+
+    setCurrentAllocation({
+      ...currentAllocation,
+      subjects: updatedSubjects
+    });
   };
 
   return (
@@ -297,9 +391,28 @@ export default function TeacherAllocation() {
                         {allocation.teacherName}
                       </Stack>
                     </TableCell>
-                    <TableCell>{allocation.subjectName}</TableCell>
+                    <TableCell>
+                      <Stack spacing={1}>
+                        {allocation.subjects.map((subject, index) => (
+                          <Chip 
+                            key={index}
+                            label={subject.subjectName}
+                            size="small"
+                            variant="outlined"
+                          />
+                        ))}
+                      </Stack>
+                    </TableCell>
                     <TableCell>{allocation.className}</TableCell>
-                    <TableCell>{allocation.schedule}</TableCell>
+                    <TableCell>
+                      <Stack spacing={1}>
+                        {allocation.subjects.map((subject, index) => (
+                          <Typography key={index} variant="body2">
+                            {subject.schedule}
+                          </Typography>
+                        ))}
+                      </Stack>
+                    </TableCell>
                     <TableCell>{allocation.room}</TableCell>
                     <TableCell>
                       <Chip 
@@ -356,20 +469,6 @@ export default function TeacherAllocation() {
             </TextField>
             
             <TextField
-              label="Subject"
-              select
-              fullWidth
-              value={currentAllocation.subjectId}
-              onChange={(e) => handleChange('subjectId', e.target.value)}
-            >
-              {mockSubjects.map((subject) => (
-                <MenuItem key={subject.id} value={subject.id}>
-                  {subject.name} ({subject.code})
-                </MenuItem>
-              ))}
-            </TextField>
-            
-            <TextField
               label="Class"
               select
               fullWidth
@@ -382,14 +481,75 @@ export default function TeacherAllocation() {
                 </MenuItem>
               ))}
             </TextField>
-            
-            <TextField
-              label="Schedule"
-              fullWidth
-              placeholder="e.g., Mon, Wed, Fri - 9:00 AM"
-              value={currentAllocation.schedule}
-              onChange={(e) => handleChange('schedule', e.target.value)}
-            />
+
+            {/* Subjects Section */}
+            <Box>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Typography variant="h6">Subjects</Typography>
+                <Button 
+                  size="small" 
+                  startIcon={<Add />}
+                  onClick={handleAddSubject}
+                >
+                  Add Subject
+                </Button>
+              </Stack>
+
+              {currentAllocation.subjects.map((subject, index) => (
+                <Card key={index} sx={{ mb: 2, p: 2 }}>
+                  <Stack spacing={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="subtitle2">Subject {index + 1}</Typography>
+                      {currentAllocation.subjects.length > 1 && (
+                        <IconButton 
+                          size="small" 
+                          color="error"
+                          onClick={() => handleRemoveSubject(index)}
+                        >
+                          <Trash size={16} />
+                        </IconButton>
+                      )}
+                    </Stack>
+                    
+                    <TextField
+                      label="Subject"
+                      select
+                      fullWidth
+                      value={subject.subjectId}
+                      onChange={(e) => handleSubjectChange(index, 'subjectId', e.target.value)}
+                    >
+                      {mockSubjects
+                        .filter(subjectOption => 
+                          !currentAllocation.subjects.some((s, i) => 
+                            i !== index && s.subjectId === subjectOption.id
+                          )
+                        )
+                        .map((subjectOption) => (
+                          <MenuItem key={subjectOption.id} value={subjectOption.id}>
+                            {subjectOption.name} ({subjectOption.code})
+                          </MenuItem>
+                        ))}
+                    </TextField>
+                    
+                    <TextField
+                      label="Schedule"
+                      fullWidth
+                      placeholder="e.g., Mon, Wed, Fri - 9:00 AM"
+                      value={subject.schedule}
+                      onChange={(e) => handleSubjectChange(index, 'schedule', e.target.value)}
+                    />
+                  </Stack>
+                </Card>
+              ))}
+
+              {currentAllocation.subjects.length === 0 && (
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <Typography color="textSecondary">
+                    No subjects added. Click "Add Subject" to begin.
+                  </Typography>
+                </Box>
+              )}
+            </Box>
             
             <TextField
               label="Status"
@@ -408,7 +568,12 @@ export default function TeacherAllocation() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentAllocation.teacherId || !currentAllocation.subjectId || !currentAllocation.classId}
+            disabled={
+              !currentAllocation.teacherId || 
+              !currentAllocation.classId || 
+              currentAllocation.subjects.length === 0 ||
+              currentAllocation.subjects.some(subject => !subject.subjectId || !subject.schedule)
+            }
           >
             {editMode ? 'Update' : 'Allocate'} Teacher
           </Button>
