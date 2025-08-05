@@ -1,4 +1,5 @@
 // project-imports
+import academicManagement from './academic-management';
 import adminPanel from './admin-panel';
 import applications from './applications';
 import chartsMap from './charts-map';
@@ -14,7 +15,7 @@ import { NavItemType } from 'types/menu';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [widget, adminPanel, applications, formsTables, chartsMap, samplePage, pages, support]
+  items: [widget, academicManagement, adminPanel, applications, formsTables, chartsMap, samplePage, pages, support]
 };
 
 export default menuItems;

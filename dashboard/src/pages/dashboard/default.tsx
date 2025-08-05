@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import EcommerceDataCard from 'components/cards/statistics/EcommerceDataCard';
 import { GRID_COMMON_SPACING } from 'config';
 
-import WelcomeBanner from 'sections/dashboard/default/WelcomeBanner';
+// import WelcomeBanner from 'sections/dashboard/default/WelcomeBanner';
 import ProjectRelease from 'sections/dashboard/default/ProjectRelease';
 import EcommerceDataChart from 'sections/widget/chart/EcommerceDataChart';
 import TotalIncome from 'sections/widget/chart/TotalIncome';
@@ -28,7 +28,7 @@ export default function DashboardDefault() {
   return (
     <Grid container spacing={GRID_COMMON_SPACING}>
       <Grid size={12}>
-        <WelcomeBanner />
+        {/* <WelcomeBanner /> */}
       </Grid>
       {/* row 1 */}
       <Grid size={{ xs: 12, sm: 6, lg: 3 }}>

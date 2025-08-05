@@ -6,6 +6,7 @@ import ComponentsRoutes from './ComponentsRoutes';
 import LoginRoutes from './LoginRoutes';
 import MainRoutes from './MainRoutes';
 import { TeacherRoutes } from 'teacher-dashboard';
+import { AcademicManagerRoutes } from 'academic-manager-dashboard';
 
 import Loadable from 'components/Loadable';
 import { SimpleLayoutType } from 'config';
@@ -31,7 +32,8 @@ const router = createBrowserRouter(
     LoginRoutes,
     ComponentsRoutes,
     MainRoutes,
-    TeacherRoutes
+    TeacherRoutes,
+    AcademicManagerRoutes
   ],
   { basename: import.meta.env.VITE_APP_BASE_NAME }
 );
