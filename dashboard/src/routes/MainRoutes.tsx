@@ -157,7 +157,6 @@ const MaintenanceComingSoon2 = Loadable(lazy(() => import('pages/maintenance/com
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const Landing = Loadable(lazy(() => import('pages/landing')));
 const ContactUS = Loadable(lazy(() => import('pages/contact-us')));
-const IcimsWebsite = Loadable(lazy(() => import('pages/icims-website')));
 const PricingPage = Loadable(lazy(() => import('pages/extra-pages/price/price1')));
 const PricingPage2 = Loadable(lazy(() => import('pages/extra-pages/price/price2')));
 
@@ -688,10 +687,6 @@ const MainRoutes = {
         {
           path: 'contact-us',
           element: <ContactUS />
-        },
-        {
-          path: 'icims-website',
-          element: <IcimsWebsite />
         }
       ]
     },
