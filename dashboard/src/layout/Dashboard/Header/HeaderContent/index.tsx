@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 
 // project-imports
 import FullScreen from './FullScreen';
@@ -25,7 +25,7 @@ import useConfig from 'hooks/useConfig';
 import DrawerHeader from 'layout/Dashboard/Drawer/DrawerHeader';
 
 // assets
-import { Profile2User } from 'iconsax-react';
+// import { Profile2User } from 'iconsax-react';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
@@ -39,9 +39,9 @@ export default function HeaderContent() {
 
   const megaMenu = useMemo(() => <MegaMenuSection />, []);
 
-  const handleTeacherDashboard = () => {
-    navigate('/teacher/classes');
-  };
+  // const handleTeacherDashboard = () => {
+  //   navigate('/teacher/classes');
+  // };
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function HeaderContent() {
       {!downLG && localization}
       {downLG && <Box sx={{ width: 1, ml: 1 }} />}
 
-      {!downLG && (
+      {/* {!downLG && (
         <Button
           variant="outlined"
           size="small"
@@ -61,7 +61,7 @@ export default function HeaderContent() {
         >
           Teacher Dashboard
         </Button>
-      )}
+      )} */}
 
       <ThemeToggleButton />
       <Notification />
