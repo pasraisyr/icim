@@ -5,8 +5,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import ComponentsRoutes from './ComponentsRoutes';
 import LoginRoutes from './LoginRoutes';
 import MainRoutes from './MainRoutes';
-import { TeacherRoutes } from 'teacher-dashboard';
-import { AcademicManagerRoutes } from 'academic-manager-dashboard';
+import { TeacherRoutes } from 'panel-dashboard/teacher-dashboard';
+import { AcademicManagerRoutes } from 'panel-dashboard/academic-manager-dashboard';
 
 import Loadable from 'components/Loadable';
 import { SimpleLayoutType } from 'config';
