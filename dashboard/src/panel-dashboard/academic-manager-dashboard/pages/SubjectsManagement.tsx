@@ -30,10 +30,7 @@ import { Add, Edit, Trash, DocumentText } from 'iconsax-react';
 interface Subject {
   id: string;
   name: string;
-  code: string;
   description: string;
-  credits: number;
-  department: string;
   level: 'Form 1' | 'Form 2' | 'Form 3' | 'Form 4' | 'Form 5';
   status: 'active' | 'inactive';
 }
@@ -43,40 +40,28 @@ const mockSubjects: Subject[] = [
   {
     id: '1',
     name: 'Advanced Mathematics',
-    code: 'MATH501',
     description: 'Calculus, Statistics, and Mathematical Analysis',
-    credits: 4,
-    department: 'Mathematics',
     level: 'Form 5',
     status: 'active'
   },
   {
     id: '2',
     name: 'Physics',
-    code: 'PHY401',
     description: 'Mechanics, Thermodynamics, and Electromagnetism',
-    credits: 4,
-    department: 'Science',
     level: 'Form 4',
     status: 'active'
   },
   {
     id: '3',
     name: 'Islamic Studies',
-    code: 'IS301',
     description: 'Quran, Hadith, and Islamic Jurisprudence',
-    credits: 3,
-    department: 'Islamic Studies',
     level: 'Form 3',
     status: 'active'
   },
   {
     id: '4',
     name: 'Arabic Language',
-    code: 'AR201',
     description: 'Arabic Grammar, Literature, and Conversation',
-    credits: 3,
-    department: 'Languages',
     level: 'Form 2',
     status: 'inactive'
   }
@@ -84,10 +69,7 @@ const mockSubjects: Subject[] = [
 
 const initialSubject: Omit<Subject, 'id'> = {
   name: '',
-  code: '',
   description: '',
-  credits: 0,
-  department: '',
   level: 'Form 1',
   status: 'active'
 };
@@ -113,10 +95,7 @@ export default function SubjectsManagement() {
     setEditingId(subject.id);
     setCurrentSubject({
       name: subject.name,
-      code: subject.code,
       description: subject.description,
-      credits: subject.credits,
-      department: subject.department,
       level: subject.level,
       status: subject.status
     });
@@ -165,7 +144,7 @@ export default function SubjectsManagement() {
                 Subjects Management
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Manage curriculum subjects, credits, and academic requirements
+                Manage subject details, pricing, and availability
               </Typography>
             </Stack>
             <Button 
@@ -187,10 +166,7 @@ export default function SubjectsManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Subject Name</TableCell>
-                  <TableCell>Code</TableCell>
-                  <TableCell>Department</TableCell>
                   <TableCell>Level</TableCell>
-                  <TableCell>Credits</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -209,16 +185,7 @@ export default function SubjectsManagement() {
                         </Stack>
                       </Stack>
                     </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={subject.code} 
-                        variant="outlined" 
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>{subject.department}</TableCell>
                     <TableCell>{subject.level}</TableCell>
-                    <TableCell>{subject.credits}</TableCell>
                     <TableCell>
                       <Chip 
                         label={subject.status}
@@ -266,25 +233,12 @@ export default function SubjectsManagement() {
               onChange={(e) => handleChange('name', e.target.value)}
             />
             <TextField
-              label="Subject Code"
-              fullWidth
-              placeholder="e.g., MATH501"
-              value={currentSubject.code}
-              onChange={(e) => handleChange('code', e.target.value)}
-            />
-            <TextField
               label="Description"
               fullWidth
               multiline
               rows={3}
               value={currentSubject.description}
               onChange={(e) => handleChange('description', e.target.value)}
-            />
-            <TextField
-              label="Department"
-              fullWidth
-              value={currentSubject.department}
-              onChange={(e) => handleChange('department', e.target.value)}
             />
             <TextField
               label="Level"
@@ -299,13 +253,6 @@ export default function SubjectsManagement() {
               <MenuItem value="Form 4">Form 4</MenuItem>
               <MenuItem value="Form 5">Form 5</MenuItem>
             </TextField>
-            <TextField
-              label="Credits"
-              type="number"
-              fullWidth
-              value={currentSubject.credits}
-              onChange={(e) => handleChange('credits', parseInt(e.target.value) || 0)}
-            />
             <TextField
               label="Status"
               select
@@ -323,7 +270,7 @@ export default function SubjectsManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentSubject.name || !currentSubject.code || !currentSubject.department}
+            disabled={!currentSubject.name || !currentSubject.description}
           >
             {editMode ? 'Update' : 'Add'} Subject
           </Button>

@@ -19,6 +19,12 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
+import Autocomplete from '@mui/material/Autocomplete';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Box from '@mui/material/Box';
 
 // project-imports
 import MainCard from 'components/MainCard';
@@ -27,63 +33,122 @@ import MainCard from 'components/MainCard';
 import { Add, Edit, Trash, Book } from 'iconsax-react';
 
 // types
+interface Subject {
+  id: string;
+  name: string;
+  description: string;
+  level: 'Form 1' | 'Form 2' | 'Form 3' | 'Form 4' | 'Form 5';
+  status: 'active' | 'inactive';
+}
+
 interface Class {
   id: string;
   name: string;
-  subject: string;
+  subjects: string[]; // Array of subject IDs
   teacher: string;
   room: string;
   schedule: string;
   capacity: number;
   enrolled: number;
+  price: number; // Price per month for the class
   status: 'active' | 'inactive';
 }
+
+// Available subjects (this could come from an API or context)
+const availableSubjects: Subject[] = [
+  {
+    id: '1',
+    name: 'Advanced Mathematics',
+    description: 'Calculus, Statistics, and Mathematical Analysis',
+    level: 'Form 5',
+    status: 'active'
+  },
+  {
+    id: '2',
+    name: 'Physics',
+    description: 'Mechanics, Thermodynamics, and Electromagnetism',
+    level: 'Form 4',
+    status: 'active'
+  },
+  {
+    id: '3',
+    name: 'Chemistry',
+    description: 'Organic and Inorganic Chemistry',
+    level: 'Form 4',
+    status: 'active'
+  },
+  {
+    id: '4',
+    name: 'Literature',
+    description: 'English Literature and Creative Writing',
+    level: 'Form 4',
+    status: 'active'
+  },
+  {
+    id: '5',
+    name: 'Islamic Studies',
+    description: 'Quran, Hadith, and Islamic Jurisprudence',
+    level: 'Form 3',
+    status: 'active'
+  },
+  {
+    id: '6',
+    name: 'Arabic Language',
+    description: 'Arabic Grammar, Literature, and Conversation',
+    level: 'Form 2',
+    status: 'active'
+  }
+];
 
 // mock data
 const mockClasses: Class[] = [
   {
     id: '1',
     name: 'Form 5 Science A',
-    subject: 'Physics',
+    subjects: ['1', '2'], // Advanced Mathematics and Physics
     teacher: 'Dr. Ahmad Hassan',
     room: 'Lab 101',
     schedule: 'Mon, Wed, Fri - 9:00 AM',
     capacity: 30,
     enrolled: 25,
+    price: 280, // Combined price for the class
     status: 'active'
   },
   {
     id: '2',
     name: 'Form 4 Arts B',
-    subject: 'Literature',
+    subjects: ['4'], // Literature
     teacher: 'Ms. Sarah Johnson',
     room: 'Room 205',
     schedule: 'Tue, Thu - 2:00 PM',
     capacity: 25,
     enrolled: 18,
+    price: 140,
     status: 'active'
   },
   {
     id: '3',
     name: 'Form 3 Science C',
-    subject: 'Chemistry',
+    subjects: ['2', '3'], // Physics and Chemistry
     teacher: 'Ms. Fatimah Ali',
     room: 'Lab 203',
     schedule: 'Mon, Wed - 11:00 AM',
     capacity: 28,
     enrolled: 22,
+    price: 250,
     status: 'inactive'
   }
 ];
 
 const initialClass: Omit<Class, 'id'> = {
   name: '',
-  subject: '',
+  subjects: [],
   teacher: '',
   room: '',
   schedule: '',
   capacity: 0,
   enrolled: 0,
+  price: 0,
   status: 'active'
 };
 
@@ -95,6 +160,14 @@ export default function ClassesManagement() {
   const [editMode, setEditMode] = useState(false);
   const [currentClass, setCurrentClass] = useState<Omit<Class, 'id'>>(initialClass);
   const [editingId, setEditingId] = useState<string>('');
+
+  // Helper function to get subject names from IDs
+  const getSubjectNames = (subjectIds: string[]): string[] => {
+    return subjectIds.map(id => {
+      const subject = availableSubjects.find(s => s.id === id);
+      return subject ? subject.name : 'Unknown Subject';
+    });
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -108,12 +181,13 @@ export default function ClassesManagement() {
     setEditingId(classItem.id);
     setCurrentClass({
       name: classItem.name,
-      subject: classItem.subject,
+      subjects: classItem.subjects,
       teacher: classItem.teacher,
       room: classItem.room,
       schedule: classItem.schedule,
       capacity: classItem.capacity,
       enrolled: classItem.enrolled,
+      price: classItem.price,
       status: classItem.status
     });
   };
@@ -146,7 +220,7 @@ export default function ClassesManagement() {
     setClasses(classes.filter(classItem => classItem.id !== id));
   };
 
-  const handleChange = (field: keyof Omit<Class, 'id'>, value: string | number) => {
+  const handleChange = (field: keyof Omit<Class, 'id'>, value: string | number | string[]) => {
     setCurrentClass({ ...currentClass, [field]: value });
   };
 
@@ -183,10 +257,11 @@ export default function ClassesManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Class Name</TableCell>
-                  <TableCell>Subject</TableCell>
+                  <TableCell>Subjects</TableCell>
                   <TableCell>Teacher</TableCell>
                   <TableCell>Room</TableCell>
                   <TableCell>Schedule</TableCell>
+                  <TableCell>Price</TableCell>
                   <TableCell>Enrollment</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
@@ -201,10 +276,32 @@ export default function ClassesManagement() {
                         {classItem.name}
                       </Stack>
                     </TableCell>
-                    <TableCell>{classItem.subject}</TableCell>
+                    <TableCell>
+                      <Stack spacing={0.5}>
+                        {getSubjectNames(classItem.subjects).map((subjectName, index) => (
+                          <Chip 
+                            key={index}
+                            label={subjectName}
+                            size="small"
+                            variant="outlined"
+                            color="primary"
+                          />
+                        ))}
+                        {classItem.subjects.length === 0 && (
+                          <Typography variant="body2" color="textSecondary">
+                            No subjects assigned
+                          </Typography>
+                        )}
+                      </Stack>
+                    </TableCell>
                     <TableCell>{classItem.teacher}</TableCell>
                     <TableCell>{classItem.room}</TableCell>
                     <TableCell>{classItem.schedule}</TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" color="primary">
+                        RM{classItem.price}/month
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Typography variant="body2">
                         {classItem.enrolled}/{classItem.capacity}
@@ -259,12 +356,40 @@ export default function ClassesManagement() {
               value={currentClass.name}
               onChange={(e) => handleChange('name', e.target.value)}
             />
-            <TextField
-              label="Subject"
-              fullWidth
-              value={currentClass.subject}
-              onChange={(e) => handleChange('subject', e.target.value)}
-            />
+            <FormControl fullWidth>
+              <InputLabel>Subjects</InputLabel>
+              <Select
+                multiple
+                value={currentClass.subjects}
+                onChange={(e) => handleChange('subjects', e.target.value as string[])}
+                input={<OutlinedInput label="Subjects" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {(selected as string[]).map((value) => {
+                      const subject = availableSubjects.find(s => s.id === value);
+                      return (
+                        <Chip 
+                          key={value} 
+                          label={subject?.name || 'Unknown'} 
+                          size="small" 
+                        />
+                      );
+                    })}
+                  </Box>
+                )}
+              >
+                {availableSubjects.filter(subject => subject.status === 'active').map((subject) => (
+                  <MenuItem key={subject.id} value={subject.id}>
+                    <Stack>
+                      <Typography variant="body2">{subject.name}</Typography>
+                      <Typography variant="caption" color="textSecondary">
+                        {subject.level} - {subject.description}
+                      </Typography>
+                    </Stack>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="Teacher"
               fullWidth
@@ -283,6 +408,16 @@ export default function ClassesManagement() {
               placeholder="e.g., Mon, Wed, Fri - 9:00 AM"
               value={currentClass.schedule}
               onChange={(e) => handleChange('schedule', e.target.value)}
+            />
+            <TextField
+              label="Price per Month"
+              type="number"
+              fullWidth
+              value={currentClass.price}
+              onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
+              InputProps={{
+                startAdornment: 'RM'
+              }}
             />
             <TextField
               label="Capacity"
@@ -315,7 +450,7 @@ export default function ClassesManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentClass.name || !currentClass.subject || !currentClass.teacher}
+            disabled={!currentClass.name || currentClass.subjects.length === 0 || !currentClass.teacher || currentClass.price <= 0}
           >
             {editMode ? 'Update' : 'Add'} Class
           </Button>

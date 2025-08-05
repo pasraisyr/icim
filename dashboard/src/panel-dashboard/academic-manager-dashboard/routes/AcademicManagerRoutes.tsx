@@ -14,6 +14,7 @@ const TeacherAllocation = Loadable(lazy(() => import('../pages/TeacherAllocation
 const StudentAllocation = Loadable(lazy(() => import('../pages/StudentAllocation')));
 const TeacherAttendanceView = Loadable(lazy(() => import('../pages/TeacherAttendanceView')));
 const StudentAttendanceView = Loadable(lazy(() => import('../pages/StudentAttendanceView')));
+const PaymentCalculator = Loadable(lazy(() => import('../pages/PaymentCalculator')));
 
 // ==============================|| ACADEMIC MANAGER DASHBOARD ROUTES ||============================== //
 
@@ -44,6 +45,10 @@ const AcademicManagerRoutes = {
     {
       path: 'subjects',
       element: <SubjectsManagement />
+    },
+    {
+      path: 'payment-calculator',
+      element: <PaymentCalculator />
     },
     {
       path: 'teacher-allocation',
