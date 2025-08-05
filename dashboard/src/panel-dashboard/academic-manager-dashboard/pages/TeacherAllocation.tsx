@@ -230,7 +230,7 @@ export default function TeacherAllocation() {
       </Grid>
 
       {/* Summary Cards */}
-      <Grid item xs={12} md={4}>
+      {/* <Grid item xs={12} md={4}>
         <Card>
           <CardHeader title="Total Allocations" />
           <CardContent>
@@ -270,7 +270,7 @@ export default function TeacherAllocation() {
             </Typography>
           </CardContent>
         </Card>
-      </Grid>
+      </Grid> */}
 
       {/* Allocations Table */}
       <Grid item xs={12}>

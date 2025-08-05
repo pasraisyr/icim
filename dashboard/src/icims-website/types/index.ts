@@ -6,6 +6,16 @@ export interface IcimsWebsiteLayoutProps {
 }
 
 // types
+export interface PaymentInformation {
+  paymentMethod: string;
+  cardName?: string;
+  cardNumber?: string;
+  expiryDate?: string;
+  cvv?: string;
+  paypalEmail?: string;
+  preferredPaymentDate?: string;
+}
+
 export interface StudentRegistration {
   fullName: string;
   icNumber: string;
@@ -31,6 +41,7 @@ export interface StudentRegistration {
   specialNeeds: string;
   emergencyContact: string;
   emergencyPhone: string;
+  payment: PaymentInformation;
 }
 
 export interface ContactForm {
@@ -65,7 +76,16 @@ export const initialFormData: StudentRegistration = {
   previousIslamic: false,
   specialNeeds: '',
   emergencyContact: '',
-  emergencyPhone: ''
+  emergencyPhone: '',
+  payment: {
+    paymentMethod: '',
+    cardName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    paypalEmail: '',
+    preferredPaymentDate: ''
+  }
 };
 
 export const initialContactForm: ContactForm = {
@@ -76,7 +96,7 @@ export const initialContactForm: ContactForm = {
   message: ''
 };
 
-export const steps = ['Personal Information', 'Contact Details', 'Academic Information', 'Parent/Guardian Details', 'Review & Submit'];
+export const steps = ['Personal Information', 'Contact Details', 'Academic Information', 'Parent/Guardian Details', 'Payment Information', 'Review & Submit'];
 
 export const malaysianStates = [
   'Johor', 'Kedah', 'Kelantan', 'Kuala Lumpur', 'Labuan', 'Malacca', 'Negeri Sembilan',
@@ -95,4 +115,11 @@ export const programs = [
   'Tuition Classes (STPM)',
   'Hafez Program',
   'Arabic Language Course'
+];
+
+export const paymentMethods = [
+  { value: 'card', label: 'Credit/Debit Card', description: 'Secure payment with Visa, MasterCard' },
+  { value: 'paypal', label: 'PayPal', description: 'Pay with your PayPal account' },
+  { value: 'bank_transfer', label: 'Bank Transfer', description: 'Direct bank transfer' },
+  { value: 'installment', label: 'Monthly Installment', description: 'Pay in monthly installments' }
 ];

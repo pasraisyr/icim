@@ -215,7 +215,7 @@ export default function StudentAllocation() {
       </Grid>
 
       {/* Summary Cards */}
-      <Grid item xs={12} md={3}>
+      {/* <Grid item xs={12} md={3}>
         <Card>
           <CardHeader title="Total Allocations" />
           <CardContent>
@@ -269,10 +269,10 @@ export default function StudentAllocation() {
             </Typography>
           </CardContent>
         </Card>
-      </Grid>
+      </Grid> */}
 
       {/* Class Capacity Overview */}
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <MainCard title="Class Capacity Overview">
           <Grid container spacing={2}>
             {mockClasses.map((classData) => {
@@ -305,7 +305,7 @@ export default function StudentAllocation() {
             })}
           </Grid>
         </MainCard>
-      </Grid>
+      </Grid> */}
 
       {/* Allocations Table */}
       <Grid item xs={12}>
@@ -370,7 +370,7 @@ export default function StudentAllocation() {
         <DialogTitle>
           {editMode ? 'Edit Student Allocation' : 'Allocate Student'}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ px: 3, py: 2 }}>
           <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
               label="Student"
@@ -433,7 +433,7 @@ export default function StudentAllocation() {
             </TextField>
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ px: 3, py: 2 }}>
           <Button onClick={handleClose}>Cancel</Button>
           <Button 
             onClick={handleSave} 
