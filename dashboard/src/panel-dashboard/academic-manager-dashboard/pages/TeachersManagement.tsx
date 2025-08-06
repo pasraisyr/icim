@@ -32,7 +32,7 @@ interface Teacher {
   name: string;
   email: string;
   phone: string;
-  subject: string;
+
   experience: number;
   status: 'active' | 'inactive';
   joinDate: string;
@@ -45,7 +45,7 @@ const mockTeachers: Teacher[] = [
     name: 'Dr. Sarah Johnson',
     email: 'sarah.johnson@school.edu',
     phone: '+60123456789',
-    subject: 'Mathematics',
+
     experience: 8,
     status: 'active',
     joinDate: '2020-03-15'
@@ -55,7 +55,7 @@ const mockTeachers: Teacher[] = [
     name: 'Prof. Ahmad Hassan',
     email: 'ahmad.hassan@school.edu',
     phone: '+60987654321',
-    subject: 'Physics',
+
     experience: 12,
     status: 'active',
     joinDate: '2018-09-01'
@@ -65,7 +65,6 @@ const mockTeachers: Teacher[] = [
     name: 'Ms. Fatimah Ali',
     email: 'fatimah.ali@school.edu',
     phone: '+60555123456',
-    subject: 'Chemistry',
     experience: 5,
     status: 'inactive',
     joinDate: '2021-01-10'
@@ -76,7 +75,6 @@ const initialTeacher: Omit<Teacher, 'id'> = {
   name: '',
   email: '',
   phone: '',
-  subject: '',
   experience: 0,
   status: 'active',
   joinDate: new Date().toISOString().split('T')[0]
@@ -105,7 +103,6 @@ export default function TeachersManagement() {
       name: teacher.name,
       email: teacher.email,
       phone: teacher.phone,
-      subject: teacher.subject,
       experience: teacher.experience,
       status: teacher.status,
       joinDate: teacher.joinDate
@@ -178,8 +175,7 @@ export default function TeachersManagement() {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Phone</TableCell>
-                  <TableCell>Subject</TableCell>
+                  <TableCell>Phone</TableCell>                
                   <TableCell>Experience</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Join Date</TableCell>
@@ -196,8 +192,7 @@ export default function TeachersManagement() {
                       </Stack>
                     </TableCell>
                     <TableCell>{teacher.email}</TableCell>
-                    <TableCell>{teacher.phone}</TableCell>
-                    <TableCell>{teacher.subject}</TableCell>
+                    <TableCell>{teacher.phone}</TableCell> 
                     <TableCell>{teacher.experience} years</TableCell>
                     <TableCell>
                       <Chip 
@@ -260,12 +255,6 @@ export default function TeachersManagement() {
               onChange={(e) => handleChange('phone', e.target.value)}
             />
             <TextField
-              label="Subject"
-              fullWidth
-              value={currentTeacher.subject}
-              onChange={(e) => handleChange('subject', e.target.value)}
-            />
-            <TextField
               label="Experience (years)"
               type="number"
               fullWidth
@@ -297,7 +286,7 @@ export default function TeachersManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentTeacher.name || !currentTeacher.email || !currentTeacher.subject}
+            disabled={!currentTeacher.name || !currentTeacher.email}
           >
             {editMode ? 'Update' : 'Add'} Teacher
           </Button>
