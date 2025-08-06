@@ -26,14 +26,17 @@ import Chip from '@mui/material/Chip';
 import MainCard from 'components/MainCard';
 
 // assets
-import { Add, Edit, Trash, Profile2User } from 'iconsax-react';
+import { Add, Edit, Trash, Profile2User, Eye } from 'iconsax-react';
 
 // types
 interface Student {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
+  guardianName: string;
+  guardianIC: string;
+  guardianPhone: string;
+  studentName: string;
+  studentIC: string;
+  address: string;
   class: string;
   level: 'Standard 5' | 'Standard 6';
   status: 'active' | 'inactive';
@@ -44,19 +47,25 @@ interface Student {
 const mockStudents: Student[] = [
   {
     id: '1',
-    name: 'Ahmad Rahman',
-    email: 'ahmad.rahman@school.edu',
-    phone: '+60123456789',
+    guardianName: 'Ahmad bin Ali',
+    guardianIC: '123456789012',
+    guardianPhone: '+60123456789',
+    studentName: 'Ali bin Ahmad',
+    studentIC: '987654321098',
+    address: '123 Jalan ABC, Kuala Lumpur',
     class: 'Form 5 Science',
     level: 'Standard 5',
     status: 'active',
-    enrollmentDate: '2024-01-15'
+    enrollmentDate: '2024-02-15'
   },
   {
     id: '2',
-    name: 'Siti Aminah',
-    email: 'siti.aminah@school.edu',
-    phone: '+60987654321',
+    guardianName: 'Fatimah binti Abu',
+    guardianIC: '987654321012',
+    guardianPhone: '+60123456780',
+    studentName: 'Aminah binti Ahmad',
+    studentIC: '123456789098',
+    address: '456 Jalan DEF, Kuala Lumpur',
     class: 'Form 4 Arts',
     level: 'Standard 6',
     status: 'active',
@@ -64,9 +73,12 @@ const mockStudents: Student[] = [
   },
   {
     id: '3',
-    name: 'Muhammad Ali',
-    email: 'muhammad.ali@school.edu',
-    phone: '+60555123456',
+    guardianName: 'Muhammad Ali',
+    guardianIC: '123456789013',
+    guardianPhone: '+60123456781',
+    studentName: 'Ali bin Muhammad',
+    studentIC: '987654321099',
+    address: '789 Jalan GHI, Kuala Lumpur',
     class: 'Form 3 Science',
     level: 'Standard 5',
     status: 'inactive',
@@ -75,9 +87,12 @@ const mockStudents: Student[] = [
 ];
 
 const initialStudent: Omit<Student, 'id'> = {
-  name: '',
-  email: '',
-  phone: '',
+  guardianName: '',
+  guardianIC: '',
+  guardianPhone: '',
+  studentName: '',
+  studentIC: '',
+  address: '',
   class: '',
   level: 'Standard 5',
   status: 'active',
@@ -92,6 +107,8 @@ export default function StudentsManagement() {
   const [editMode, setEditMode] = useState(false);
   const [currentStudent, setCurrentStudent] = useState<Omit<Student, 'id'>>(initialStudent);
   const [editingId, setEditingId] = useState<string>('');
+  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
   const handleOpen = () => {
     setOpen(true);
@@ -104,9 +121,12 @@ export default function StudentsManagement() {
     setEditMode(true);
     setEditingId(student.id);
     setCurrentStudent({
-      name: student.name,
-      email: student.email,
-      phone: student.phone,
+      guardianName: student.guardianName,
+      guardianIC: student.guardianIC,
+      guardianPhone: student.guardianPhone,
+      studentName: student.studentName,
+      studentIC: student.studentIC,
+      address: student.address,
       class: student.class,
       level: student.level,
       status: student.status,
@@ -140,6 +160,16 @@ export default function StudentsManagement() {
 
   const handleDelete = (id: string) => {
     setStudents(students.filter(student => student.id !== id));
+  };
+
+  const handleViewDetails = (student: Student) => {
+    setSelectedStudent(student);
+    setViewDetailsOpen(true);
+  };
+
+  const handleCloseViewDetails = () => {
+    setViewDetailsOpen(false);
+    setSelectedStudent(null);
   };
 
   const handleChange = (field: keyof Omit<Student, 'id'>, value: string) => {
@@ -178,13 +208,12 @@ export default function StudentsManagement() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Phone</TableCell>
+                  <TableCell>Student Name</TableCell>
+                  <TableCell>Guardian Phone</TableCell>
                   <TableCell>Class</TableCell>
                   <TableCell>Level</TableCell>
-                  <TableCell>Status</TableCell>
                   <TableCell>Enrollment Date</TableCell>
+                  <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -194,13 +223,13 @@ export default function StudentsManagement() {
                     <TableCell>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Profile2User size={20} />
-                        {student.name}
+                        {student.studentName}  <br />
                       </Stack>
                     </TableCell>
-                    <TableCell>{student.email}</TableCell>
-                    <TableCell>{student.phone}</TableCell>
+                    <TableCell>{student.guardianPhone}</TableCell>
                     <TableCell>{student.class}</TableCell>
                     <TableCell>{student.level}</TableCell>
+                    <TableCell>{student.enrollmentDate}</TableCell>
                     <TableCell>
                       <Chip 
                         label={student.status}
@@ -208,9 +237,16 @@ export default function StudentsManagement() {
                         size="small"
                       />
                     </TableCell>
-                    <TableCell>{student.enrollmentDate}</TableCell>
+                   
                     <TableCell align="center">
                       <Stack direction="row" spacing={1} justifyContent="center">
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleViewDetails(student)}
+                          color="info"
+                        >
+                          <Eye size={16} />
+                        </IconButton>
                         <IconButton 
                           size="small" 
                           onClick={() => handleEdit(student)}
@@ -243,23 +279,40 @@ export default function StudentsManagement() {
         <DialogContent>
           <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
-              label="Name"
+              label="Guardian's Full Name"
               fullWidth
-              value={currentStudent.name}
-              onChange={(e) => handleChange('name', e.target.value)}
+              value={currentStudent.guardianName}
+              onChange={(e) => handleChange('guardianName', e.target.value)}
             />
             <TextField
-              label="Email"
-              type="email"
+              label="Guardian's IC Number"
               fullWidth
-              value={currentStudent.email}
-              onChange={(e) => handleChange('email', e.target.value)}
+              value={currentStudent.guardianIC}
+              onChange={(e) => handleChange('guardianIC', e.target.value)}
             />
             <TextField
-              label="Phone"
+              label="Guardian's Phone Number"
               fullWidth
-              value={currentStudent.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
+              value={currentStudent.guardianPhone}
+              onChange={(e) => handleChange('guardianPhone', e.target.value)}
+            />
+            <TextField
+              label="Student's Full Name"
+              fullWidth
+              value={currentStudent.studentName}
+              onChange={(e) => handleChange('studentName', e.target.value)}
+            />
+            <TextField
+              label="Student's IC Number"
+              fullWidth
+              value={currentStudent.studentIC}
+              onChange={(e) => handleChange('studentIC', e.target.value)}
+            />
+            <TextField
+              label="Address"
+              fullWidth
+              value={currentStudent.address}
+              onChange={(e) => handleChange('address', e.target.value)}
             />
             <TextField
               label="Class"
@@ -302,9 +355,103 @@ export default function StudentsManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentStudent.name || !currentStudent.email}
+            disabled={!currentStudent.guardianName || !currentStudent.guardianIC || !currentStudent.guardianPhone || !currentStudent.studentName || !currentStudent.studentIC || !currentStudent.address || !currentStudent.class}
           >
             {editMode ? 'Update' : 'Add'} Student
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Student Details Dialog */}
+      <Dialog open={viewDetailsOpen} onClose={handleCloseViewDetails} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Student Details
+        </DialogTitle>
+        <DialogContent>
+          {selectedStudent && (
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary">
+                      Student Information
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Student Name</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.studentName}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Student IC Number</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.studentIC}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Class</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.class}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Level</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.level}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Status</Typography>
+                        <Chip 
+                          label={selectedStudent.status}
+                          color={selectedStudent.status === 'active' ? 'success' : 'default'}
+                          size="small"
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Enrollment Date</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.enrollmentDate}</Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant="body2" color="textSecondary">Address</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.address}</Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary">
+                      Guardian Information
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Guardian Name</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.guardianName}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Guardian IC Number</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.guardianIC}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Guardian Phone</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedStudent.guardianPhone}</Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseViewDetails}>Close</Button>
+          <Button 
+            onClick={() => {
+              if (selectedStudent) {
+                handleCloseViewDetails();
+                handleEdit(selectedStudent);
+              }
+            }}
+            variant="contained"
+            startIcon={<Edit />}
+          >
+            Edit Student
           </Button>
         </DialogActions>
       </Dialog>
