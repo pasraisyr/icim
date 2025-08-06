@@ -5,6 +5,8 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -24,7 +26,7 @@ import Chip from '@mui/material/Chip';
 import MainCard from 'components/MainCard';
 
 // assets
-import { Add, Edit, Trash, Teacher as TeacherIcon } from 'iconsax-react';
+import { Add, Edit, Trash, Teacher as TeacherIcon, Eye } from 'iconsax-react';
 
 // types
 interface Teacher {
@@ -88,6 +90,8 @@ export default function TeachersManagement() {
   const [editMode, setEditMode] = useState(false);
   const [currentTeacher, setCurrentTeacher] = useState<Omit<Teacher, 'id'>>(initialTeacher);
   const [editingId, setEditingId] = useState<string>('');
+  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   const handleOpen = () => {
     setOpen(true);
@@ -118,8 +122,8 @@ export default function TeachersManagement() {
 
   const handleSave = () => {
     if (editMode) {
-      setTeachers(teachers.map(teacher => 
-        teacher.id === editingId 
+      setTeachers(teachers.map(teacher =>
+        teacher.id === editingId
           ? { ...currentTeacher, id: editingId }
           : teacher
       ));
@@ -135,6 +139,16 @@ export default function TeachersManagement() {
 
   const handleDelete = (id: string) => {
     setTeachers(teachers.filter(teacher => teacher.id !== id));
+  };
+
+  const handleViewDetails = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setViewDetailsOpen(true);
+  };
+
+  const handleCloseViewDetails = () => {
+    setViewDetailsOpen(false);
+    setSelectedTeacher(null);
   };
 
   const handleChange = (field: keyof Omit<Teacher, 'id'>, value: string | number) => {
@@ -155,8 +169,8 @@ export default function TeachersManagement() {
                 Manage teacher profiles, subjects, and assignments
               </Typography>
             </Stack>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               startIcon={<Add />}
               onClick={handleOpen}
             >
@@ -175,7 +189,7 @@ export default function TeachersManagement() {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Phone</TableCell>                
+                  <TableCell>Phone</TableCell>
                   <TableCell>Experience</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Join Date</TableCell>
@@ -192,10 +206,10 @@ export default function TeachersManagement() {
                       </Stack>
                     </TableCell>
                     <TableCell>{teacher.email}</TableCell>
-                    <TableCell>{teacher.phone}</TableCell> 
+                    <TableCell>{teacher.phone}</TableCell>
                     <TableCell>{teacher.experience} years</TableCell>
                     <TableCell>
-                      <Chip 
+                      <Chip
                         label={teacher.status}
                         color={teacher.status === 'active' ? 'success' : 'default'}
                         size="small"
@@ -204,15 +218,22 @@ export default function TeachersManagement() {
                     <TableCell>{teacher.joinDate}</TableCell>
                     <TableCell align="center">
                       <Stack direction="row" spacing={1} justifyContent="center">
-                        <IconButton 
-                          size="small" 
+                        <IconButton
+                          size="small"
+                          onClick={() => handleViewDetails(teacher)}
+                          color="info"
+                        >
+                          <Eye size={16} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
                           onClick={() => handleEdit(teacher)}
                           color="primary"
                         >
                           <Edit size={16} />
                         </IconButton>
-                        <IconButton 
-                          size="small" 
+                        <IconButton
+                          size="small"
                           onClick={() => handleDelete(teacher.id)}
                           color="error"
                         >
@@ -283,12 +304,79 @@ export default function TeachersManagement() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             variant="contained"
             disabled={!currentTeacher.name || !currentTeacher.email}
           >
             {editMode ? 'Update' : 'Add'} Teacher
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Teacher Details Dialog */}
+      <Dialog open={viewDetailsOpen} onClose={handleCloseViewDetails} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Teacher Details
+        </DialogTitle>
+        <DialogContent>
+          {selectedTeacher && (
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary">
+                      Teacher Information
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Full Name</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.name}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Email Address</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.email}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Phone Number</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.phone}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Teaching Experience</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.experience} years</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Status</Typography>
+                        <Chip
+                          label={selectedTeacher.status}
+                          color={selectedTeacher.status === 'active' ? 'success' : 'default'}
+                          size="small"
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="body2" color="textSecondary">Join Date</Typography>
+                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.joinDate}</Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseViewDetails}>Close</Button>
+          <Button
+            onClick={() => {
+              if (selectedTeacher) {
+                handleCloseViewDetails();
+                handleEdit(selectedTeacher);
+              }
+            }}
+            variant="contained"
+            startIcon={<Edit />}
+          >
+            Edit Teacher
           </Button>
         </DialogActions>
       </Dialog>
