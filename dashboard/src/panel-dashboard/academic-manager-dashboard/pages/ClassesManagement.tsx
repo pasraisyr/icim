@@ -19,7 +19,6 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
-import Autocomplete from '@mui/material/Autocomplete';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -36,21 +35,18 @@ import { Add, Edit, Trash, Book } from 'iconsax-react';
 interface Subject {
   id: string;
   name: string;
-  description: string;
-  level: 'Form 1' | 'Form 2' | 'Form 3' | 'Form 4' | 'Form 5';
   status: 'active' | 'inactive';
 }
 
 interface Class {
   id: string;
   name: string;
-  subjects: string[]; // Array of subject IDs
-  teacher: string;
-  room: string;
-  schedule: string;
-  capacity: number;
-  enrolled: number;
-  price: number; // Price per month for the class
+  subjects: string[]; // Multiple subject IDs
+  level: 'Primary' | 'Secondary' | 'Tuition';
+  scheduleDay: string;
+  startTime: string;
+  endTime: string;
+  price: number;
   status: 'active' | 'inactive';
 }
 
@@ -59,82 +55,94 @@ const availableSubjects: Subject[] = [
   {
     id: '1',
     name: 'Advanced Mathematics',
-    description: 'Calculus, Statistics, and Mathematical Analysis',
-    level: 'Form 5',
     status: 'active'
   },
   {
     id: '2',
     name: 'Physics',
-    description: 'Mechanics, Thermodynamics, and Electromagnetism',
-    level: 'Form 4',
     status: 'active'
   },
   {
     id: '3',
     name: 'Chemistry',
-    description: 'Organic and Inorganic Chemistry',
-    level: 'Form 4',
     status: 'active'
   },
   {
     id: '4',
     name: 'Literature',
-    description: 'English Literature and Creative Writing',
-    level: 'Form 4',
     status: 'active'
   },
   {
     id: '5',
     name: 'Islamic Studies',
-    description: 'Quran, Hadith, and Islamic Jurisprudence',
-    level: 'Form 3',
     status: 'active'
   },
   {
     id: '6',
     name: 'Arabic Language',
-    description: 'Arabic Grammar, Literature, and Conversation',
-    level: 'Form 2',
     status: 'active'
   }
+];
+
+// Available days and times
+const availableDays = [
+  'Monday',
+  'Tuesday', 
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
+
+const availableTimes = [
+  '8:00 AM',
+  '9:00 AM',
+  '10:00 AM',
+  '11:00 AM',
+  '12:00 PM',
+  '1:00 PM',
+  '2:00 PM',
+  '3:00 PM',
+  '4:00 PM',
+  '5:00 PM',
+  '6:00 PM',
+  '7:00 PM',
+  '8:00 PM'
 ];
 
 // mock data
 const mockClasses: Class[] = [
   {
     id: '1',
-    name: 'Form 5 Science A',
-    subjects: ['1', '2'], // Advanced Mathematics and Physics
-    teacher: 'Dr. Ahmad Hassan',
-    room: 'Lab 101',
-    schedule: 'Mon, Wed, Fri - 9:00 AM',
-    capacity: 30,
-    enrolled: 25,
-    price: 280, // Combined price for the class
+    name: 'Form 5 Mathematics',
+    subjects: ['1'], // Advanced Mathematics
+    level: 'Secondary',
+    scheduleDay: 'Monday',
+    startTime: '09:00',
+    endTime: '10:30',
+    price: 280,
     status: 'active'
   },
   {
     id: '2',
-    name: 'Form 4 Arts B',
+    name: 'Form 4 Literature',
     subjects: ['4'], // Literature
-    teacher: 'Ms. Sarah Johnson',
-    room: 'Room 205',
-    schedule: 'Tue, Thu - 2:00 PM',
-    capacity: 25,
-    enrolled: 18,
+    level: 'Secondary',
+    scheduleDay: 'Tuesday',
+    startTime: '14:00',
+    endTime: '15:30',
     price: 140,
     status: 'active'
   },
   {
     id: '3',
-    name: 'Form 3 Science C',
-    subjects: ['2', '3'], // Physics and Chemistry
-    teacher: 'Ms. Fatimah Ali',
-    room: 'Lab 203',
-    schedule: 'Mon, Wed - 11:00 AM',
-    capacity: 28,
-    enrolled: 22,
+    name: 'Physics Class',
+    subjects: ['2'], // Physics
+    level: 'Secondary',
+    scheduleDay: 'Monday',
+    startTime: '11:00',
+    endTime: '12:30',
     price: 250,
     status: 'inactive'
   }
@@ -143,11 +151,10 @@ const mockClasses: Class[] = [
 const initialClass: Omit<Class, 'id'> = {
   name: '',
   subjects: [],
-  teacher: '',
-  room: '',
-  schedule: '',
-  capacity: 0,
-  enrolled: 0,
+  level: 'Primary',
+  scheduleDay: '',
+  startTime: '',
+  endTime: '',
   price: 0,
   status: 'active'
 };
@@ -162,11 +169,18 @@ export default function ClassesManagement() {
   const [editingId, setEditingId] = useState<string>('');
 
   // Helper function to get subject names from IDs
-  const getSubjectNames = (subjectIds: string[]): string[] => {
-    return subjectIds.map(id => {
+  const getSubjectNames = (subjectIds: string[]): string => {
+    const subjects = subjectIds.map(id => {
       const subject = availableSubjects.find(s => s.id === id);
       return subject ? subject.name : 'Unknown Subject';
     });
+    return subjects.join(', ');
+  };
+
+  // Helper function to format time display
+  const formatTimeRange = (startTime: string, endTime: string): string => {
+    if (!startTime || !endTime) return 'Not set';
+    return `${startTime} - ${endTime}`;
   };
 
   const handleOpen = () => {
@@ -182,11 +196,10 @@ export default function ClassesManagement() {
     setCurrentClass({
       name: classItem.name,
       subjects: classItem.subjects,
-      teacher: classItem.teacher,
-      room: classItem.room,
-      schedule: classItem.schedule,
-      capacity: classItem.capacity,
-      enrolled: classItem.enrolled,
+      level: classItem.level,
+      scheduleDay: classItem.scheduleDay,
+      startTime: classItem.startTime,
+      endTime: classItem.endTime,
       price: classItem.price,
       status: classItem.status
     });
@@ -257,12 +270,10 @@ export default function ClassesManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Class Name</TableCell>
-                  <TableCell>Subjects</TableCell>
-                  <TableCell>Teacher</TableCell>
-                  <TableCell>Room</TableCell>
+                  <TableCell>Subject</TableCell>
+                  <TableCell>Level</TableCell>
                   <TableCell>Schedule</TableCell>
                   <TableCell>Price</TableCell>
-                  <TableCell>Enrollment</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -277,37 +288,25 @@ export default function ClassesManagement() {
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      <Stack spacing={0.5}>
-                        {getSubjectNames(classItem.subjects).map((subjectName, index) => (
+                      <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {classItem.subjects.map((subjectId) => (
                           <Chip 
-                            key={index}
-                            label={subjectName}
+                            key={subjectId}
+                            label={availableSubjects.find(s => s.id === subjectId)?.name || 'Unknown'}
                             size="small"
                             variant="outlined"
                             color="primary"
                           />
                         ))}
-                        {classItem.subjects.length === 0 && (
-                          <Typography variant="body2" color="textSecondary">
-                            No subjects assigned
-                          </Typography>
-                        )}
                       </Stack>
                     </TableCell>
-                    <TableCell>{classItem.teacher}</TableCell>
-                    <TableCell>{classItem.room}</TableCell>
-                    <TableCell>{classItem.schedule}</TableCell>
+                    <TableCell>{classItem.level}</TableCell>
+                    <TableCell>
+                      {classItem.scheduleDay} - {formatTimeRange(classItem.startTime, classItem.endTime)}
+                    </TableCell>
                     <TableCell>
                       <Typography variant="subtitle2" color="primary">
                         RM{classItem.price}/month
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {classItem.enrolled}/{classItem.capacity}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {Math.round((classItem.enrolled / classItem.capacity) * 100)}% filled
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -365,49 +364,66 @@ export default function ClassesManagement() {
                 input={<OutlinedInput label="Subjects" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {(selected as string[]).map((value) => {
-                      const subject = availableSubjects.find(s => s.id === value);
-                      return (
-                        <Chip 
-                          key={value} 
-                          label={subject?.name || 'Unknown'} 
-                          size="small" 
-                        />
-                      );
-                    })}
+                    {(selected as string[]).map((value) => (
+                      <Chip 
+                        key={value} 
+                        label={availableSubjects.find(s => s.id === value)?.name || 'Unknown'}
+                        size="small"
+                      />
+                    ))}
                   </Box>
                 )}
               >
                 {availableSubjects.filter(subject => subject.status === 'active').map((subject) => (
                   <MenuItem key={subject.id} value={subject.id}>
-                    <Stack>
-                      <Typography variant="body2">{subject.name}</Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {subject.level} - {subject.description}
-                      </Typography>
-                    </Stack>
+                    {subject.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <TextField
-              label="Teacher"
+              label="Level"
+              select
               fullWidth
-              value={currentClass.teacher}
-              onChange={(e) => handleChange('teacher', e.target.value)}
+              value={currentClass.level}
+              onChange={(e) => handleChange('level', e.target.value)}
+            >
+              <MenuItem value="Primary">Primary</MenuItem>
+              <MenuItem value="Secondary">Secondary</MenuItem>
+              <MenuItem value="Tuition">Tuition</MenuItem>
+            </TextField>
+            <TextField
+              label="Schedule Day"
+              select
+              fullWidth
+              value={currentClass.scheduleDay}
+              onChange={(e) => handleChange('scheduleDay', e.target.value)}
+            >
+              {availableDays.map((day) => (
+                <MenuItem key={day} value={day}>
+                  {day}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Start Time"
+              type="time"
+              fullWidth
+              value={currentClass.startTime}
+              onChange={(e) => handleChange('startTime', e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <TextField
-              label="Room"
+              label="End Time"
+              type="time"
               fullWidth
-              value={currentClass.room}
-              onChange={(e) => handleChange('room', e.target.value)}
-            />
-            <TextField
-              label="Schedule"
-              fullWidth
-              placeholder="e.g., Mon, Wed, Fri - 9:00 AM"
-              value={currentClass.schedule}
-              onChange={(e) => handleChange('schedule', e.target.value)}
+              value={currentClass.endTime}
+              onChange={(e) => handleChange('endTime', e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <TextField
               label="Price per Month"
@@ -418,20 +434,6 @@ export default function ClassesManagement() {
               InputProps={{
                 startAdornment: 'RM'
               }}
-            />
-            <TextField
-              label="Capacity"
-              type="number"
-              fullWidth
-              value={currentClass.capacity}
-              onChange={(e) => handleChange('capacity', parseInt(e.target.value) || 0)}
-            />
-            <TextField
-              label="Currently Enrolled"
-              type="number"
-              fullWidth
-              value={currentClass.enrolled}
-              onChange={(e) => handleChange('enrolled', parseInt(e.target.value) || 0)}
             />
             <TextField
               label="Status"
@@ -450,7 +452,7 @@ export default function ClassesManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentClass.name || currentClass.subjects.length === 0 || !currentClass.teacher || currentClass.price <= 0}
+            disabled={!currentClass.name || currentClass.subjects.length === 0 || !currentClass.scheduleDay || !currentClass.startTime || !currentClass.endTime || currentClass.price <= 0}
           >
             {editMode ? 'Update' : 'Add'} Class
           </Button>

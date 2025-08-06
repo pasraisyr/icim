@@ -34,8 +34,6 @@ interface Teacher {
   name: string;
   email: string;
   phone: string;
-
-  experience: number;
   status: 'active' | 'inactive';
   joinDate: string;
 }
@@ -48,7 +46,6 @@ const mockTeachers: Teacher[] = [
     email: 'sarah.johnson@school.edu',
     phone: '+60123456789',
 
-    experience: 8,
     status: 'active',
     joinDate: '2020-03-15'
   },
@@ -58,7 +55,6 @@ const mockTeachers: Teacher[] = [
     email: 'ahmad.hassan@school.edu',
     phone: '+60987654321',
 
-    experience: 12,
     status: 'active',
     joinDate: '2018-09-01'
   },
@@ -67,7 +63,6 @@ const mockTeachers: Teacher[] = [
     name: 'Ms. Fatimah Ali',
     email: 'fatimah.ali@school.edu',
     phone: '+60555123456',
-    experience: 5,
     status: 'inactive',
     joinDate: '2021-01-10'
   }
@@ -77,7 +72,6 @@ const initialTeacher: Omit<Teacher, 'id'> = {
   name: '',
   email: '',
   phone: '',
-  experience: 0,
   status: 'active',
   joinDate: new Date().toISOString().split('T')[0]
 };
@@ -107,7 +101,6 @@ export default function TeachersManagement() {
       name: teacher.name,
       email: teacher.email,
       phone: teacher.phone,
-      experience: teacher.experience,
       status: teacher.status,
       joinDate: teacher.joinDate
     });
@@ -207,7 +200,6 @@ export default function TeachersManagement() {
                     </TableCell>
                     <TableCell>{teacher.email}</TableCell>
                     <TableCell>{teacher.phone}</TableCell>
-                    <TableCell>{teacher.experience} years</TableCell>
                     <TableCell>
                       <Chip
                         label={teacher.status}
@@ -275,13 +267,7 @@ export default function TeachersManagement() {
               value={currentTeacher.phone}
               onChange={(e) => handleChange('phone', e.target.value)}
             />
-            <TextField
-              label="Experience (years)"
-              type="number"
-              fullWidth
-              value={currentTeacher.experience}
-              onChange={(e) => handleChange('experience', parseInt(e.target.value) || 0)}
-            />
+
             <TextField
               label="Status"
               select
@@ -341,10 +327,7 @@ export default function TeachersManagement() {
                         <Typography variant="body2" color="textSecondary">Phone Number</Typography>
                         <Typography variant="body1" fontWeight="medium">{selectedTeacher.phone}</Typography>
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Typography variant="body2" color="textSecondary">Teaching Experience</Typography>
-                        <Typography variant="body1" fontWeight="medium">{selectedTeacher.experience} years</Typography>
-                      </Grid>
+
                       <Grid item xs={12} sm={6}>
                         <Typography variant="body2" color="textSecondary">Status</Typography>
                         <Chip

@@ -32,6 +32,7 @@ export interface ClassMethod {
 
 export interface PaymentInformation {
   paymentMethod: string;
+  reference: string;
   receipt: File | null;
 }
 
@@ -74,6 +75,7 @@ export const initialFormData: StudentRegistration = {
   },
   payment: {
     paymentMethod: '',
+    reference: '',
     receipt: null
   }
 };
