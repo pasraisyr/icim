@@ -30,8 +30,6 @@ import { Add, Edit, Trash, DocumentText } from 'iconsax-react';
 interface Subject {
   id: string;
   name: string;
-  description: string;
-  level: 'Form 1' | 'Form 2' | 'Form 3' | 'Form 4' | 'Form 5';
   status: 'active' | 'inactive';
 }
 
@@ -40,37 +38,27 @@ const mockSubjects: Subject[] = [
   {
     id: '1',
     name: 'Advanced Mathematics',
-    description: 'Calculus, Statistics, and Mathematical Analysis',
-    level: 'Form 5',
     status: 'active'
   },
   {
     id: '2',
     name: 'Physics',
-    description: 'Mechanics, Thermodynamics, and Electromagnetism',
-    level: 'Form 4',
     status: 'active'
   },
   {
     id: '3',
     name: 'Islamic Studies',
-    description: 'Quran, Hadith, and Islamic Jurisprudence',
-    level: 'Form 3',
     status: 'active'
   },
   {
     id: '4',
     name: 'Arabic Language',
-    description: 'Arabic Grammar, Literature, and Conversation',
-    level: 'Form 2',
     status: 'inactive'
   }
 ];
 
 const initialSubject: Omit<Subject, 'id'> = {
   name: '',
-  description: '',
-  level: 'Form 1',
   status: 'active'
 };
 
@@ -95,8 +83,6 @@ export default function SubjectsManagement() {
     setEditingId(subject.id);
     setCurrentSubject({
       name: subject.name,
-      description: subject.description,
-      level: subject.level,
       status: subject.status
     });
   };
@@ -166,7 +152,6 @@ export default function SubjectsManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Subject Name</TableCell>
-                  <TableCell>Level</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -177,15 +162,9 @@ export default function SubjectsManagement() {
                     <TableCell>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <DocumentText size={20} />
-                        <Stack>
-                          <Typography variant="subtitle2">{subject.name}</Typography>
-                          <Typography variant="caption" color="textSecondary">
-                            {subject.description}
-                          </Typography>
-                        </Stack>
+                        <Typography variant="subtitle2">{subject.name}</Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>{subject.level}</TableCell>
                     <TableCell>
                       <Chip 
                         label={subject.status}
@@ -233,27 +212,6 @@ export default function SubjectsManagement() {
               onChange={(e) => handleChange('name', e.target.value)}
             />
             <TextField
-              label="Description"
-              fullWidth
-              multiline
-              rows={3}
-              value={currentSubject.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-            />
-            <TextField
-              label="Level"
-              select
-              fullWidth
-              value={currentSubject.level}
-              onChange={(e) => handleChange('level', e.target.value)}
-            >
-              <MenuItem value="Form 1">Form 1</MenuItem>
-              <MenuItem value="Form 2">Form 2</MenuItem>
-              <MenuItem value="Form 3">Form 3</MenuItem>
-              <MenuItem value="Form 4">Form 4</MenuItem>
-              <MenuItem value="Form 5">Form 5</MenuItem>
-            </TextField>
-            <TextField
               label="Status"
               select
               fullWidth
@@ -270,7 +228,7 @@ export default function SubjectsManagement() {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={!currentSubject.name || !currentSubject.description}
+            disabled={!currentSubject.name}
           >
             {editMode ? 'Update' : 'Add'} Subject
           </Button>

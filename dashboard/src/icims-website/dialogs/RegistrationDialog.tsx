@@ -88,6 +88,7 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
       formData.academic.class &&
       formData.classMethod.type &&
       formData.payment.paymentMethod && 
+      formData.payment.reference &&
       formData.payment.receipt
     );
   };
@@ -164,6 +165,13 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
     setFormData(prev => ({
       ...prev,
       payment: { ...prev.payment, paymentMethod: method }
+    }));
+  };
+
+  const handlePaymentReferenceChange = (reference: string) => {
+    setFormData(prev => ({
+      ...prev,
+      payment: { ...prev.payment, reference }
     }));
   };
 
@@ -386,11 +394,38 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
         return (
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>Payment Method</Typography>
+              <Typography variant="h6" gutterBottom>Payment Information</Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                Select payment method and upload receipt for verification
+                Complete your payment and upload receipt for verification
               </Typography>
             </Grid>
+            
+            {/* Payment Summary */}
+            <Grid item xs={12}>
+              <Card sx={{ bgcolor: 'success.lighter', border: '1px solid', borderColor: 'success.main' }}>
+                <CardContent>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
+                      <Typography variant="h6" color="success.dark">Payment Summary</Typography>
+                      <Typography variant="body2" color="success.dark">
+                        {formData.academic.class ? 
+                          academicLevels[formData.academic.level as keyof typeof academicLevels]?.classes.find(cls => cls.id === formData.academic.class)?.name 
+                          : 'No class selected'}
+                      </Typography>
+                    </Box>
+                    <Box textAlign="right">
+                      <Typography variant="h4" color="success.dark" fontWeight="bold">
+                        RM {formData.academic.price || 0}
+                      </Typography>
+                      <Typography variant="body2" color="success.dark">
+                        /month
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+            
             <Grid item xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Payment Method</InputLabel>
@@ -409,7 +444,7 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
               <Grid item xs={12}>
                 <Card sx={{ p: 2 }}>
                   <CardContent>
-                    <Stack spacing={2}>
+                    <Stack spacing={3}>
                       <Box display="flex" alignItems="center" gap={1}>
                         <Bank size={24} color={theme.palette.primary.main} />
                         <Typography variant="h6">Bank Account Details</Typography>
@@ -429,8 +464,10 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
                           <Typography variant="body1">{bankDetails.accountName}</Typography>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                          <Typography variant="body2" color="textSecondary">Reference</Typography>
-                          <Typography variant="body1">{formData.student.fullName || 'Student Name'}</Typography>
+                          <Typography variant="body2" color="textSecondary">Amount to Pay</Typography>
+                          <Typography variant="body1" fontWeight="bold" color="error.main">
+                            RM {formData.academic.price || 0}
+                          </Typography>
                         </Grid>
                       </Grid>
                       
@@ -463,6 +500,17 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
                       </Box>
                       
                       <Divider />
+                      
+                      <Typography variant="h6">Payment Reference</Typography>
+                      <TextField
+                        fullWidth
+                        label="Payment Reference"
+                        value={formData.payment.reference}
+                        onChange={(e) => handlePaymentReferenceChange(e.target.value)}
+                        placeholder="Enter payment reference (e.g., transaction ID, reference number)"
+                        helperText="Please provide the reference number from your payment transaction"
+                        required
+                      />
                       
                       <Typography variant="h6">Upload Payment Receipt</Typography>
                       <Button
