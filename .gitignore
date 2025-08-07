@@ -109,6 +109,7 @@ dist
 # wincompare file
 .bak
 
+.env
 
 # Python
 *.pyc
