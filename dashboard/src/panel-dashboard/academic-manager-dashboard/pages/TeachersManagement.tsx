@@ -183,7 +183,6 @@ export default function TeachersManagement() {
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Phone</TableCell>
-                  <TableCell>Experience</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Join Date</TableCell>
                   <TableCell align="center">Actions</TableCell>

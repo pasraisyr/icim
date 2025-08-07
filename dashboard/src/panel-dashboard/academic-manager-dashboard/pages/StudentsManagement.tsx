@@ -314,13 +314,7 @@ export default function StudentsManagement() {
               value={currentStudent.address}
               onChange={(e) => handleChange('address', e.target.value)}
             />
-            <TextField
-              label="Class"
-              fullWidth
-              value={currentStudent.class}
-              onChange={(e) => handleChange('class', e.target.value)}
-            />
-            <TextField
+             <TextField
               label="Level"
               select
               fullWidth
@@ -330,6 +324,12 @@ export default function StudentsManagement() {
               <MenuItem value="Standard 5">Standard 5</MenuItem>
               <MenuItem value="Standard 6">Standard 6</MenuItem>
             </TextField>
+            <TextField
+              label="Class"
+              fullWidth
+              value={currentStudent.class}
+              onChange={(e) => handleChange('class', e.target.value)}
+            />
             <TextField
               label="Status"
               select
