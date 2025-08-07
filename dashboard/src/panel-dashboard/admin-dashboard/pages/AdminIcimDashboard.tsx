@@ -25,9 +25,9 @@ import {
   ArrowDown
 } from 'iconsax-react';
 
-// ==============================|| ACADEMIC MANAGER DASHBOARD ||============================== //
+// ==============================|| ADMIN ICIM DASHBOARD ||============================== //
 
-export default function ManagerDashboard() {
+export default function AdminIcimDashboard() {
   const theme = useTheme();
 
   // Mock data - replace with actual API calls
@@ -49,7 +49,7 @@ export default function ManagerDashboard() {
         <MainCard>
           <Stack spacing={2}>
             <Typography variant="h4" color="primary">
-              Academic Manager Dashboard
+              Admin ICIM Dashboard
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Manage students, teachers, classes, and academic operations

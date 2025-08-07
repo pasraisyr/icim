@@ -6,7 +6,7 @@ import AdminLayout from '../layout/AdminLayout';
 
 
 // render - admin pages
-const ManagerDashboard = Loadable(lazy(() => import('../pages/ManagerDashboard')));
+const AdminIcimDashboard = Loadable(lazy(() => import('../pages/AdminIcimDashboard')));
 const StudentsManagement = Loadable(lazy(() => import('../pages/StudentsManagement')));
 const TeachersManagement = Loadable(lazy(() => import('../pages/TeachersManagement')));
 const ClassesManagement = Loadable(lazy(() => import('../pages/ClassesManagement')));
@@ -20,16 +20,16 @@ const PaymentCalculator = Loadable(lazy(() => import('../pages/PaymentCalculator
 // ==============================|| ACADEMIC MANAGER DASHBOARD ROUTES ||============================== //
 
 const AdminRoutes = {
-  path: '/admin',
+  path: '/admin-icims',
   element: <AdminLayout />,
   children: [
     {
       index: true,
-      element: <ManagerDashboard />
+      element: <AdminIcimDashboard />
     },
     {
       path: 'dashboard',
-      element: <ManagerDashboard />
+      element: <AdminIcimDashboard />
     },
     {
       path: 'students',

@@ -8,7 +8,7 @@ import MainRoutes from './MainRoutes';
 import { TeacherRoutes } from 'panel-dashboard/teacher-dashboard';
 import { AcademicManagerRoutes } from 'panel-dashboard/academic-manager-dashboard';
 import { IcimsWebsiteRoutes } from 'icims-website';
-
+import { AdminRoutes } from 'panel-dashboard/admin-dashboard';
 import Loadable from 'components/Loadable';
 import { SimpleLayoutType } from 'config';
 import SimpleLayout from 'layout/Simple';
@@ -35,7 +35,8 @@ const router = createBrowserRouter(
     MainRoutes,
     IcimsWebsiteRoutes,
     TeacherRoutes,
-    AcademicManagerRoutes
+    AcademicManagerRoutes,
+    AdminRoutes
   ],
   { basename: import.meta.env.VITE_APP_BASE_NAME }
 );
