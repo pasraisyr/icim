@@ -12,8 +12,9 @@ const icons = {
 // ==============================|| MENU ITEMS - ICIMS WEBSITE ||============================== //
 
 const icimsWebsite: NavItemType = {
-  id: 'icims-website',
-  title: 'ICIMS Website',
+  id: 'group-icims-website',
+  title: 'ICIM Website',
+  icon: icons.home,
   type: 'group',
   children: [
     {
@@ -23,6 +24,14 @@ const icimsWebsite: NavItemType = {
       url: '/icims-website',
       icon: icons.home,
       breadcrumbs: false
+    },
+    {
+      id: 'admin-icims-dahboard',
+      title: 'Admin ICIM Dashboard',
+      type: 'item',
+      url: '/admin-icims',
+      icon: icons.home,
+      breadcrumbs: true
     }
   ]
 };

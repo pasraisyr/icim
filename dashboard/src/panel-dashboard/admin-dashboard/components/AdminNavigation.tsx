@@ -11,7 +11,7 @@ import NavItem from 'layout/Dashboard/Drawer/DrawerContent/Navigation/NavItem';
 import { useGetMenuMaster } from 'api/menu';
 import { MenuOrientation, HORIZONTAL_MAX_ITEM } from 'config';
 import useConfig from 'hooks/useConfig';
-import academicManagerMenuItems from '../menu/academic-manager-menu-items';
+import adminMenuItems from '../menu/admin-menu-items';
 
 // types
 import { NavItemType } from 'types/menu';
@@ -28,8 +28,8 @@ export default function AdminNavigation() {
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 
   const lastItem = isHorizontal ? HORIZONTAL_MAX_ITEM : null;
-  const lastItemIndex = academicManagerMenuItems.items.length - 1;
-  const remItems = academicManagerMenuItems.items.slice(0, lastItem || lastItemIndex).map((item, index) => ({
+  const lastItemIndex = adminMenuItems.items.length - 1;
+  const remItems = adminMenuItems.items.slice(0, lastItem || lastItemIndex).map((item, index) => ({
     ...item,
     items: item.children,
     ...(lastItem && index === lastItem - 1 && {
@@ -37,7 +37,7 @@ export default function AdminNavigation() {
       title: 'More...',
       type: 'collapse',
       icon: undefined,
-      children: academicManagerMenuItems.items.slice(lastItem).map((item: NavItemType) => ({
+      children: adminMenuItems.items.slice(lastItem).map((item: NavItemType) => ({
         ...item,
         title: item.title as string,
         type: 'item',
@@ -47,7 +47,7 @@ export default function AdminNavigation() {
     })
   }));
 
-  const navGroups = academicManagerMenuItems.items.map((item, index) => {
+  const navGroups = adminMenuItems.items.map((item, index) => {
     switch (item.type) {
       case 'group':
         if (item.url && item.id !== lastItemIndex.toString()) {
