@@ -1,5 +1,6 @@
 Django
 psycopg
+python-dotenv
 djangorestframework
 pillow
 django-environ
