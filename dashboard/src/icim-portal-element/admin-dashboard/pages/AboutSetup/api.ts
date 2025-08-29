@@ -5,43 +5,82 @@ export interface About {
   id: number;
   title: string;
   description: string;
-  created_at: string;
   status: 'active' | 'inactive';
 }
 
 export interface AboutPayload {
+  id: number;
   title: string;
   description: string;
   status: 'active' | 'inactive';
 }
 
-export async function fetchAbouts(): Promise<About[]> {
-  const res = await fetch(`${BASE_URL}/api/Admin/about/`);
+// Fetch the About element (returns a single object)
+export async function fetchAbout(): Promise<About> {
+  const res = await fetch(`${BASE_URL}/api/admin/about/`);
+  if (!res.ok) throw new Error('Failed to fetch about');
+  return res.json();
+}
+
+// Fetch all About elements
+export async function fetchAbouts(): Promise<AboutPayload[]> {
+  const res = await fetch(`${BASE_URL}/api/admin/about/`);
   if (!res.ok) throw new Error('Failed to fetch abouts');
-  return res.json();
+  const data = await res.json();
+  // If data is an object, wrap it in an array
+  return Array.isArray(data) ? data : [data];
 }
 
-export async function createAbout(payload: AboutPayload): Promise<About> {
-  const res = await fetch(`${BASE_URL}/api/Admin/about/`, {
+// Create or update the About element
+export async function createOrUpdateAbout(payload: AboutPayload): Promise<{ status: string }> {
+  const token = localStorage.getItem('token'); // Or get from context/store
+  const res = await fetch(`${BASE_URL}/api/admin/about/input/`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Add this line
+    },
+    body: JSON.stringify({
+      element: 'About',
+      data: payload
+    }),
   });
-  if (!res.ok) throw new Error('Failed to create about');
+  if (!res.ok) throw new Error('Failed to create/update about');
   return res.json();
 }
 
-export async function updateAbout(id: number, payload: AboutPayload): Promise<About> {
-  const res = await fetch(`${BASE_URL}/api/Admin/about/${id}/`, {
+// Edit the About element
+export async function editAbout(payload: AboutPayload): Promise<{ status: string }> {
+  const token = localStorage.getItem('token'); // Or get from context/store
+  const res = await fetch(`${BASE_URL}/api/admin/about/edit/`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Add this line
+    },
+    body: JSON.stringify({
+      element: 'About',
+      data: payload
+    }),
   });
-  if (!res.ok) throw new Error('Failed to update about');
+  if (!res.ok) throw new Error('Failed to edit about');
   return res.json();
 }
 
-export async function deleteAbout(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/Admin/about/${id}/`, { method: 'DELETE' });
+// Delete the About element
+export async function deleteAbout(id: number): Promise<{ status: string }> {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/about/delete/`, {
+    method: 'DELETE',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      element: 'About',
+      id: id
+    }),
+  });
   if (!res.ok) throw new Error('Failed to delete about');
+  return res.json();
 }

@@ -26,7 +26,7 @@ const StudentClassAllocation = Loadable(lazy(() => import('../pages/StudentClass
 const AdminRoutes = {
   path: '/admin-icims',
   element: (
-    <ProtectedRoute requiredRole='admin'>
+    <ProtectedRoute requiredRole="1">
       <AdminLayout />
     </ProtectedRoute>
   ),

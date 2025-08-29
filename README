@@ -1,0 +1,10 @@
+## Folder Structure ICIM DASHBOARD
+
+src/
+└── icim-portal-element/
+    ├── admin-dashboard/
+    │   ├── pages/
+
+# every page have their own parents and api.ts
+# same goes with other dashboard
+

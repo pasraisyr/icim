@@ -2,17 +2,31 @@ from icims_backend.models import Elements
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+import json
+
 
 class AboutView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        try:
-            element = Elements.objects.get(element="About")
-            data = element.data if element.data else {}
-            return Response(data, status=status.HTTP_200_OK)
-        except Elements.DoesNotExist:
-            return Response({"error": "Element not found"}, status=status.HTTP_404_NOT_FOUND)
+        elements = Elements.objects.filter(element="About")
+        data = []
+        for element in elements:
+            # kalau data tu JSON string, parse dulu
+            try:
+                parsed_data = element.data if isinstance(element.data, dict) else json.loads(element.data)
+            except Exception:
+                parsed_data = {}
+
+            data.append({
+                "id": element.id,
+                "element": element.element,
+                "title": parsed_data.get("title", ""),
+                "description": parsed_data.get("description", ""),
+                "status": parsed_data.get("status", "inactive")
+            })
+        return Response(data, status=status.HTTP_200_OK)
+
 
 class AboutInput(APIView):
     permission_classes = [permissions.IsAdminUser]
@@ -20,14 +34,21 @@ class AboutInput(APIView):
     def post(self, request):
         inputs = request.data
         try:
-            element = inputs.element
-            data = inputs.data
-            obj, created = Elements.objects.get_or_create(element=element)
-            obj.data = data
-            obj.save()
-            return Response({"status": "success"}, status=status.HTTP_200_OK)
+            element = inputs['element']
+            data = inputs['data']   # expect JSON {title, description, status}
+
+            obj = Elements.objects.create(element=element, data=data)
+
+            return Response({
+                "id": obj.id,
+                "element": obj.element,
+                "title": data.get("title", ""),
+                "description": data.get("description", ""),
+                "status": data.get("status", "inactive")
+            }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AboutEdit(APIView):
     permission_classes = [permissions.IsAdminUser]
@@ -35,14 +56,23 @@ class AboutEdit(APIView):
     def put(self, request):
         inputs = request.data
         try:
-            data = inputs.data
-            element = inputs.element
+            element = inputs['element']
+            data = inputs['data']
+
             obj = Elements.objects.get(element=element)
             obj.data = data
             obj.save()
-            return Response({"status": "success"}, status=status.HTTP_200_OK)
+
+            return Response({
+                "id": obj.id,
+                "element": obj.element,
+                "title": data.get("title", ""),
+                "description": data.get("description", ""),
+                "status": data.get("status", "inactive")
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AboutDelete(APIView):
     permission_classes = [permissions.IsAdminUser]
@@ -50,9 +80,12 @@ class AboutDelete(APIView):
     def delete(self, request):
         try:
             inputs = request.data
-            element = inputs.element
-            obj = Elements.objects.get(element=element)
+            element = inputs.get('element')
+            id = inputs.get('id')
+
+            obj = Elements.objects.get(element=element, id=id)
             obj.delete()
+
             return Response({"status": "success"}, status=status.HTTP_200_OK)
         except Elements.DoesNotExist:
             return Response({"error": "Element not found"}, status=status.HTTP_404_NOT_FOUND)
