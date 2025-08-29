@@ -22,4 +22,12 @@ python-telegram-bot
 urllib3
 apscheduler
 pytz
-openai 
+openai
+opencv-python
+numpy
+pytesseract
+PyMuPDF
+PyPDF2
+pdf2image
+easyocr
+boto3

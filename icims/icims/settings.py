@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'icims_backend.LoginCheckMiddleWare.LoginCheckMiddleWare',
+    # 'icims_backend.LoginCheckMiddleWare.LoginCheckMiddleWare',
 ]
 
 
@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'wesitex_backend.EmailBackEnd.JWTAuthentication',
+        'icims_backend.EmailBackEnd.JWTAuthentication',
     ]
 }
 

@@ -1,22 +1,24 @@
-"""
-URL configuration for icims project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from icims_backend.LoginApi import UserLoginAPI, ObtainTokenView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/login/', UserLoginAPI.as_view(), name='user_login'),
+    path('api/obtain-token/', ObtainTokenView.as_view(), name='obtain_token'),
 ]
+
+# Serve static and media files during development
+if settings.DEBUG:
+    # Serve regular media files
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    # Serve static files
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    
+    # Serve ML materials separately
+    if hasattr(settings, 'ML_MATERIALS_URL') and hasattr(settings, 'ML_MATERIALS_ROOT'):
+        urlpatterns += static(settings.ML_MATERIALS_URL, document_root=settings.ML_MATERIALS_ROOT)
