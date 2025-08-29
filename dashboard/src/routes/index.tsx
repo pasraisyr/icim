@@ -3,15 +3,15 @@ import { createBrowserRouter } from 'react-router-dom';
 
 // project-imports
 import ComponentsRoutes from './ComponentsRoutes';
-import LoginRoutes from './LoginRoutes';
+import LoginPage from 'icim-portal-element/auth/LoginPage';
 import MainRoutes from './MainRoutes';
-import { TeacherRoutes } from 'panel-dashboard/teacher-dashboard';
-import { AcademicManagerRoutes } from 'panel-dashboard/academic-manager-dashboard';
-import { IcimsWebsiteRoutes } from 'icims-website';
-import { AdminRoutes } from 'panel-dashboard/admin-dashboard';
+import { TeacherRoutes } from 'icim-portal-element/teacher-dashboard';
+import { AcademicManagerRoutes } from 'icim-portal-element/academic-manager-dashboard';
+import { IcimsWebsiteRoutes } from 'icim-portal-element/icims-website';
+import { AdminRoutes } from 'icim-portal-element/admin-dashboard';
 import Loadable from 'components/Loadable';
-import { SimpleLayoutType } from 'config';
-import SimpleLayout from 'layout/Simple';
+// import { SimpleLayoutType } from 'config';
+// import SimpleLayout from 'layout/Simple';
 
 // render - landing page
 const PagesLanding = Loadable(lazy(() => import('pages/landing')));
@@ -20,17 +20,20 @@ const PagesLanding = Loadable(lazy(() => import('pages/landing')));
 
 const router = createBrowserRouter(
   [
+    // {
+    //   path: '/',
+    //   element: <SimpleLayout layout={SimpleLayoutType.LANDING} />,
+    //   children: [
+    //     {
+    //       index: true,
+    //       element: <PagesLanding />
+    //     }
+    //   ]
+    // },
     {
-      path: '/',
-      element: <SimpleLayout layout={SimpleLayoutType.LANDING} />,
-      children: [
-        {
-          index: true,
-          element: <PagesLanding />
-        }
-      ]
+      path: '/login',
+      element: <LoginPage />
     },
-    LoginRoutes,
     ComponentsRoutes,
     MainRoutes,
     IcimsWebsiteRoutes,

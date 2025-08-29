@@ -108,3 +108,7 @@ dist
 
 # wincompare file
 .bak
+
+# Python cache files
+__pycache__/
+*.pyc
