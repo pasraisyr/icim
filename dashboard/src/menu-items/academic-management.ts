@@ -37,7 +37,7 @@ const academicManagement: NavItemType = {
       title: 'Academic Manager Portal',
       type: 'item',
       icon: icons.dashboard,
-      url: '/academic-manager/dashboard',
+      url: '/academic-manager/students',
       breadcrumbs: true
     },
     {

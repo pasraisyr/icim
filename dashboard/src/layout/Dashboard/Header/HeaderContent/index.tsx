@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 
 // project-imports
 import FullScreen from './FullScreen';
@@ -43,12 +43,20 @@ export default function HeaderContent() {
   //   navigate('/teacher/classes');
   // };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    navigate('/login');
+  };
+
   return (
-    <>
+    <Box display="flex" alignItems="center" width="100%">
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
       {!downLG && <Search />}
-      {!downLG && megaMenu}
-      {!downLG && localization}
+      
+      {/* {!downLG && megaMenu} */}
+      {/* {!downLG && localization} */}
       {downLG && <Box sx={{ width: 1, ml: 1 }} />}
 
       {/* {!downLG && (
@@ -63,12 +71,22 @@ export default function HeaderContent() {
         </Button>
       )} */}
 
-      <ThemeToggleButton />
-      <Notification />
-      {!downLG && <FullScreen />}
-      <Message />
+      <Box display="flex" alignItems="center" ml="auto" gap={2}>
+        <ThemeToggleButton />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleLogout}
+          sx={{ fontWeight: 'bold', boxShadow: 1 }}
+        >
+          Logout
+        </Button>
+      </Box>
+      {/* <Notification />
+      {!downLG && <FullScreen />} */}
+      {/* <Message />
       {!downLG && <Profile />}
-      {downLG && <MobileSection />}
-    </>
+      {downLG && <MobileSection />} */}
+    </Box>
   );
 }
