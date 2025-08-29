@@ -29,14 +29,13 @@ const Login = () => {
                 // Simpan token & user info dalam localStorage
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', data.username || email);
-                localStorage.setItem('role', data.role);
-
+                localStorage.setItem('user_type', data.user_type);
                 // Redirect ikut role
-                if (data.role === 'admin') {
+                if (data.user_type === 1) {
                     navigate('/admin-icims');
-                } else if (data.role === 'teacher') {
+                } else if (data.user_type === 2) {
                     navigate('/teacher');
-                } else if (data.role === 'academic_manager') {
+                } else if (data.user_type === 3) {
                     navigate('/academic-manager/students');
                 } else {
                     navigate('/');
