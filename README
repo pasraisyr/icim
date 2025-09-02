@@ -2,9 +2,27 @@
 
 src/
 └── icim-portal-element/
-    ├── admin-dashboard/
+    ├── admin-dashboard/ 
     │   ├── pages/
 
-# every page have their own parents and api.ts
+# Dashboard : 
+academic-manager-dashboard (same function with Admin)
+admin-dashboard
+teacher-dashboard
+
+Frontend Folder : 
+icims-website 
+
+
+# every ["pages" folder] have their own parents and api.ts
+
+example parents : 
+icim-portal-element > academic-manager-dashboard > pages > ClassesManagement > index.tsx
+
+example api.ts: 
+icim-portal-element > academic-manager-dashboard > pages > ClassesManagement > api.ts 
+
+
+
 # same goes with other dashboard
 
