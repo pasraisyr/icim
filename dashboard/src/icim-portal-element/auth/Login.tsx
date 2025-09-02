@@ -24,18 +24,21 @@ const Login = () => {
             });
 
             const data = await response.json();
+            console.log('Login response:', data); // Add this line
 
             if (response.ok) {
                 // Simpan token & user info dalam localStorage
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', data.username || email);
                 localStorage.setItem('user_type', data.user_type);
-                // Redirect ikut role
-                if (data.user_type === 1) {
+
+                const userType = Number(data.user_type); // Fix: convert to number
+
+                if (userType === 1) {
                     navigate('/admin-icims');
-                } else if (data.user_type === 2) {
+                } else if (userType === 2) {
                     navigate('/teacher');
-                } else if (data.user_type === 3) {
+                } else if (userType === 3) {
                     navigate('/academic-manager/students');
                 } else {
                     navigate('/');

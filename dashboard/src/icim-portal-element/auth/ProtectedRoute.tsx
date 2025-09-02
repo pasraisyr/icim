@@ -8,7 +8,7 @@ const ProtectedRoute = ({
   requiredRole?: string;
 }) => {
   const token = localStorage.getItem('token');
-  const userRole = localStorage.getItem('role'); // Store role after login
+  const userRole = localStorage.getItem('user_type'); // Store role after login
 
   if (!token) {
     return <Navigate to="/login" replace />;

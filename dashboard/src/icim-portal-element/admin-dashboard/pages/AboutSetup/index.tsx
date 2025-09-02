@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import { SubjectForm, SubjectsTable, PageHeader, DeleteConfirmDialog } from './components';
-import {  About, AboutPayload, createAbout, deleteAbout, fetchAbouts, updateAbout } from './api';
+import { About, AboutPayload, fetchAbouts, createOrUpdateAbout, editAbout, deleteAbout } from './api';
 import AboutsTable from './components/Table';
 
-const initialAbout: AboutPayload = { title: '', description: '', status: 'active' };
+const initialAbout: AboutPayload = { id: 0, title: '', description: '', status: 'active' };
 
 export default function FrontendManagement() {
-  const [abouts, setAbouts] = useState<About[]>([]);
+  const [abouts, setAbouts] = useState<AboutPayload[]>([]);
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentAbout, setCurrentAbout] = useState<AboutPayload>(initialAbout);
@@ -16,13 +16,15 @@ export default function FrontendManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [aboutToDelete, setAboutToDelete] = useState<About | null>(null);
+  const [aboutToDelete, setAboutToDelete] = useState<AboutPayload | null>(null);
 
   useEffect(() => {
     setLoading(true);
     setError(null);
     fetchAbouts()
-      .then(data => setAbouts(data))
+      .then(data => {
+        setAbouts(data);
+      })
       .catch(() => setError('Failed to fetch abouts'))
       .finally(() => setLoading(false));
   }, []);
@@ -33,11 +35,11 @@ export default function FrontendManagement() {
     setCurrentAbout(initialAbout);
   };
 
-  const handleEdit = (about: About) => {
+  const handleEdit = (about: AboutPayload) => {
     setOpen(true);
     setEditMode(true);
     setEditingId(about.id);
-    setCurrentAbout({ title: about.title, description: about.description, status: about.status });
+    setCurrentAbout({ ...about });
   };
 
   const handleClose = () => {
@@ -67,6 +69,7 @@ export default function FrontendManagement() {
       setAboutToDelete(null);
     }
   };
+  
 
   const handleCancelDelete = () => {
     setDeleteDialogOpen(false);
@@ -77,11 +80,11 @@ export default function FrontendManagement() {
     setError(null);
     try {
       if (editMode && editingId !== null) {
-        const updated = await updateAbout(editingId, currentAbout);
-        setAbouts(abouts.map(s => (s.id === editingId ? updated : s)));
+        await editAbout(currentAbout);
+        setAbouts(abouts.map(s => (s.id === editingId ? currentAbout : s)));
       } else {
-        const created = await createAbout(currentAbout);
-        setAbouts([...abouts, created]);
+        await createOrUpdateAbout(currentAbout);
+        setAbouts([...abouts, currentAbout]);
       }
       handleClose();
     } catch (e) {
