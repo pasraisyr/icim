@@ -5,40 +5,59 @@ export interface Subject {
   id: number;
   name: string;
   status: 'active' | 'inactive';
+  updated_at: string;
 }
 
 export interface SubjectPayload {
+  id: number;
   name: string;
   status: 'active' | 'inactive';
+  updated_at: string;
 }
 
 export async function fetchSubjects(): Promise<Subject[]> {
-  const res = await fetch(`${BASE_URL}/api/Academic/subjects/`);
+  const res = await fetch(`${BASE_URL}/api/admin/subject/`);
   if (!res.ok) throw new Error('Failed to fetch subjects');
   return res.json();
 }
 
 export async function createSubject(payload: SubjectPayload): Promise<Subject> {
-  const res = await fetch(`${BASE_URL}/api/Academic/subjects/`, {
+  const token = localStorage.getItem('token'); // Or get from context/store
+  const res = await fetch(`${BASE_URL}/api/admin/subject/input/`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to create subject');
   return res.json();
 }
 
-export async function updateSubject(id: number, payload: SubjectPayload): Promise<Subject> {
-  const res = await fetch(`${BASE_URL}/api/Academic/subjects/${id}/`, {
+export async function updateSubject(payload: SubjectPayload): Promise<Subject> {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/subject/edit/`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(payload), // send payload directly
   });
-  if (!res.ok) throw new Error('Failed to update subject');
+  if (!res.ok) throw new Error('Failed to edit subject');
   return res.json();
 }
 
 export async function deleteSubject(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/Academic/subjects/${id}/`, { method: 'DELETE' });
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/subject/delete/`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ id }) // send id in body
+  });
   if (!res.ok) throw new Error('Failed to delete subject');
 }

@@ -1,6 +1,5 @@
 import type { Subject } from '../SubjectsManagement/api';
 
-// API utility for SubjectsManagement
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export interface Class {
@@ -35,7 +34,7 @@ export async function fetchClasses(): Promise<Class[]> {
 }
 
 export async function fetchSubjects(): Promise<Subject[]> {
-  const res = await fetch(`${BASE_URL}/api/Academic/subjects/`);
+  const res = await fetch(`${BASE_URL}/api/admin/subject/`);
   if (!res.ok) throw new Error('Failed to fetch subjects');
   return res.json();
 }
