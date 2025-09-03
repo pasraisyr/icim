@@ -21,6 +21,7 @@ const PaymentCalculator = Loadable(lazy(() => import('../pages/PaymentCalculator
 const FrontendManagement = Loadable(lazy(() => import('../pages/AboutSetup')));
 const VerificationStatus = Loadable(lazy(() => import('../pages/VerificationStatus')));
 const StudentClassAllocation = Loadable(lazy(() => import('../pages/StudentClassAllocation')));
+const PaymentRecord = Loadable(lazy(() => import('../pages/PaymentRecord')));
 // ==============================|| ACADEMIC MANAGER DASHBOARD ROUTES ||============================== //
 
 const AdminRoutes = {
@@ -92,6 +93,10 @@ const AdminRoutes = {
       path: 'website-management',
       element: <FrontendManagement />
     },
+    {
+      path:'payment-record',
+      element: <PaymentRecord />
+    }
   ]
 };
 

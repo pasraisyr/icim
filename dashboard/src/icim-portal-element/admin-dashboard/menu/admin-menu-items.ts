@@ -1,13 +1,13 @@
 // assets
-import { 
-  Profile2User, 
-  Teacher, 
-  Book, 
-  DocumentText, 
-  UserAdd, 
-  UserEdit, 
-  Calendar, 
-  Chart, 
+import {
+  Profile2User,
+  Teacher,
+  Book,
+  DocumentText,
+  UserAdd,
+  UserEdit,
+  Calendar,
+  Chart,
   Home,
   DollarCircle,
   Wallet2,
@@ -30,7 +30,7 @@ const icons = {
   chart: Chart,
   dollarCircle: DollarCircle,
   wallet2: Wallet2,
- global: Global,
+  global: Global,
 };
 
 // ==============================|| ADMIN DASHBOARD - MENU ITEMS ||============================== //
@@ -109,7 +109,7 @@ const adminMenuItems: { items: NavItemType[] } = {
         }
       ]
     },
-     {
+    {
       id: 'verification',
       title: 'Verification',
       icon: icons.allocation,
@@ -125,6 +125,31 @@ const adminMenuItems: { items: NavItemType[] } = {
         }
       ]
     },
+    {
+      id: 'payment',
+      title: 'Payment',
+      icon: icons.dollarCircle,
+      type: 'group',
+      children: [
+        // {
+        //   id: 'teacher-payment-view',
+        //   title: 'Teacher Payment',
+        //   type: 'item',
+        //   url: '/admin-icims/teacher-payment',
+        //   icon: icons.wallet2,
+        //   breadcrumbs: true
+        // },
+        {
+          id: 'student-payment-view',
+          title: 'Student Payment Record',
+          type: 'item',
+          url: '/admin-icims/payment-record',
+          icon: icons.dollarCircle,
+          breadcrumbs: true
+        }
+      ]
+    },
+
     {
       id: 'allocation',
       title: 'Allocation',
@@ -155,7 +180,7 @@ const adminMenuItems: { items: NavItemType[] } = {
       icon: icons.attendance,
       type: 'group',
       children: [
-         {
+        {
           id: 'teacher-attendance-view',
           title: 'Teacher Attendance',
           type: 'item',
@@ -179,30 +204,6 @@ const adminMenuItems: { items: NavItemType[] } = {
           icon: icons.classes,
           breadcrumbs: true
         },
-      ]
-    },
-    {
-      id: 'payment-reports',
-      title: 'Payment Reports',
-      icon: icons.dollarCircle,
-      type: 'group',
-      children: [
-        {
-          id: 'teacher-payment-view',
-          title: 'Teacher Payment',
-          type: 'item',
-          url: '/admin-icims/teacher-payment',
-          icon: icons.wallet2,
-          breadcrumbs: true
-        },
-        {
-          id: 'student-payment-view',
-          title: 'Student Payment',
-          type: 'item',
-          url: '/admin-icims/student-payment',
-          icon: icons.dollarCircle,
-          breadcrumbs: true
-        }
       ]
     },
     {

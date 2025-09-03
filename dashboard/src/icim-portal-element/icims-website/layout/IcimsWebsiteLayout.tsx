@@ -4,8 +4,8 @@ import { Box } from '@mui/material';
 // project components
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import RegistrationDialog from '../dialogs/RegistrationDialog';
-import ContactDialog from '../dialogs/ContactDialog';
+import RegistrationDialog from '../dialogs-form/RegistrationDialog';
+import ContactDialog from '../dialogs-form/ContactDialog';
 
 // types
 import { IcimsWebsiteLayoutProps } from '../types';

@@ -16,13 +16,27 @@ icims-website
 
 # every ["pages" folder] have their own parents and api.ts
 
+# pages : 
+AboutSetup
+ClassesManagement
+PaymentRecord
+StudentAllocation
+StudentClassAllocation
+StudentsManagement
+SubjectManagement
+TeacherAllocation
+TeachersManagement
+VerificationStatus
+
 example parents : 
 icim-portal-element > academic-manager-dashboard > pages > ClassesManagement > index.tsx
 
 example api.ts: 
 icim-portal-element > academic-manager-dashboard > pages > ClassesManagement > api.ts 
 
+--same goes with other dashboard--
 
+# Frontend Form - SelfRegistration 
+icim-portal-element > icims-website > dialogs-form > api.ts
 
-# same goes with other dashboard
 
