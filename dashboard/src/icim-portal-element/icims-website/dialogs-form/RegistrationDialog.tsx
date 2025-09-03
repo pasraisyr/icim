@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import { fetchClasses, submitRegistration } from './api';
 import {
   Dialog,
   DialogTitle,
@@ -86,13 +86,9 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
   useEffect(() => {
     // Fetch classes from backend when dialog opens
     if (open) {
-      axios.get('http://localhost:8000/api/Academic/classes/')
-        .then(res => {
-          setClasses(res.data || []);
-        })
-        .catch(() => {
-          setClasses([]);
-        });
+      fetchClasses()
+        .then(setClasses)
+        .catch(() => setClasses([]));
     }
   }, [open]);
 
@@ -220,16 +216,16 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
     if (formData.payment.receipt) form.append('payment_receipt', formData.payment.receipt);
     form.append('status', 'inactive');
 
-    // (Optional) include detailed breakdown for backend if you want:
-    form.append('selected_payments', JSON.stringify(selectedPayments));
-    form.append('total_amount', String(totalPayment));
+    // Build selected_payments as array of objects with type and amount
+    const selectedPaymentsDetailed = selectedPayments.map(key => {
+      const item = paymentOptions.find(p => p.key === key);
+      return { type: key, amount: item?.amount || 0 };
+    });
+    form.append('selected_payments', JSON.stringify(selectedPaymentsDetailed));
+    form.append('total_payment', String(totalPayment));
 
     try {
-      await axios.post(
-        'http://localhost:8000/api/Frontend/self-registration/',
-        form,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+      await submitRegistration(form);
       setSubmitted(true);
     } catch (error: any) {
       alert('Registration failed: ' + JSON.stringify(error?.response?.data));

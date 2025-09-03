@@ -20,8 +20,8 @@ export { default as Navigation } from './components/Navigation';
 export { default as Footer } from './components/Footer';
 
 // Export dialogs
-export { default as RegistrationDialog } from './dialogs/RegistrationDialog';
-export { default as ContactDialog } from './dialogs/ContactDialog';
+export { default as RegistrationDialog } from './dialogs-form/RegistrationDialog';
+export { default as ContactDialog } from './dialogs-form/ContactDialog';
 
 // Export utilities
 export * from './utils';
