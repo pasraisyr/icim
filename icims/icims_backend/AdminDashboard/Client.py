@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 from datetime import datetime
 import json
 
+
 class ClientsView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -16,6 +17,7 @@ class ClientsView(APIView):
                 user = CustomUser.objects.get(id=client.admin.id)
                 data.append({
                     "id": client.id,
+                    "username": user.username,
                     "first_name": user.first_name,
                     "last_name": user.last_name,
                     "email": user.email,
@@ -42,7 +44,7 @@ class ClientsView(APIView):
 
 class ClientView(APIView):
     def get(self, request, client_id):
-        client_id = request.query_params.get(id=client_id)
+        
         if not client_id:
             return Response({"error": "Client ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -149,7 +151,8 @@ class ClientInput(APIView):
         try:
             # Required CustomUser fields
             user = CustomUser.objects.create_user(
-                email=inputs['email'],
+                username=inputs['studentIC'],  # Assuming username is the email
+                # email=inputs['email'],
                 first_name=inputs['first_name'],
                 last_name=inputs['last_name'],
                 password=inputs.get('password', 'defaultpassword'),
@@ -212,7 +215,7 @@ class ClientDelete(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def delete(self, request, client_id):
-        client_id = request.query_params.get(id=client_id)
+      
         if not client_id:
             return Response({"error": "Client ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:

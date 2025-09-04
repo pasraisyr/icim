@@ -25,7 +25,7 @@ urlpatterns = [
     path('client/<int:client_id>/', ClientView.as_view(), name='client'),
     path('client/input/', ClientInput.as_view(), name='client_input'),
     path('client/edit/', ClientEdit.as_view(), name='client_edit'),
-    path('client/delete/', ClientDelete.as_view(), name='client_delete'),
+    path('client/delete/<int:client_id>/', ClientDelete.as_view(), name='client_delete'),
     path('clients/', ClientsView.as_view(), name='clients'),
 
     # Classrooms
