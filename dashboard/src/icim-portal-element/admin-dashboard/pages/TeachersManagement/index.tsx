@@ -5,12 +5,15 @@ import { fetchTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher, Te
 import { TeachersTable, TeacherForm, PageHeader, DeleteConfirmDialog } from './components';
 
 const initialTeacher: TeacherPayload = {
-  name: '',
+  id: 0,
+  first_name: '',
+  last_name: '',
   email: '',
-  phone: '',
+  password: '', // <-- Add this
+  phone_number: '',
   status: 'active',
   joinDate: '',
-  role: 'teacher', 
+  position: 'teacher',
 };
 
 export default function TeachersManagement() {
@@ -21,15 +24,22 @@ export default function TeachersManagement() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<Teacher | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchTeachers().then(setTeachers);
+    setLoading(true);
+    fetchTeachers()
+      .then(setTeachers)
+      .catch(err => setError('Failed to fetch teachers'))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleOpen = () => {
     setOpen(true);
     setEditMode(false);
     setCurrentTeacher(initialTeacher);
+    setEditingId(null);
   };
 
   const handleEdit = (teacher: Teacher) => {
@@ -37,11 +47,15 @@ export default function TeachersManagement() {
     setEditMode(true);
     setEditingId(teacher.id);
     setCurrentTeacher({
-      name: teacher.name,
+      id: teacher.id,
+      password: teacher.password,
+      first_name: teacher.first_name,
+      last_name: teacher.last_name,
       email: teacher.email,
-      phone: teacher.phone,
+      phone_number: teacher.phone_number,
       status: teacher.status,
       joinDate: teacher.joinDate,
+      position: teacher.position,
     });
   };
 
@@ -53,11 +67,25 @@ export default function TeachersManagement() {
   };
 
   const handleSave = async () => {
-    if (editMode && editingId) {
-      const updated = await updateTeacher(editingId, currentTeacher);
+    if (editMode && editingId !== null) {
+      const payload: TeacherPayload = {
+        id: editingId,
+        password: currentTeacher.password,
+        first_name: currentTeacher.first_name,
+        last_name: currentTeacher.last_name,
+        email: currentTeacher.email,
+        phone_number: currentTeacher.phone_number,
+        status: currentTeacher.status,
+        joinDate: currentTeacher.joinDate,
+        position: currentTeacher.position,
+      };
+      console.log('Update payload:', payload);
+      const updated = await updateTeacher(payload);
       setTeachers(teachers.map(t => (t.id === editingId ? updated : t)));
     } else {
-      const created = await createTeacher(currentTeacher);
+      const {id, ...createPayload} = currentTeacher;
+      console.log('Create payload:', createPayload);
+      const created = await createTeacher(createPayload as TeacherPayload);
       setTeachers([...teachers, created]);
     }
     handleClose();
@@ -71,12 +99,18 @@ export default function TeachersManagement() {
 
   const handleConfirmDelete = async () => {
     if (teacherToDelete) {
-      await deleteTeacher(teacherToDelete.id);
-      setTeachers(teachers.filter(t => t.id !== teacherToDelete.id));
+      setError(null);
+      try {
+        await deleteTeacher(teacherToDelete.id);
+        setTeachers(teachers.filter(t => t.id !== teacherToDelete.id));
+      } catch (e) {
+        setError('Failed to delete teacher');
+      }
       setDeleteDialogOpen(false);
       setTeacherToDelete(null);
     }
   };
+
 
   const handleCancelDelete = () => {
     setDeleteDialogOpen(false);
@@ -96,7 +130,13 @@ export default function TeachersManagement() {
       </Grid>
       <Grid item xs={12}>
         <MainCard title="Teachers List">
+            {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div style={{ color: 'red' }}>{error}</div>
+          ) : (
           <TeachersTable teachers={teachers} onEdit={handleEdit} onDelete={handleDelete} />
+          )}
         </MainCard>
       </Grid>
       <TeacherForm 
@@ -109,7 +149,7 @@ export default function TeachersManagement() {
       />
       <DeleteConfirmDialog
         open={deleteDialogOpen}
-        teacherName={teacherToDelete?.name || ''}
+        teacherName={`${teacherToDelete?.first_name || ''} ${teacherToDelete?.last_name || ''}`}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />

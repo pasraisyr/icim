@@ -54,20 +54,20 @@ const TeacherAllocationForm = ({
   onSave 
 }: TeacherAllocationFormProps) => {
   // Get available subjects for the selected class
-  const selectedClass = classes.find(c => c.id === currentAllocation.class_obj_id);
+  const selectedClass = classes.find(c => c.id === currentAllocation.classroom_id);
   const availableSubjects = selectedClass ? selectedClass.subjects : [];
   // Find subjects already assigned to other teachers for the selected class
   const assignedSubjectIds = React.useMemo(() => {
     if (!selectedClass || !Array.isArray(allocations)) return [];
     return allocations
-      .filter(a => a.class_obj.id === currentAllocation.class_obj_id && a.teacher.id !== currentAllocation.teacher_id)
+      .filter(a => a.classroom_id === currentAllocation.classroom_id && a.teacher.id !== currentAllocation.staff_id)
       .flatMap(a => a.subjects.map((s: Subject) => s.id));
-  }, [allocations, currentAllocation.class_obj_id, currentAllocation.teacher_id, selectedClass]);
+  }, [allocations, currentAllocation.classroom_id, currentAllocation.staff_id, selectedClass]);
 
   const handleSubjectChange = (event: SelectChangeEvent<number[]>) => {
     const value = event.target.value;
     const selectedSubjectIds = typeof value === 'string' ? [parseInt(value)] : value;
-    onChange('subject_ids', selectedSubjectIds);
+    onChange('subjects', selectedSubjectIds);
   };
   
 
@@ -87,12 +87,12 @@ const TeacherAllocationForm = ({
             label="Teacher"
             select
             fullWidth
-            value={currentAllocation.teacher_id || ''}
-            onChange={(e) => onChange('teacher_id', parseInt(e.target.value))}
+            value={currentAllocation.staff_id || ''}
+            onChange={(e) => onChange('staff_id', parseInt(e.target.value))}
           >
             {teachers.map((teacher) => (
               <MenuItem key={teacher.id} value={teacher.id}>
-                {teacher.name} 
+                {teacher.first_name} {teacher.last_name}
               </MenuItem>
             ))}
           </TextField>
@@ -101,12 +101,12 @@ const TeacherAllocationForm = ({
             label="Class"
             select
             fullWidth
-            value={currentAllocation.class_obj_id || ''}
+            value={currentAllocation.classroom_id || ''}
             onChange={(e) => {
               const classId = parseInt(e.target.value);
-              onChange('class_obj_id', classId);
+              onChange('classroom_id', classId);
               // Clear subjects when class changes
-              onChange('subject_ids', []);
+              onChange('subjects', []);
             }}
           >
             {classes.map((classData) => (
@@ -116,12 +116,17 @@ const TeacherAllocationForm = ({
             ))}
           </TextField>
 
-          <FormControl fullWidth disabled={!currentAllocation.class_obj_id}>
+          <FormControl fullWidth disabled={!currentAllocation.classroom_id}>
             <InputLabel>Subjects</InputLabel>
             <Select
               multiple
-              value={currentAllocation.subject_ids}
-              onChange={handleSubjectChange}
+              value={currentAllocation.subjects}
+              onChange={e => {
+                const value = e.target.value;
+                // value can be string[] or number[], so always convert to number[]
+                const subjectIds = Array.isArray(value) ? value.map(v => Number(v)) : [];
+                onChange('subjects', subjectIds);
+              }}
               input={<OutlinedInput label="Subjects" />}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -135,15 +140,13 @@ const TeacherAllocationForm = ({
               )}
               MenuProps={MenuProps}
             >
-              {availableSubjects
-                .filter(subject => !assignedSubjectIds.includes(subject.id))
-                .map((subject) => (
-                  <MenuItem key={subject.id} value={subject.id}>
-                    {subject.name}
-                  </MenuItem>
-                ))}
+              {subjects.map(subject => (
+                <MenuItem key={subject.id} value={subject.id}>
+                  {subject.name}
+                </MenuItem>
+              ))}
             </Select>
-            {!currentAllocation.class_obj_id && (
+            {!currentAllocation.classroom_id && (
               <Box sx={{ mt: 1, color: 'text.secondary', fontSize: '0.75rem' }}>
                 Please select a class first
               </Box>
@@ -157,9 +160,9 @@ const TeacherAllocationForm = ({
           onClick={onSave} 
           variant="contained"
           disabled={
-            !currentAllocation.teacher_id || 
-            !currentAllocation.class_obj_id ||
-            currentAllocation.subject_ids.length === 0
+            !currentAllocation.staff_id || 
+            !currentAllocation.classroom_id ||
+            currentAllocation.subjects.length === 0
           }
         >
           {editMode ? 'Update' : 'Allocate'} Teacher

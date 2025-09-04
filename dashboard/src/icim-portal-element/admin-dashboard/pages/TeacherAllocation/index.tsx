@@ -11,16 +11,15 @@ import {
   TeacherAllocationPayload,
 } from './api';
 
-import { Teacher,Class,Subject,fetchClasses,fetchSubjects,fetchTeachers } from './api';
+import { Teacher, Class, Subject, fetchClasses, fetchSubjects, fetchTeachers } from './api';
 
 const initialAllocation: TeacherAllocationPayload = {
-  teacher_id: 0,
-  class_obj_id: 0,
-  subject_ids: []
+  staff_id: 0,
+  classroom_id: 0,
+  subjects: []
 };
 
 export default function TeacherAllocation() {
-
   const [allocations, setAllocations] = useState<TeacherAllocationData[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
@@ -31,7 +30,6 @@ export default function TeacherAllocation() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     setLoading(true);
@@ -47,22 +45,34 @@ export default function TeacherAllocation() {
       .finally(() => setLoading(false));
   }, []);
 
-
   const handleOpen = () => {
     setOpen(true);
     setEditMode(false);
     setCurrentAllocation(initialAllocation);
+    setEditingId(null);
   };
 
-
+  // Map names from allocation to IDs for editing
   const handleEdit = (allocation: TeacherAllocationData) => {
     setOpen(true);
     setEditMode(true);
     setEditingId(allocation.id);
+
+    const staff = teachers.find(
+      t => `${t.first_name} ${t.last_name}`.trim() === allocation.teacher_name.trim()
+    );
+    const classroom = classes.find(c => c.name === allocation.classroom);
+
+    // FIX: Map subject names to IDs
+    const subjectIds = subjects
+      .filter(s => allocation.subjects.includes(s.name))
+      .map(s => s.id);
+
     setCurrentAllocation({
-      teacher_id: allocation.teacher.id,
-      class_obj_id: allocation.class_obj.id,
-      subject_ids: allocation.subjects.map(subject => subject.id)
+      id: allocation.id,
+      staff_id: staff ? staff.id : 0,
+      classroom_id: classroom ? classroom.id : 0,
+      subjects: subjectIds
     });
   };
 
@@ -73,48 +83,45 @@ export default function TeacherAllocation() {
     setEditingId(null);
   };
 
-
   const handleSave = async () => {
+    setError(null);
     try {
-    if (editMode && editingId !== null) {
-      const updated = await updateTeacherAllocation(editingId, currentAllocation);
-      setAllocations(allocations.map(allocation =>
-        allocation.id === editingId ? updated : allocation
-      ));
-    } else {
-      const created = await createTeacherAllocation(currentAllocation);
-      setAllocations([...allocations, created]);
-    }
-    handleClose();
-     } catch (e) {
+      if (editMode && editingId !== null) {
+        const payload: TeacherAllocationPayload = {
+          id: editingId,
+          staff_id: currentAllocation.staff_id,
+          classroom_id: currentAllocation.classroom_id,
+          subjects: currentAllocation.subjects
+        };
+        await updateTeacherAllocation(payload);
+      } else {
+        const { id, ...createPayload } = currentAllocation;
+        await createTeacherAllocation(createPayload);
+      }
+      // Always refetch allocations after save
+      const allocationData = await fetchTeacherAllocations();
+      setAllocations(allocationData);
+      handleClose();
+    } catch (e) {
       setError('Failed to save allocation');
     }
   };
 
   const handleDelete = async (id: number) => {
-    await deleteTeacherAllocation(id);
-    setAllocations(allocations.filter(allocation => allocation.id !== id));
+    try {
+      await deleteTeacherAllocation(id);
+      const allocationData = await fetchTeacherAllocations();
+      setAllocations(allocationData);
+    } catch {
+      setError('Failed to delete allocation');
+    }
   };
-
-
 
   const handleChange = (field: keyof TeacherAllocationPayload, value: any) => {
-  setCurrentAllocation(prev => ({
-    ...prev,
-    [field]: field === 'class_obj_id' ? Number(value) : value
-  }));
-};
-
-  const getSubjectNames = (subjects: Subject[]): string[] => {
-    return subjects.map(subject => subject.name);
-  };
-
-  const getTeacherName = (teacher: Teacher): string => {
-    return teacher.name;
-  };
-
-  const getClassName = (classObj: Class): string => {
-    return classObj.name;
+    setCurrentAllocation(prev => ({
+      ...prev,
+      [field]: field === 'classroom_id' || field === 'staff_id' ? Number(value) : value
+    }));
   };
 
   return (
@@ -127,19 +134,16 @@ export default function TeacherAllocation() {
       </Grid>
 
       <Grid item xs={12}>
-        <MainCard title="Classes List">
+        <MainCard title="Teacher Allocations">
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
             <div style={{ color: 'red' }}>{error}</div>
           ) : (
-            <TeacherAllocationTable 
-              allocations={allocations} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete} 
-              getSubjectNames={getSubjectNames}
-              getTeacherName={getTeacherName}
-              getClassName={getClassName}
+            <TeacherAllocationTable
+              allocations={allocations}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           )}
         </MainCard>

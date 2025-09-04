@@ -18,7 +18,7 @@ class ClassroomsView(APIView):
                     "name": classroom.name,
                     "level": classroom.level,
                     "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
-                    "scheduleDate": classroom.scheduleDate,
+                    "scheduleDay": classroom.scheduleDay,  # Now returns array
                     "startTime": classroom.startTime,
                     "endTime": classroom.endTime,
                     "price": classroom.price,
@@ -41,7 +41,7 @@ class ClassroomView(APIView):
                 "name": classroom.name,
                 "level": classroom.level,
                 "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
-                "scheduleDate": classroom.scheduleDate,
+                "scheduleDay": classroom.scheduleDay,  # Now returns array
                 "startTime": classroom.startTime.strftime('%H:%M'),
                 "endTime": classroom.endTime.strftime('%H:%M'),
                 "price": classroom.price,
@@ -59,16 +59,20 @@ class ClassroomsInput(APIView):
     def post(self, request):
         inputs = request.data
         try:
-            # Convert string dates/times to proper Python objects
-            schedule_date = datetime.strptime(inputs['scheduleDate'], '%Y-%m-%d').date()
+            # Parse time fields
             start_time = datetime.strptime(inputs['startTime'], '%H:%M').time()
             end_time = datetime.strptime(inputs['endTime'], '%H:%M').time()
+            
+            # Handle scheduleDay as array
+            schedule_days = inputs.get('scheduleDay', [])
+            if not isinstance(schedule_days, list):
+                return Response({"error": "scheduleDay must be an array"}, status=status.HTTP_400_BAD_REQUEST)
             
             # Create classroom first without subjects
             obj = Classrooms.objects.create(
                 name=inputs['name'],
                 level=inputs['level'],
-                scheduleDate=schedule_date,
+                scheduleDay=schedule_days,  # Store as JSON array
                 startTime=start_time,
                 endTime=end_time,
                 price=float(inputs['price']),
@@ -85,7 +89,7 @@ class ClassroomsInput(APIView):
                 "name": obj.name,
                 "level": obj.level,
                 "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
-                "scheduleDate": obj.scheduleDate,
+                "scheduleDay": obj.scheduleDay,  # Returns array
                 "startTime": obj.startTime.strftime('%H:%M'),
                 "endTime": obj.endTime.strftime('%H:%M'),
                 "price": obj.price,
@@ -93,7 +97,7 @@ class ClassroomsInput(APIView):
                 "updated_at": obj.updated_at
             }, status=status.HTTP_201_CREATED)
         except ValueError as e:
-            return Response({"error": "Invalid date/time format"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid time format"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -112,8 +116,11 @@ class ClassroomsEdit(APIView):
             if 'subject_ids' in inputs:
                 subjects = Subject.objects.filter(id__in=inputs['subject_ids'])
                 obj.subjects.set(subjects)
-            if 'scheduleDate' in inputs:
-                obj.scheduleDate = datetime.strptime(inputs['scheduleDate'], '%Y-%m-%d').date()
+            if 'scheduleDay' in inputs:
+                schedule_days = inputs['scheduleDay']
+                if not isinstance(schedule_days, list):
+                    return Response({"error": "scheduleDay must be an array"}, status=status.HTTP_400_BAD_REQUEST)
+                obj.scheduleDay = schedule_days  # Store as JSON array
             if 'startTime' in inputs:
                 obj.startTime = datetime.strptime(inputs['startTime'], '%H:%M').time()
             if 'endTime' in inputs:
@@ -130,7 +137,7 @@ class ClassroomsEdit(APIView):
                 "name": obj.name,
                 "level": obj.level,
                 "subjects": [{"id": subject.id, "name": subject.name} for subject in obj.subjects.all()],
-                "scheduleDate": obj.scheduleDate,
+                "scheduleDay": obj.scheduleDay,  # Returns array
                 "startTime": obj.startTime.strftime('%H:%M'),
                 "endTime": obj.endTime.strftime('%H:%M'),
                 "price": obj.price,
@@ -140,7 +147,7 @@ class ClassroomsEdit(APIView):
         except Classrooms.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
-            return Response({"error": "Invalid date/time format"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid time format"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

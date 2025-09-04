@@ -4,7 +4,12 @@ import MainCard from 'components/MainCard';
 import { SubjectForm, SubjectsTable, PageHeader, DeleteConfirmDialog } from './components';
 import { fetchSubjects, createSubject, updateSubject, deleteSubject, Subject, SubjectPayload } from './api';
 
-const initialSubject: SubjectPayload = { id: 0, name: '', status: 'active' };
+const initialSubject: SubjectPayload = { 
+  id: 0, 
+  name: '', 
+  status: 'active' 
+  
+};
 
 export default function SubjectsManagement() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -118,7 +123,7 @@ export default function SubjectsManagement() {
           )}
         </MainCard>
       </Grid>
-      <SubjectForm 
+      <SubjectForm
         open={open}
         editMode={editMode}
         currentSubject={currentSubject}

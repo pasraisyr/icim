@@ -7,14 +7,15 @@ import { fetchClasses, createClass, updateClass, deleteClass, Class, ClassPayloa
 import { fetchSubjects, Subject } from './api';
 
 const initialClass: ClassPayload = {
+  id: 0,
   name: '',
   subject_ids: [],
-  level: 'Primary',
-  scheduleDate: '', // Changed from scheduleDay
+  level: 'Tahap Rendah', // Changed from 'Primary'
+  scheduleDay: [],
   startTime: '',
   endTime: '',
   price: 0,
-  statuse: 'active', // Changed from status
+  statuse: 'active',
 };
 
 export default function ClassesManagement() {
@@ -36,8 +37,6 @@ export default function ClassesManagement() {
       .then(([classData, subjectData]) => {
         setClasses(classData);
         setAvailableSubjects(subjectData);
-        console.log('Classes:', classData); // Debug line
-        console.log('Subjects:', subjectData); // Debug line
       })
       .catch((err) => {
         console.error('Fetch error:', err); // Debug line
@@ -50,6 +49,7 @@ export default function ClassesManagement() {
     setOpen(true);
     setEditMode(false);
     setCurrentClass(initialClass);
+    setEditingId(null);
   };
 
   const handleEdit = (cls: Class) => {
@@ -57,14 +57,15 @@ export default function ClassesManagement() {
     setEditMode(true);
     setEditingId(cls.id);
     setCurrentClass({
+      id: cls.id,
       name: cls.name,
       subject_ids: cls.subjects.map(s => s.id),
       level: cls.level,
-      scheduleDate: cls.scheduleDate, // Changed from scheduleDay
+      scheduleDay: Array.isArray(cls.scheduleDay) ? cls.scheduleDay : [], 
       startTime: cls.startTime,
       endTime: cls.endTime,
       price: cls.price,
-      statuse: cls.statuse, // Changed from status
+      statuse: cls.statuse, 
     });
   };
 
@@ -78,12 +79,24 @@ export default function ClassesManagement() {
   const handleSave = async () => {
     setError(null);
     try {
-      console.log('Saving class:', currentClass); // Debug line
       if (editMode && editingId !== null) {
-        const updated = await updateClass(editingId, { ...currentClass, id: editingId });
+        const payload: ClassPayload = {
+          id: editingId,
+          name: currentClass.name,
+          subject_ids: currentClass.subject_ids,
+          level: currentClass.level,
+          scheduleDay: currentClass.scheduleDay,
+          startTime: currentClass.startTime.slice(0, 5), // <-- Only HH:MM
+          endTime: currentClass.endTime.slice(0, 5),     // <-- Only HH:MM
+          price: currentClass.price,
+          statuse: currentClass.statuse,
+        };
+        console.log('Payload sent to updateClass:', payload);
+        const updated = await updateClass(payload);
         setClasses(classes.map(c => (c.id === editingId ? updated : c)));
       } else {
-        const created = await createClass(currentClass);
+        const {id, ...createPayload} = currentClass; // Exclude id for creation
+        const created = await createClass(createPayload as ClassPayload);
         setClasses([...classes, created]);
       }
       handleClose();
@@ -119,7 +132,7 @@ export default function ClassesManagement() {
     setClassToDelete(null);
   };
 
-  const handleChange = (field: keyof ClassPayload, value: any) => {
+  const handleChange = (field: keyof ClassPayload, value: string) => {
     setCurrentClass({ ...currentClass, [field]: value });
   };
 

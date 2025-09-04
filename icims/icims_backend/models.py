@@ -79,25 +79,26 @@ class Elements(models.Model):
 class Classrooms(models.Model):
     name = models.CharField(max_length=255)
     level = models.CharField(max_length=100)
-    subjects = models.ManyToManyField(Subject)  # Changed from subject_id ForeignKey
-    scheduleDate = models.DateField()
+    subjects = models.ManyToManyField(Subject)
+    scheduleDay = models.JSONField(default=list)  
     startTime = models.TimeField()
     endTime = models.TimeField()
     price = models.FloatField()
     statuse = models.CharField(max_length=100)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
     def __str__(self):
         return self.name
 
 class TeacherAllocation(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    cllassroom_id = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
-    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    classroom_id = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
+    subjects = models.ManyToManyField(Subject)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Teacher Allocation: {self.staff_id} - {self.classroom_id} - {self.subject_id}"
+        return f"Teacher Allocation: {self.staff_id} - {self.classroom_id} - {self.subjects.all()}"
 
 class StudentAllocation(models.Model):
     student_id = models.ForeignKey(Client, on_delete=models.CASCADE)

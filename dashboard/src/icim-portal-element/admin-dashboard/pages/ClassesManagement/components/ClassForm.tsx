@@ -29,10 +29,7 @@ interface ClassFormProps {
 }
 
 const levels = ['Tahap Rendah', 'Tahap Menengah', 'Kelas Tuisyen', 'Aktiviti Kokurikulum'];
-const days = ['Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu','Ahad'];
-const times = [
-  '8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM'
-];
+const days = ['Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu', 'Ahad'];
 
 const ClassForm = ({ open, editMode, currentClass, availableSubjects, onChange, onClose, onSave }: ClassFormProps) => (
   <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -44,14 +41,16 @@ const ClassForm = ({ open, editMode, currentClass, availableSubjects, onChange, 
           fullWidth
           value={currentClass.name}
           onChange={e => onChange('name', e.target.value)}
+          required
         />
+        
         <FormControl fullWidth>
-          <InputLabel>Subjects</InputLabel>
+          <InputLabel>Subjects *</InputLabel>
           <Select
             multiple
             value={currentClass.subject_ids}
             onChange={e => onChange('subject_ids', e.target.value)}
-            input={<OutlinedInput label="Subjects" />}
+            input={<OutlinedInput label="Subjects *" />}
             renderValue={(selected) =>
               (selected as number[]).map(id => {
                 const subj = availableSubjects.find(s => s.id === id);
@@ -64,6 +63,7 @@ const ClassForm = ({ open, editMode, currentClass, availableSubjects, onChange, 
             ))}
           </Select>
         </FormControl>
+        
         <FormControl fullWidth>
           <InputLabel>Level</InputLabel>
           <Select
@@ -76,56 +76,78 @@ const ClassForm = ({ open, editMode, currentClass, availableSubjects, onChange, 
             ))}
           </Select>
         </FormControl>
+        
         <FormControl fullWidth>
-          <InputLabel>Schedule Day</InputLabel>
+          <InputLabel>Schedule Days</InputLabel>
           <Select
+            multiple
             value={currentClass.scheduleDay}
             onChange={e => onChange('scheduleDay', e.target.value)}
-            label="Schedule Day"
+            input={<OutlinedInput label="Schedule Days" />}
+            renderValue={(selected) =>
+              (selected as string[]).join(', ')
+            }
           >
             {days.map(day => (
               <MenuItem key={day} value={day}>{day}</MenuItem>
             ))}
           </Select>
         </FormControl>
+        
         <Stack direction="row" spacing={2}>
-          <FormControl fullWidth>
-            <InputLabel>Start Time</InputLabel>
-            <Select
-              value={currentClass.startTime}
-              onChange={e => onChange('startTime', e.target.value)}
-              label="Start Time"
-            >
-              {times.map(time => (
-                <MenuItem key={time} value={time}>{time}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel>End Time</InputLabel>
-            <Select
-              value={currentClass.endTime}
-              onChange={e => onChange('endTime', e.target.value)}
-              label="End Time"
-            >
-              {times.map(time => (
-                <MenuItem key={time} value={time}>{time}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <TextField
+            label="Start Time"
+            type="time"
+            fullWidth
+            value={currentClass.startTime}
+            onChange={e => onChange('startTime', e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min intervals
+            }}
+            required
+          />
+          <TextField
+            label="End Time"
+            type="time"
+            fullWidth
+            value={currentClass.endTime}
+            onChange={e => onChange('endTime', e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min intervals
+            }}
+            required
+          />
         </Stack>
+        
         <TextField
           label="Price"
           type="number"
           fullWidth
           value={currentClass.price}
-          onChange={e => onChange('price', Number(e.target.value))}
+          onChange={e => {
+            const value = e.target.value;
+            // Convert to float, default to 0.0 if empty or invalid
+            const floatValue = value === '' ? 0.0 : parseFloat(value);
+            onChange('price', isNaN(floatValue) ? 0.0 : floatValue);
+          }}
+          inputProps={{
+            min: 0,
+            step: 0.01
+          }}
+          required
         />
+        
         <FormControl fullWidth>
           <InputLabel>Status</InputLabel>
           <Select
-            value={currentClass.status}
-            onChange={e => onChange('status', e.target.value)}
+            value={currentClass.statuse}
+            onChange={e => onChange('statuse', e.target.value)}
             label="Status"
           >
             <MenuItem value="active">Active</MenuItem>
@@ -136,7 +158,11 @@ const ClassForm = ({ open, editMode, currentClass, availableSubjects, onChange, 
     </DialogContent>
     <DialogActions>
       <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={onSave} variant="contained" disabled={!currentClass.name}>
+      <Button 
+        onClick={onSave} 
+        variant="contained" 
+        disabled={!currentClass.name || currentClass.subject_ids.length === 0 || !currentClass.startTime || !currentClass.endTime}
+      >
         {editMode ? 'Update' : 'Add'} Class
       </Button>
     </DialogActions>

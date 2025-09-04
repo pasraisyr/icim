@@ -5,7 +5,7 @@ from rest_framework import status, permissions
 from datetime import datetime
 
 class StaffsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         staffs = Staff.objects.all()
@@ -19,7 +19,6 @@ class StaffsView(APIView):
                     "last_name": user.last_name,
                     "email": user.email,
                     "phone_number": staff.phone_number,
-                    "address": staff.address,
                     "status": staff.status,
                     "position": staff.position,
                     "joinDate": staff.joinDate,
@@ -43,10 +42,7 @@ class StaffView(APIView):
                 "last_name": user.last_name,
                 "email": user.email,
                 "phone_number": staff.phone_number,
-                "address": staff.address,
                 "status": staff.status,
-                "role": staff.role,
-                "salary": staff.salary,
                 "updated_at": staff.updated_at
             }, status=status.HTTP_200_OK)
         except Exception as e:
@@ -140,7 +136,6 @@ class StaffEdit(APIView):
                 "last_name": user.last_name,
                 "email": user.email,
                 "phone_number": staff.phone_number,
-                "address": staff.address,
                 "status": staff.status,
                 "position": staff.position,
                 "joinDate": staff.joinDate,

@@ -3,44 +3,52 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export interface Teacher {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  phone: string;
+  password: string;
+  phone_number: string;
   status: 'active' | 'inactive';
   joinDate: string;
+  position: string;
 }
 
 export interface TeacherPayload {
-  name: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   email: string;
-  phone: string;
+  phone_number: string;
   status: 'active' | 'inactive';
   joinDate: string;
-  role?: string; // Add this line
+  password: string;
+  position: string; // <-- Added
 }
 
 // Replace with real API calls
 export async function fetchTeachers(): Promise<Teacher[]> {
-  const res = await fetch(`${BASE_URL}/api/Academic/teachers/`);
+  const res = await fetch(`${BASE_URL}/api/admin/staffs/`);
   if (!res.ok) throw new Error('Failed to fetch teachers');
   return res.json();
 }
 
 
 export async function createTeacher(payload: TeacherPayload): Promise<Teacher> {
-  const res = await fetch(`${BASE_URL}/api/Academic/teachers/`, {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/staff/input/`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to create teacher');
   return res.json();
 }
 
-export async function updateTeacher(id: number, payload: TeacherPayload): Promise<Teacher> {
-  const res = await fetch(`${BASE_URL}/api/Academic/teachers/${id}/`, {
+export async function updateTeacher( payload: TeacherPayload): Promise<Teacher> {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/staff/edit/`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to update teacher');
@@ -48,8 +56,14 @@ export async function updateTeacher(id: number, payload: TeacherPayload): Promis
 }
 
 export async function deleteTeacher(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/Academic/teachers/${id}/`, {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/admin/staff/delete/`, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ id }) // send id in body
   });
   if (!res.ok) throw new Error('Failed to delete teacher');
   return;
