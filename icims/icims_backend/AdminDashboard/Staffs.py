@@ -58,30 +58,29 @@ class StaffInput(APIView):
     def post(self, request):
         inputs = request.data
         try:
-            # Create CustomUser first
+            # Create CustomUser first with user_type=2 for Staff
             user = CustomUser.objects.create_user(
                 username=inputs['email'],
                 email=inputs['email'],
                 first_name=inputs['first_name'],
                 last_name=inputs['last_name'],
                 password=inputs['password'],
-                user_type=2  # Assuming 2 represents Staff
+                user_type=2  # This will trigger the signal to create Staff
             )
 
-            # Parse joinDate if provided
+            # Get the staff object created by signal
+            staff = Staff.objects.get(admin=user)
+            
+            # Update the staff object with additional fields
             join_date = None
             if 'joinDate' in inputs:
                 join_date = datetime.strptime(inputs['joinDate'], '%Y-%m-%d').date()
 
-            # Create Staff linked to this user
-            staff = Staff.objects.create(
-                admin=user,
-                phone_number=inputs.get('phone_number', ''),
-                address=inputs.get('address', ''),
-                status=inputs.get('status', 'active'),
-                position=inputs['position'],
-                joinDate=join_date
-            )
+            staff.phone_number = inputs.get('phone_number', '')
+            staff.status = inputs.get('status', 'active')
+            staff.position = inputs['position']
+            staff.joinDate = join_date
+            staff.save()
 
             return Response({
                 "id": staff.id,
@@ -89,13 +88,15 @@ class StaffInput(APIView):
                 "last_name": user.last_name,
                 "email": user.email,
                 "phone_number": staff.phone_number,
-                "address": staff.address,
                 "status": staff.status,
                 "position": staff.position,
                 "joinDate": staff.joinDate,
                 "updated_at": staff.updated_at
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
+            # If something goes wrong, cleanup
+            if 'user' in locals():
+                user.delete()
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class StaffEdit(APIView):
