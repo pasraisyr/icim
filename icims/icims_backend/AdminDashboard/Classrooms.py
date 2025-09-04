@@ -5,7 +5,7 @@ from rest_framework import status, permissions
 from datetime import datetime
 
 class ClassroomsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         classrooms = Classrooms.objects.all()

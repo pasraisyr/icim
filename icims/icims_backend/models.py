@@ -105,7 +105,7 @@ class StudentAllocation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Student Allocation: {self.student_id} - {self.classroom_id} - {self.subject_id}"
+        return f"Student Allocation: {self.student_id} - {self.classroom_id}"
 
 class Attendance(models.Model):
     student_id = models.ForeignKey(Client, on_delete=models.CASCADE)
