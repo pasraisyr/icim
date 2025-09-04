@@ -10,11 +10,11 @@ const initialClass: ClassPayload = {
   name: '',
   subject_ids: [],
   level: 'Primary',
-  scheduleDay: '',
+  scheduleDate: '', // Changed from scheduleDay
   startTime: '',
   endTime: '',
   price: 0,
-  status: 'active',
+  statuse: 'active', // Changed from status
 };
 
 export default function ClassesManagement() {
@@ -36,9 +36,13 @@ export default function ClassesManagement() {
       .then(([classData, subjectData]) => {
         setClasses(classData);
         setAvailableSubjects(subjectData);
-        console.log('Subjects:', subjectData); // <-- Add this line
+        console.log('Classes:', classData); // Debug line
+        console.log('Subjects:', subjectData); // Debug line
       })
-      .catch(() => setError('Failed to fetch classes or subjects'))
+      .catch((err) => {
+        console.error('Fetch error:', err); // Debug line
+        setError('Failed to fetch classes or subjects');
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -56,11 +60,11 @@ export default function ClassesManagement() {
       name: cls.name,
       subject_ids: cls.subjects.map(s => s.id),
       level: cls.level,
-      scheduleDay: cls.scheduleDay,
+      scheduleDate: cls.scheduleDate, // Changed from scheduleDay
       startTime: cls.startTime,
       endTime: cls.endTime,
       price: cls.price,
-      status: cls.status,
+      statuse: cls.statuse, // Changed from status
     });
   };
 
@@ -74,8 +78,9 @@ export default function ClassesManagement() {
   const handleSave = async () => {
     setError(null);
     try {
+      console.log('Saving class:', currentClass); // Debug line
       if (editMode && editingId !== null) {
-        const updated = await updateClass(editingId, currentClass);
+        const updated = await updateClass(editingId, { ...currentClass, id: editingId });
         setClasses(classes.map(c => (c.id === editingId ? updated : c)));
       } else {
         const created = await createClass(currentClass);
@@ -83,6 +88,7 @@ export default function ClassesManagement() {
       }
       handleClose();
     } catch (e) {
+      console.error('Save error:', e); // Debug line
       setError('Failed to save class');
     }
   };
@@ -100,6 +106,7 @@ export default function ClassesManagement() {
         await deleteClass(classToDelete.id);
         setClasses(classes.filter(c => c.id !== classToDelete.id));
       } catch (e) {
+        console.error('Delete error:', e); // Debug line
         setError('Failed to delete class');
       }
       setDeleteDialogOpen(false);
