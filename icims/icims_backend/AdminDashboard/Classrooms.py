@@ -9,16 +9,15 @@ class ClassroomsView(APIView):
 
     def get(self, request):
         classrooms = Classrooms.objects.all()
-        
         data = []
         try:
             for classroom in classrooms:
-                subject = Subject.objects.get(id=classroom.subject_id.id)
+                subjects = classroom.subjects.all()
                 data.append({
                     "id": classroom.id,
                     "name": classroom.name,
                     "level": classroom.level,
-                    "subject": subject.name,
+                    "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
                     "scheduleDate": classroom.scheduleDate,
                     "startTime": classroom.startTime,
                     "endTime": classroom.endTime,
@@ -36,12 +35,12 @@ class ClassroomView(APIView):
     def get(self, request, classroom_id):
         try:
             classroom = Classrooms.objects.get(id=classroom_id)
-            subject = Subject.objects.get(id=classroom.subject_id.id)
+            subjects = classroom.subjects.all()
             return Response({
                 "id": classroom.id,
                 "name": classroom.name,
                 "level": classroom.level,
-                "subject": subject.name,
+                "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
                 "scheduleDate": classroom.scheduleDate,
                 "startTime": classroom.startTime.strftime('%H:%M'),
                 "endTime": classroom.endTime.strftime('%H:%M'),
@@ -51,8 +50,6 @@ class ClassroomView(APIView):
             }, status=status.HTTP_200_OK)
         except Classrooms.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -67,12 +64,10 @@ class ClassroomsInput(APIView):
             start_time = datetime.strptime(inputs['startTime'], '%H:%M').time()
             end_time = datetime.strptime(inputs['endTime'], '%H:%M').time()
             
-            subject = Subject.objects.get(id=inputs['subject_id'])
-
+            # Create classroom first without subjects
             obj = Classrooms.objects.create(
                 name=inputs['name'],
                 level=inputs['level'],
-                subject_id=subject,
                 scheduleDate=schedule_date,
                 startTime=start_time,
                 endTime=end_time,
@@ -80,11 +75,16 @@ class ClassroomsInput(APIView):
                 statuse=inputs['statuse']
             )
 
+            # Add subjects
+            subject_ids = inputs.get('subject_ids', [])
+            subjects = Subject.objects.filter(id__in=subject_ids)
+            obj.subjects.set(subjects)
+
             return Response({
                 "id": obj.id,
                 "name": obj.name,
                 "level": obj.level,
-                "subject": subject.name,
+                "subjects": [{"id": subject.id, "name": subject.name} for subject in subjects],
                 "scheduleDate": obj.scheduleDate,
                 "startTime": obj.startTime.strftime('%H:%M'),
                 "endTime": obj.endTime.strftime('%H:%M'),
@@ -92,8 +92,6 @@ class ClassroomsInput(APIView):
                 "statuse": obj.statuse,
                 "updated_at": obj.updated_at
             }, status=status.HTTP_201_CREATED)
-        except Subject.DoesNotExist:
-            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
             return Response({"error": "Invalid date/time format"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -111,8 +109,9 @@ class ClassroomsEdit(APIView):
                 obj.name = inputs['name']
             if 'level' in inputs:
                 obj.level = inputs['level']
-            if 'subject_id' in inputs:
-                obj.subject_id = Subject.objects.get(id=inputs['subject_id'])
+            if 'subject_ids' in inputs:
+                subjects = Subject.objects.filter(id__in=inputs['subject_ids'])
+                obj.subjects.set(subjects)
             if 'scheduleDate' in inputs:
                 obj.scheduleDate = datetime.strptime(inputs['scheduleDate'], '%Y-%m-%d').date()
             if 'startTime' in inputs:
@@ -130,7 +129,7 @@ class ClassroomsEdit(APIView):
                 "id": obj.id,
                 "name": obj.name,
                 "level": obj.level,
-                "subject": obj.subject_id.name,
+                "subjects": [{"id": subject.id, "name": subject.name} for subject in obj.subjects.all()],
                 "scheduleDate": obj.scheduleDate,
                 "startTime": obj.startTime.strftime('%H:%M'),
                 "endTime": obj.endTime.strftime('%H:%M'),
@@ -140,8 +139,6 @@ class ClassroomsEdit(APIView):
             }, status=status.HTTP_200_OK)
         except Classrooms.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
             return Response({"error": "Invalid date/time format"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

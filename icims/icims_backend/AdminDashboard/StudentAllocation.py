@@ -1,4 +1,4 @@
-from icims_backend.models import Client, CustomUser, Classrooms, Subject, StudentAllocation
+from icims_backend.models import Client, CustomUser, Classrooms, StudentAllocation
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -22,15 +22,12 @@ class StudentAllocationsView(APIView):
         client = Client.objects.get(id=allocation.student_id.id)
         user = CustomUser.objects.get(id=client.admin.id)
         classroom = Classrooms.objects.get(id=allocation.classroom_id.id)
-        subject = Subject.objects.get(id=allocation.subject_id.id)
         return {
             "id": allocation.id,
             "student_id": client.id,
             "student_name": f"{user.first_name} {user.last_name}",
             "classroom_id": classroom.id,
             "classroom_name": classroom.name,
-            "subject_id": subject.id,
-            "subject_name": subject.name,
             "updated_at": allocation.updated_at
         }
 
@@ -55,12 +52,10 @@ class StudentAllocationInput(APIView):
         try:
             client = Client.objects.get(id=inputs.get("client_id"))
             classroom = Classrooms.objects.get(id=inputs.get("classroom_id"))
-            subject = Subject.objects.get(id=inputs.get("subject_id"))
 
             allocation = StudentAllocation.objects.create(
                 student_id=client,
-                classroom_id=classroom,
-                subject_id=subject
+                classroom_id=classroom
             )
 
             data = StudentAllocationsView._format_allocation_data(self, allocation)
@@ -69,8 +64,6 @@ class StudentAllocationInput(APIView):
             return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
         except Classrooms.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -88,9 +81,6 @@ class StudentAllocationEdit(APIView):
             if 'classroom_id' in inputs:
                 classroom = Classrooms.objects.get(id=inputs['classroom_id'])
                 allocation.classroom_id = classroom
-            if 'subject_id' in inputs:
-                subject = Subject.objects.get(id=inputs['subject_id'])
-                allocation.subject_id = subject
             
             allocation.save()
 
@@ -102,8 +92,6 @@ class StudentAllocationEdit(APIView):
             return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
         except Classrooms.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -111,7 +99,7 @@ class StudentAllocationDelete(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def delete(self, request):
-        allocation_id = request.data.get('id')  # Changed from query_params to data
+        allocation_id = request.data.get('id')
         if not allocation_id:
             return Response({"error": "Allocation ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
