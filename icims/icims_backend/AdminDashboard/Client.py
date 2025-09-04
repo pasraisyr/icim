@@ -207,3 +207,21 @@ class ClientInput(APIView):
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class ClientDelete(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def delete(self, request, client_id):
+        client_id = request.query_params.get(id=client_id)
+        if not client_id:
+            return Response({"error": "Client ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            client = Client.objects.get(id=client_id)
+            user = CustomUser.objects.get(id=client.admin.id)
+            client.delete()
+            user.delete()
+            return Response({"message": "Client deleted successfully"}, status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
