@@ -4,7 +4,7 @@ import MainCard from 'components/MainCard';
 import { SubjectForm, SubjectsTable, PageHeader, DeleteConfirmDialog } from './components';
 import { fetchSubjects, createSubject, updateSubject, deleteSubject, Subject, SubjectPayload } from './api';
 
-const initialSubject: SubjectPayload = { name: '', status: 'active' };
+const initialSubject: SubjectPayload = { id: 0, name: '', status: 'active' };
 
 export default function SubjectsManagement() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -30,13 +30,14 @@ export default function SubjectsManagement() {
     setOpen(true);
     setEditMode(false);
     setCurrentSubject(initialSubject);
+    setEditingId(null);
   };
 
   const handleEdit = (subject: Subject) => {
     setOpen(true);
     setEditMode(true);
     setEditingId(subject.id);
-    setCurrentSubject({ name: subject.name, status: subject.status });
+    setCurrentSubject({ id: subject.id, name: subject.name, status: subject.status });
   };
 
   const handleClose = () => {
@@ -76,10 +77,17 @@ export default function SubjectsManagement() {
     setError(null);
     try {
       if (editMode && editingId !== null) {
-        const updated = await updateSubject(editingId, currentSubject);
+        const payload: SubjectPayload = {
+          id: editingId,
+          name: currentSubject.name,
+          status: currentSubject.status
+        };
+        const updated = await updateSubject(payload);
         setSubjects(subjects.map(s => (s.id === editingId ? updated : s)));
       } else {
-        const created = await createSubject(currentSubject);
+        // For create, remove id from payload if not needed
+        const { id, ...createPayload } = currentSubject;
+        const created = await createSubject(createPayload as SubjectPayload);
         setSubjects([...subjects, created]);
       }
       handleClose();

@@ -17,9 +17,6 @@ const initialClass: ClassPayload = {
   status: 'active',
 };
 
-
-
-
 export default function ClassesManagement() {
   const [classes, setClasses] = useState<Class[]>([]);
   const [availableSubjects, setAvailableSubjects] = useState<Subject[]>([]);
@@ -39,6 +36,7 @@ export default function ClassesManagement() {
       .then(([classData, subjectData]) => {
         setClasses(classData);
         setAvailableSubjects(subjectData);
+        console.log('Subjects:', subjectData); // <-- Add this line
       })
       .catch(() => setError('Failed to fetch classes or subjects'))
       .finally(() => setLoading(false));
