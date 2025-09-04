@@ -79,7 +79,7 @@ class Elements(models.Model):
 class Classrooms(models.Model):
     name = models.CharField(max_length=255)
     level = models.CharField(max_length=100)
-    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    subjects = models.ManyToManyField(Subject)  # Changed from subject_id ForeignKey
     scheduleDate = models.DateField()
     startTime = models.TimeField()
     endTime = models.TimeField()
@@ -102,7 +102,6 @@ class TeacherAllocation(models.Model):
 class StudentAllocation(models.Model):
     student_id = models.ForeignKey(Client, on_delete=models.CASCADE)
     classroom_id = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
-    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
