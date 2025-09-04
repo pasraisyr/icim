@@ -28,6 +28,9 @@ TeacherAllocation
 TeachersManagement
 VerificationStatus
 
+# Student Add
+API -> Dashboard -> index.ts 
+
 example parents : 
 icim-portal-element > academic-manager-dashboard > pages > ClassesManagement > index.tsx
 
