@@ -59,7 +59,7 @@ export async function createStudent(payload: StudentPayload): Promise<Student> {
   return res.json();
 }
 
-export async function updateStudent(payload: StudentPayload): Promise<Student> {
+export async function updateStudent(editingId: number, payload: StudentPayload): Promise<Student> {
   const token = localStorage.getItem('token');
   const res = await fetch(`${BASE_URL}/admin/client/edit/`, {
     method: 'PUT',

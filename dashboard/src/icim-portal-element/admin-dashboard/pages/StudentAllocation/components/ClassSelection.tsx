@@ -31,7 +31,7 @@ const ClassSelection = ({ classes, selectedClassId, allocations, onClassSelect }
       </Typography>
       
       <Grid container spacing={2}>
-        {classes.filter(c => c.status === 'active').map((classItem) => {
+        {classes.filter(c => c.statuse === 'active').map((classItem) => {
           const isSelected = selectedClassId === classItem.id;
           const currentEnrolled = getAllocatedCount(classItem.id);
           const capacity = 30; // Default capacity, you can add this to Class interface
