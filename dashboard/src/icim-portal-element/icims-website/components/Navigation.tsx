@@ -107,7 +107,7 @@ export default function Navigation({
             
             <Button 
               color="inherit" 
-              onClick={() => window.location.href = 'http://localhost:3000/react/login'}
+              onClick={() => window.location.href = `${import.meta.env.VITE_APP_BASE_NAME}/login`}
               sx={{ color: 'text.primary' }}
             >
               Log Masuk
