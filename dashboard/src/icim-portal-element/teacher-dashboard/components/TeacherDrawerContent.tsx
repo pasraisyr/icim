@@ -1,6 +1,6 @@
 // material-ui
 // project-imports
-import NavUser from 'layout/Dashboard/Drawer/DrawerContent/NavUser';
+// import NavUser from 'layout/Dashboard/Drawer/DrawerContent/NavUser';
 import TeacherNavigation from './TeacherNavigation';
 import SimpleBar from 'components/third-party/SimpleBar';
 
@@ -12,7 +12,7 @@ export default function TeacherDrawerContent() {
       <SimpleBar sx={{ '& .simplebar-content': { display: 'flex', flexDirection: 'column' } }}>
         <TeacherNavigation />
       </SimpleBar>
-      <NavUser />
+      {/* <NavUser /> */}
     </>
   );
 }

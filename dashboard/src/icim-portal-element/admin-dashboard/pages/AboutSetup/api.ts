@@ -1,5 +1,4 @@
-// API utility for SubjectsManagement
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface About {
   id: number;
@@ -17,14 +16,14 @@ export interface AboutPayload {
 
 // Fetch the About element (returns a single object)
 export async function fetchAbout(): Promise<About> {
-  const res = await fetch(`${BASE_URL}/api/admin/about/`);
+  const res = await fetch(`${BASE_URL}/admin/about/`);
   if (!res.ok) throw new Error('Failed to fetch about');
   return res.json();
 }
 
 // Fetch all About elements
 export async function fetchAbouts(): Promise<AboutPayload[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/about/`);
+  const res = await fetch(`${BASE_URL}/admin/about/`);
   if (!res.ok) throw new Error('Failed to fetch abouts');
   const data = await res.json();
   // If data is an object, wrap it in an array
@@ -34,7 +33,7 @@ export async function fetchAbouts(): Promise<AboutPayload[]> {
 // Create or update the About element
 export async function createOrUpdateAbout(payload: AboutPayload): Promise<{ status: string }> {
   const token = localStorage.getItem('token'); // Or get from context/store
-  const res = await fetch(`${BASE_URL}/api/admin/about/input/`, {
+  const res = await fetch(`${BASE_URL}/admin/about/input/`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -52,7 +51,7 @@ export async function createOrUpdateAbout(payload: AboutPayload): Promise<{ stat
 // Edit the About element
 export async function editAbout(payload: AboutPayload): Promise<{ status: string }> {
   const token = localStorage.getItem('token'); // Or get from context/store
-  const res = await fetch(`${BASE_URL}/api/admin/about/edit/`, {
+  const res = await fetch(`${BASE_URL}/admin/about/edit/`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
@@ -70,7 +69,7 @@ export async function editAbout(payload: AboutPayload): Promise<{ status: string
 // Delete the About element
 export async function deleteAbout(id: number): Promise<{ status: string }> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/about/delete/`, {
+  const res = await fetch(`${BASE_URL}/admin/about/delete/`, {
     method: 'DELETE',
     headers: { 
       'Content-Type': 'application/json',

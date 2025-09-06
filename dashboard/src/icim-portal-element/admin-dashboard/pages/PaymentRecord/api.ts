@@ -1,9 +1,7 @@
 // Utility to get subjects for a class
 import { Student } from "../StudentsManagement/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface PaymentRecordData {
   id: number;
@@ -30,9 +28,8 @@ export interface PaymentRecordPayload {
 }
 
 
-
 export async function fetchPaymentRecords(): Promise<PaymentRecordData[]> {
-  const res = await fetch(`${BASE_URL}/api/Frontend/payments/`);
+  const res = await fetch(`${BASE_URL}/admin/payments/`);
   if (!res.ok) throw new Error('Failed to fetch payment records');
   return res.json();
 }
@@ -51,7 +48,7 @@ export async function createPaymentRecord(payload: PaymentRecordPayload): Promis
   if (payload.payment_receipt instanceof File) {
     formData.append('payment_receipt', payload.payment_receipt);
   }
-  const res = await fetch(`${BASE_URL}/api/Frontend/payments/`, {
+  const res = await fetch(`${BASE_URL}/admin/payments/`, {
     method: 'POST',
     body: formData
   });
@@ -60,7 +57,7 @@ export async function createPaymentRecord(payload: PaymentRecordPayload): Promis
 }
 
 export async function updatePaymentRecord(id: number, payload: PaymentRecordPayload): Promise<PaymentRecordData> {
-  const res = await fetch(`${BASE_URL}/api/Frontend/payments/${id}/`, {
+  const res = await fetch(`${BASE_URL}/admin/payments/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -70,12 +67,12 @@ export async function updatePaymentRecord(id: number, payload: PaymentRecordPayl
 }
 
 export async function deletePaymentRecord(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/Frontend/payments/${id}/`, { method: 'DELETE' });
+  const res = await fetch(`${BASE_URL}/admin/payments/${id}/`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete payment record');
 }
 
 export async function fetchStudents(): Promise<Student[]> {
-    const res = await fetch(`${BASE_URL}/api/Academic/students/`);
+    const res = await fetch(`${BASE_URL}/admin/admin/students/`);
     if (!res.ok) throw new Error('Failed to fetch students');
     return res.json();
 }

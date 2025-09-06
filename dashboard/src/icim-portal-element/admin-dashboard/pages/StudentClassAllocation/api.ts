@@ -3,7 +3,7 @@ import { Class } from "../ClassesManagement/api";
 
 
 // API utility for StudentAllocation
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 
 export interface StudentAllocation {
@@ -36,22 +36,22 @@ export interface StudentAllocationPayload {
 
 // API Functions
 export async function fetchStudents(): Promise<Student[]> {
-  const res = await fetch(`${BASE_URL}/api/Academic/students/`);
+  const res = await fetch(`${BASE_URL}/admin/students/`);
   if (!res.ok) throw new Error('Failed to fetch students');
   return res.json();
 }
 
 export async function fetchClasses(): Promise<Class[]> {
-  const res = await fetch(`${BASE_URL}/api/Academic/classes/`);
+  const res = await fetch(`${BASE_URL}/admin/classes/`);
   if (!res.ok) throw new Error('Failed to fetch classes');
   return res.json();
 }
 
 export async function fetchStudentAllocations(classId?: number): Promise<StudentAllocation[]> {
   // Note: You may need to create this endpoint in your backend
-  const url = classId 
-    ? `${BASE_URL}/api/Academic/student-allocations/?class_id=${classId}`
-    : `${BASE_URL}/api/Academic/student-allocations/`;
+  const url = classId
+    ? `${BASE_URL}/admin/student_allocations/?class_id=${classId}`
+    : `${BASE_URL}/admin/student_allocations/`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch student allocations');
   return res.json();
@@ -59,7 +59,7 @@ export async function fetchStudentAllocations(classId?: number): Promise<Student
 
 
 export async function createStudentAllocation(payload: StudentAllocationPayload): Promise<StudentAllocation> {
-  const res = await fetch(`${BASE_URL}/api/Academic/student-allocations/`, {
+  const res = await fetch(`${BASE_URL}/admin/student_allocations/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -69,7 +69,7 @@ export async function createStudentAllocation(payload: StudentAllocationPayload)
 }
 
 export async function updateStudentAllocation(id: number, payload: StudentAllocationPayload): Promise<StudentAllocation> {
-  const res = await fetch(`${BASE_URL}/api/Academic/student-allocations/${id}/`, {
+  const res = await fetch(`${BASE_URL}/admin/student_allocations/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -79,7 +79,7 @@ export async function updateStudentAllocation(id: number, payload: StudentAlloca
 }
 
 export async function deleteStudentAllocation(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/Academic/student-allocations/${id}/`, {
+  const res = await fetch(`${BASE_URL}/admin/student_allocations/${id}/`, {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to delete student allocation');
