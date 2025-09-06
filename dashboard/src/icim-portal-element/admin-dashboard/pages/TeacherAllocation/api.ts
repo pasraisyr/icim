@@ -2,7 +2,7 @@
 import type { Subject } from '../SubjectsManagement/api';
 import type { Class} from '../ClassesManagement/api';
 import type { Teacher } from '../TeachersManagement/api';
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface TeacherAllocationData {
   classroom: string;
@@ -22,14 +22,14 @@ export interface TeacherAllocationPayload {
 
 
 export async function fetchTeacherAllocations(): Promise<TeacherAllocationData[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/teacher_allocations/`);
+  const res = await fetch(`${BASE_URL}/admin/teacher_allocations/`);
   if (!res.ok) throw new Error('Failed to fetch teacher allocations');
   return res.json();
 }
 
 export async function createTeacherAllocation(payload: TeacherAllocationPayload): Promise<TeacherAllocationData> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/teacher_allocation/input/`, {
+  const res = await fetch(`${BASE_URL}/admin/teacher_allocation/input/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export async function createTeacherAllocation(payload: TeacherAllocationPayload)
 
 export async function updateTeacherAllocation(payload: TeacherAllocationPayload): Promise<TeacherAllocationData> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/teacher_allocation/edit/`, {
+  const res = await fetch(`${BASE_URL}/admin/teacher_allocation/edit/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export async function updateTeacherAllocation(payload: TeacherAllocationPayload)
 
 export async function deleteTeacherAllocation(id: number): Promise<{ message: string }> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/teacher_allocation/delete/`, {
+  const res = await fetch(`${BASE_URL}/admin/teacher_allocation/delete/`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -71,19 +71,19 @@ export async function deleteTeacherAllocation(id: number): Promise<{ message: st
 
 // Utility fetchers for dropdowns
 export async function fetchSubjects(): Promise<Subject[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/subject/`);
+  const res = await fetch(`${BASE_URL}/admin/subject/`);
   if (!res.ok) throw new Error('Failed to fetch subjects');
   return res.json();
 }
 
 export async function fetchTeachers(): Promise<Teacher[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/staffs/`);
+  const res = await fetch(`${BASE_URL}/admin/staffs/`);
   if (!res.ok) throw new Error('Failed to fetch teachers');
   return res.json();
 }
 
 export async function fetchClasses(): Promise<Class[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/classrooms/`);
+  const res = await fetch(`${BASE_URL}/admin/classrooms/`);
   if (!res.ok) throw new Error('Failed to fetch classes');
   return res.json();
 }

@@ -1,5 +1,5 @@
 // API utility for SubjectsManagement
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface Subject {
   id: number;
@@ -15,14 +15,14 @@ export interface SubjectPayload {
 }
 
 export async function fetchSubjects(): Promise<Subject[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/subject/`);
+  const res = await fetch(`${BASE_URL}/admin/subject/`);
   if (!res.ok) throw new Error('Failed to fetch subjects');
   return res.json();
 }
 
 export async function createSubject(payload: SubjectPayload): Promise<Subject> {
   const token = localStorage.getItem('token'); // Or get from context/store
-  const res = await fetch(`${BASE_URL}/api/admin/subject/input/`, {
+  const res = await fetch(`${BASE_URL}/admin/subject/input/`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function createSubject(payload: SubjectPayload): Promise<Subject> {
 
 export async function updateSubject(payload: SubjectPayload): Promise<Subject> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/subject/edit/`, {
+  const res = await fetch(`${BASE_URL}/admin/subject/edit/`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export async function updateSubject(payload: SubjectPayload): Promise<Subject> {
 
 export async function deleteSubject(id: number): Promise<void> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/subject/delete/`, {
+  const res = await fetch(`${BASE_URL}/admin/subject/delete/`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

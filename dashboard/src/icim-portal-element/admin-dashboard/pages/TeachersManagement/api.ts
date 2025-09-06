@@ -1,5 +1,5 @@
 // API utility for TeachersManagement
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface Teacher {
   id: number;
@@ -27,7 +27,7 @@ export interface TeacherPayload {
 
 // Replace with real API calls
 export async function fetchTeachers(): Promise<Teacher[]> {
-  const res = await fetch(`${BASE_URL}/api/admin/staffs/`);
+  const res = await fetch(`${BASE_URL}/admin/staffs/`);
   if (!res.ok) throw new Error('Failed to fetch teachers');
   return res.json();
 }
@@ -35,7 +35,7 @@ export async function fetchTeachers(): Promise<Teacher[]> {
 
 export async function createTeacher(payload: TeacherPayload): Promise<Teacher> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/staff/input/`, {
+  const res = await fetch(`${BASE_URL}/admin/staff/input/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
@@ -46,7 +46,7 @@ export async function createTeacher(payload: TeacherPayload): Promise<Teacher> {
 
 export async function updateTeacher( payload: TeacherPayload): Promise<Teacher> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/staff/edit/`, {
+  const res = await fetch(`${BASE_URL}/admin/staff/edit/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
@@ -57,7 +57,7 @@ export async function updateTeacher( payload: TeacherPayload): Promise<Teacher> 
 
 export async function deleteTeacher(id: number): Promise<void> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/api/admin/staff/delete/`, {
+  const res = await fetch(`${BASE_URL}/admin/staff/delete/`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
