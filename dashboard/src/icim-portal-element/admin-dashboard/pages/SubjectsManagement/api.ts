@@ -12,7 +12,6 @@ export interface SubjectPayload {
   id: number;
   name: string;
   status: 'active' | 'inactive';
-  updated_at: string;
 }
 
 export async function fetchSubjects(): Promise<Subject[]> {
@@ -43,7 +42,7 @@ export async function updateSubject(payload: SubjectPayload): Promise<Subject> {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(payload), // send payload directly
+    body: JSON.stringify(payload), 
   });
   if (!res.ok) throw new Error('Failed to edit subject');
   return res.json();

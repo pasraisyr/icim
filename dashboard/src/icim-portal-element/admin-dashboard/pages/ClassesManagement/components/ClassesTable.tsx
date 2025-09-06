@@ -27,7 +27,8 @@ const ClassesTable = ({ classes, onEdit, onDelete, getSubjectNames }: ClassesTab
           <TableCell>Class Name</TableCell>
           <TableCell>Subjects</TableCell>
           <TableCell>Level</TableCell>
-          <TableCell>Schedule</TableCell>
+          <TableCell>Day</TableCell>
+          <TableCell>Duration</TableCell>
           <TableCell>Price</TableCell>
           <TableCell>Status</TableCell>
           <TableCell align="center">Actions</TableCell>
@@ -44,12 +45,13 @@ const ClassesTable = ({ classes, onEdit, onDelete, getSubjectNames }: ClassesTab
             </TableCell>
             <TableCell>{getSubjectNames(cls.subjects)}</TableCell>
             <TableCell>{cls.level}</TableCell>
-            <TableCell>{cls.scheduleDay} {cls.startTime} - {cls.endTime}</TableCell>
+            <TableCell>{cls.scheduleDay.join(', ')}</TableCell>
+            <TableCell>{cls.startTime} - {cls.endTime}</TableCell>
             <TableCell>{cls.price}</TableCell>
             <TableCell>
               <Chip 
-                label={cls.status}
-                color={cls.status === 'active' ? 'success' : 'default'}
+                label={cls.statuse}
+                color={cls.statuse === 'active' ? 'success' : 'default'}
                 size="small"
               />
             </TableCell>

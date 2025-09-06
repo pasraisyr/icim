@@ -7,7 +7,6 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { Edit, Trash, Teacher as TeacherIcon, Eye } from 'iconsax-react';
 import { Teacher } from '../api';
 
@@ -34,13 +33,10 @@ const TeachersTable = ({ teachers, onEdit, onDelete }: TeachersTableProps) => (
         {teachers.map((teacher) => (
           <TableRow key={teacher.id}>
             <TableCell>
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <TeacherIcon size={20} />
-                <Typography variant="subtitle2">{teacher.name}</Typography>
-              </Stack>
+              {teacher.first_name} {teacher.last_name}
             </TableCell>
             <TableCell>{teacher.email}</TableCell>
-            <TableCell>{teacher.phone}</TableCell>
+            <TableCell>{teacher.phone_number}</TableCell>
             <TableCell>
               <Chip 
                 label={teacher.status}

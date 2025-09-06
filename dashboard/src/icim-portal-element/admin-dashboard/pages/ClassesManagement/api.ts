@@ -1,3 +1,4 @@
+import { C } from '@fullcalendar/core/internal-common';
 import type { Subject } from '../SubjectsManagement/api';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -7,23 +8,24 @@ export interface Class {
   name: string;
   subjects: Subject[];
   subject_ids?: number[];
-  level: 'Primary' | 'Secondary' | 'Tuition';
-  scheduleDate: string;  // Changed from scheduleDay
+  level: 'Tahap Rendah' | 'Tahap Menengah' | 'Kelas Tuisyen' | 'Aktiviti Kokurikulum';
+  scheduleDay: string[];
   startTime: string;
   endTime: string;
   price: number;
-  statuse: 'active' | 'inactive';  // Changed from status to match backend
+  statuse: 'active' | 'inactive';  
 }
 
 export interface ClassPayload {
+  id: number;
   name: string;
   subject_ids: number[];
-  level: 'Primary' | 'Secondary' | 'Tuition';
-  scheduleDate: string;  // Changed from scheduleDay
+  level: 'Tahap Rendah' | 'Tahap Menengah' | 'Kelas Tuisyen' | 'Aktiviti Kokurikulum';
+  scheduleDay: string[];
   startTime: string;
   endTime: string;
   price: number;
-  statuse: 'active' | 'inactive';  // Changed from status to match backend
+  statuse: 'active' | 'inactive';  
 }
 
 export async function fetchClasses(): Promise<Class[]> {
@@ -51,7 +53,7 @@ export async function fetchSubjects(): Promise<Subject[]> {
 }
 
 export async function createClass(payload: ClassPayload): Promise<Class> {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
   const res = await fetch(`${BASE_URL}/api/admin/classrooms/input/`, {
     method: 'POST',
     headers: { 
@@ -64,22 +66,22 @@ export async function createClass(payload: ClassPayload): Promise<Class> {
   return res.json();
 }
 
-export async function updateClass(id: number, payload: Partial<ClassPayload> & { id: number }): Promise<Class> {
-  const token = localStorage.getItem('authToken');
+export async function updateClass(payload :ClassPayload): Promise<Class> {
+  const token = localStorage.getItem('token');
   const res = await fetch(`${BASE_URL}/api/admin/classrooms/edit/`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({ ...payload, id }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to update class');
   return res.json();
 }
 
 export async function deleteClass(id: number): Promise<void> {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
   const res = await fetch(`${BASE_URL}/api/admin/classrooms/delete/`, { 
     method: 'DELETE',
     headers: {

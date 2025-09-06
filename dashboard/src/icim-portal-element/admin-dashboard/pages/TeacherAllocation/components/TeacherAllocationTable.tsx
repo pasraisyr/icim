@@ -5,24 +5,18 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Edit, Trash, Teacher as TeacherIcon } from 'iconsax-react';
 
-import { TeacherAllocationData, Teacher, Class, Subject } from '../api';
-
+import { TeacherAllocationData } from '../api';
 
 interface TeacherAllocationTableProps {
   allocations: TeacherAllocationData[];
   onEdit: (allocation: TeacherAllocationData) => void;
   onDelete: (id: number) => void;
-  getTeacherName: (teacher: Teacher) => string;
-  getClassName: (classObj: Class) => string;
-  getSubjectNames: (subjects: Subject[]) => string[];
 }
 
-
-const TeacherAllocationTable = ({ allocations, onEdit, onDelete, getTeacherName, getClassName, getSubjectNames }: TeacherAllocationTableProps) => (
+const TeacherAllocationTable = ({ allocations, onEdit, onDelete }: TeacherAllocationTableProps) => (
   <TableContainer>
     <Table>
       <TableHead>
@@ -39,11 +33,11 @@ const TeacherAllocationTable = ({ allocations, onEdit, onDelete, getTeacherName,
             <TableCell>
               <Stack direction="row" alignItems="center" spacing={2}>
                 <TeacherIcon size={20} />
-                {getTeacherName(allocation.teacher)}
+                {allocation.teacher_name}
               </Stack>
             </TableCell>
-            <TableCell>{getClassName(allocation.class_obj)}</TableCell>
-            <TableCell>{getSubjectNames(allocation.subjects).join(', ')}</TableCell>
+            <TableCell>{allocation.classroom}</TableCell>
+            <TableCell>{allocation.subjects.join(', ')}</TableCell>
             <TableCell align="center">
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
