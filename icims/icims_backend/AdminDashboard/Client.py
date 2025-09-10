@@ -1,10 +1,22 @@
-from icims_backend.models import Client, CustomUser
+from icims_backend.models import Client, CustomUser, Payments, StudentAllocation
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from datetime import datetime
 import json
 
+def get_payment_details(client):
+    """Helper function to get payment history for a client"""
+    payments = Payments.objects.filter(student_id=client).order_by('-payment_date')
+    return [{
+        "id": payment.id,
+        "amount": payment.amount,
+        "payment_reference": payment.payment_reference,
+        "payment_date": payment.payment_date,
+        "payment_method": payment.payment_method,
+        "receipt": payment.receipt.url if payment.receipt else None,
+        "updated_at": payment.updated_at
+    } for payment in payments]
 
 class ClientsView(APIView):
     permission_classes = [permissions.IsAdminUser]
@@ -15,7 +27,7 @@ class ClientsView(APIView):
         try:
             for client in clients:
                 user = CustomUser.objects.get(id=client.admin.id)
-                data.append({
+                client_data = {
                     "id": client.id,
                     "username": user.username,
                     "first_name": user.first_name,
@@ -31,20 +43,20 @@ class ClientsView(APIView):
                     "level": client.level,
                     "enrollmentDate": client.enrollmentDate,
                     "class_method": client.class_method,
-                    "payment_method": client.payment_method,
-                    "payment_receipt": client.payment_receipt.url if client.payment_receipt else None,
-                    "selected_payment": client.selected_payment,
-                    "total_payment": client.total_payment,
-                    "current_payments": client.current_payments,
+                    "total_fees": client.total_fees,
+                    "outstanding_fees": client.outstanding_fees,
+                    "payments": get_payment_details(client),
                     "updated_at": client.updated_at
-                })
+                }
+                data.append(client_data)
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class ClientView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+    
     def get(self, request, client_id):
-        
         if not client_id:
             return Response({"error": "Client ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -65,16 +77,88 @@ class ClientView(APIView):
                 "level": client.level,
                 "enrollmentDate": client.enrollmentDate,
                 "class_method": client.class_method,
-                "payment_method": client.payment_method,
-                "payment_receipt": client.payment_receipt.url if client.payment_receipt else None,
-                "selected_payment": client.selected_payment,
-                "total_payment": client.total_payment,
-                "current_payments": client.current_payments,
+                "total_fees": client.total_fees,
+                "outstanding_fees": client.outstanding_fees,
+                "payments": get_payment_details(client),
                 "updated_at": client.updated_at
             }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class ClientInput(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        inputs = request.data
+        try:
+            # Create CustomUser
+            user = CustomUser.objects.create_user(
+                username=inputs['studentIC'],
+                first_name=inputs['first_name'],
+                last_name=inputs['last_name'],
+                password=inputs.get('password', 'defaultpassword'),
+                user_type=4,  # Client type
+                is_staff=False,
+                is_superuser=False
+            )
+
+            # Calculate total and outstanding fees
+            total_fees = float(inputs.get('total_fees', 0))
+            initial_payment = float(inputs.get('initial_payment', 0))
+            outstanding_fees = total_fees - initial_payment
+
+            # Create Client
+            client = Client.objects.create(
+                admin=user,
+                phone_number=inputs.get('phone_number'),
+                status=inputs.get('status', 'active'),
+                address=inputs.get('address'),
+                studentIC=inputs.get('studentIC'),
+                guardianName=inputs.get('guardianName'),
+                guardianIC=inputs.get('guardianIC'),
+                guardianPhone=inputs.get('guardianPhone'),
+                level=inputs.get('level'),
+                class_method=inputs.get('class_method'),
+                total_fees=total_fees,
+                outstanding_fees=outstanding_fees,
+                enrollmentDate=datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date() if 'enrollmentDate' in inputs else None
+            )
+
+            # Create initial payment if provided
+            if initial_payment > 0:
+                payment = Payments.objects.create(
+                    student_id=client,
+                    amount=initial_payment,
+                    payment_reference=inputs.get('payment_reference'),
+                    payment_method=inputs.get('payment_method'),
+                    receipt=request.FILES.get('receipt')
+                )
+
+            return Response({
+                "id": client.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "phone_number": client.phone_number,
+                "address": client.address,
+                "status": client.status,
+                "studentIC": client.studentIC,
+                "guardianName": client.guardianName,
+                "guardianIC": client.guardianIC,
+                "guardianPhone": client.guardianPhone,
+                "level": client.level,
+                "enrollmentDate": client.enrollmentDate,
+                "class_method": client.class_method,
+                "total_fees": client.total_fees,
+                "outstanding_fees": client.outstanding_fees,
+                "payments": get_payment_details(client),
+                "updated_at": client.updated_at
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            if 'user' in locals():
+                user.delete()
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class ClientEdit(APIView):
@@ -83,9 +167,8 @@ class ClientEdit(APIView):
     def put(self, request):
         inputs = request.data
         try:
-            client_id = inputs['id']
-            obj = Client.objects.get(id=client_id)
-            user = CustomUser.objects.get(id=obj.admin.id)
+            client = Client.objects.get(id=inputs['id'])
+            user = CustomUser.objects.get(id=client.admin.id)
 
             # Update CustomUser fields
             if 'first_name' in inputs:
@@ -100,114 +183,79 @@ class ClientEdit(APIView):
             fields = [
                 'phone_number', 'address', 'status', 'studentIC', 
                 'guardianName', 'guardianIC', 'guardianPhone', 'level',
-                'class_method', 'payment_method', 'selected_payment',
-                'total_payment', 'current_payments'
+                'class_method', 'total_fees'
             ]
 
             for field in fields:
                 if field in inputs:
-                    setattr(obj, field, inputs[field])
+                    setattr(client, field, inputs[field])
 
             if 'enrollmentDate' in inputs:
-                obj.enrollmentDate = datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date()
+                client.enrollmentDate = datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date()
 
-            if 'payment_receipt' in request.FILES:
-                obj.payment_receipt = request.FILES['payment_receipt']
-
-            obj.save()
+            client.save()
 
             return Response({
-                "id": obj.id,
+                "id": client.id,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "email": user.email,
-                "phone_number": obj.phone_number,
-                "address": obj.address,
-                "status": obj.status,
-                "studentIC": obj.studentIC,
-                "guardianName": obj.guardianName,
-                "guardianIC": obj.guardianIC,
-                "guardianPhone": obj.guardianPhone,
-                "level": obj.level,
-                "enrollmentDate": obj.enrollmentDate,
-                "class_method": obj.class_method,
-                "payment_method": obj.payment_method,
-                "payment_receipt": obj.payment_receipt.url if obj.payment_receipt else None,
-                "selected_payment": obj.selected_payment,
-                "total_payment": obj.total_payment,
-                "current_payments": obj.current_payments,
-                "updated_at": obj.updated_at
+                "phone_number": client.phone_number,
+                "address": client.address,
+                "status": client.status,
+                "studentIC": client.studentIC,
+                "guardianName": client.guardianName,
+                "guardianIC": client.guardianIC,
+                "guardianPhone": client.guardianPhone,
+                "level": client.level,
+                "enrollmentDate": client.enrollmentDate,
+                "class_method": client.class_method,
+                "total_fees": client.total_fees,
+                "outstanding_fees": client.outstanding_fees,
+                "payments": get_payment_details(client),
+                "updated_at": client.updated_at
             }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-class ClientInput(APIView):
+class ClientPayment(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
         inputs = request.data
         try:
-            # Required CustomUser fields
-            user = CustomUser.objects.create_user(
-                username=inputs['studentIC'],  # Assuming username is the email
-                # email=inputs['email'],
-                first_name=inputs['first_name'],
-                last_name=inputs['last_name'],
-                password=inputs.get('password', 'defaultpassword'),
-                is_staff=False,
-                is_superuser=False
+            client = Client.objects.get(id=inputs['client_id'])
+            payment_amount = float(inputs['amount'])
+
+            # Create new payment
+            payment = Payments.objects.create(
+                student_id=client,
+                amount=payment_amount,
+                payment_reference=inputs.get('payment_reference'),
+                payment_method=inputs['payment_method'],
+                receipt=request.FILES.get('receipt')
             )
 
-            # Create Client with all possible fields
-            client_data = {
-                'admin': user,
-                'phone_number': inputs.get('phone_number'),
-                'status': inputs.get('status', 'active'),
-                'address': inputs.get('address'),
-                'studentIC': inputs.get('studentIC'),
-                'guardianName': inputs.get('guardianName'),
-                'guardianIC': inputs.get('guardianIC'),
-                'guardianPhone': inputs.get('guardianPhone'),
-                'level': inputs.get('level'),
-                'class_method': inputs.get('class_method'),
-                'payment_method': inputs.get('payment_method'),
-                'selected_payment': inputs.get('selected_payment'),
-                'total_payment': inputs.get('total_payment', 0),
-                'current_payments': inputs.get('current_payments')
-            }
-
-            if 'enrollmentDate' in inputs:
-                client_data['enrollmentDate'] = datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date()
-
-            if 'payment_receipt' in request.FILES:
-                client_data['payment_receipt'] = request.FILES['payment_receipt']
-
-            obj = Client.objects.create(**client_data)
+            # Update outstanding fees
+            client.outstanding_fees = float(client.outstanding_fees) - payment_amount
+            client.save()
 
             return Response({
-                "id": obj.id,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "email": user.email,
-                "phone_number": obj.phone_number,
-                "address": obj.address,
-                "status": obj.status,
-                "studentIC": obj.studentIC,
-                "guardianName": obj.guardianName,
-                "guardianIC": obj.guardianIC,
-                "guardianPhone": obj.guardianPhone,
-                "level": obj.level,
-                "enrollmentDate": obj.enrollmentDate,
-                "class_method": obj.class_method,
-                "payment_method": obj.payment_method,
-                "payment_receipt": obj.payment_receipt.url if obj.payment_receipt else None,
-                "selected_payment": obj.selected_payment,
-                "total_payment": obj.total_payment,
-                "current_payments": obj.current_payments,
-                "updated_at": obj.updated_at
+                "payment": {
+                    "id": payment.id,
+                    "amount": payment.amount,
+                    "payment_reference": payment.payment_reference,
+                    "payment_date": payment.payment_date,
+                    "payment_method": payment.payment_method,
+                    "receipt": payment.receipt.url if payment.receipt else None,
+                    "updated_at": payment.updated_at
+                },
+                "outstanding_fees": client.outstanding_fees
             }, status=status.HTTP_201_CREATED)
+        except Client.DoesNotExist:
+            return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -215,11 +263,24 @@ class ClientDelete(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def delete(self, request, client_id):
-      
         if not client_id:
             return Response({"error": "Client ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             client = Client.objects.get(id=client_id)
+            
+            # Check for associated records
+            payments = Payments.objects.filter(student_id=client)
+            allocations = StudentAllocation.objects.filter(student_id=client)
+            
+            # Return warning if client has payments or allocations
+            if payments.exists() or allocations.exists():
+                return Response({
+                    "warning": "Client has associated payments or class allocations",
+                    "payments_count": payments.count(),
+                    "allocations_count": allocations.count()
+                }, status=status.HTTP_409_CONFLICT)
+            
+            # Proceed with deletion
             user = CustomUser.objects.get(id=client.admin.id)
             client.delete()
             user.delete()
