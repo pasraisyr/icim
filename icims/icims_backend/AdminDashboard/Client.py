@@ -19,7 +19,7 @@ def get_payment_details(client):
     } for payment in payments]
 
 class ClientsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         clients = Client.objects.all()
@@ -111,7 +111,8 @@ class ClientInput(APIView):
 
             # Create Client
             client = Client.objects.create(
-                admin=user,
+                admin=user.id,
+                user_id=user.objects.get(id=user.id),
                 phone_number=inputs.get('phone_number'),
                 status=inputs.get('status', 'active'),
                 address=inputs.get('address'),

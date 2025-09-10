@@ -47,15 +47,22 @@ const StudentForm = ({ open, editMode, currentStudent,onChange, onClose, onSave 
         label="Guardian Phone"
         fullWidth
         margin="normal"
-        value={currentStudent.guardianPhone}
-        onChange={e => onChange('guardianPhone', e.target.value)}
+        value={currentStudent.phone_number}
+        onChange={e => onChange('phone_number', e.target.value)}
       />
       <TextField
-        label="Student Name"
+        label="Student's First Name"
         fullWidth
         margin="normal"
-        value={currentStudent.studentName}
-        onChange={e => onChange('studentName', e.target.value)}
+        value={currentStudent.first_name}
+        onChange={e => onChange('first_name', e.target.value)}
+      />
+      <TextField
+        label="Student's Last Name"
+        fullWidth
+        margin="normal"
+        value={currentStudent.last_name}
+        onChange={e => onChange('last_name', e.target.value)}
       />
       <TextField
         label="Student IC"
@@ -102,7 +109,7 @@ const StudentForm = ({ open, editMode, currentStudent,onChange, onClose, onSave 
     </DialogContent>
     <DialogActions>
       <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={onSave} variant="contained" disabled={!currentStudent.studentName}>
+      <Button onClick={onSave} variant="contained" disabled={!currentStudent.first_name || !currentStudent.last_name}>
         {editMode ? 'Update' : 'Add'} Student
       </Button>
     </DialogActions>
