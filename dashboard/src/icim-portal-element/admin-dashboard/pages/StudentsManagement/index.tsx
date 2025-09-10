@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
-import { fetchStudents, createStudent, updateStudent, deleteStudent, Student, StudentPayload } from './api';
+import { fetchStudents, createStudent, updateStudent, deleteStudent, Student, StudentPayload, fetchStudentById } from './api';
 import { StudentsTable, StudentForm, PageHeader, DeleteConfirmDialog } from './components';
 
 const initialStudent: StudentPayload = {
@@ -9,12 +9,20 @@ const initialStudent: StudentPayload = {
   guardianName: '',
   guardianIC: '',
   guardianPhone: '',
-  studentName: '',
+  phone_number: '',
+  first_name: '',
+  last_name: '',
   studentIC: '',
   address: '',
   level: '',
   status: 'active',
   enrollmentDate: '',
+  password: 'Icim@2025',
+  class_method: '',
+  total_fees: 0,
+  initial_payment: 0,
+  payment_reference: '',
+  payment_method: '',
 };
 
 import { fetchClasses } from './api';
@@ -51,22 +59,22 @@ export default function StudentsManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (student: Student) => {
+  const handleEdit = async (student: Student) => {
     setOpen(true);
     setEditMode(true);
     setEditingId(student.id);
-    setCurrentStudent({
-      id: student.id,
-      guardianName: student.guardianName,
-      guardianIC: student.guardianIC,
-      guardianPhone: student.guardianPhone,
-      studentName: student.studentName,
-      studentIC: student.studentIC,
-      address: student.address,
-      level: student.level,
-      status: student.status,
-      enrollmentDate: student.enrollmentDate,
-    });
+
+    try {
+      // Fetch full student details from backend
+      const fullStudent = await fetchStudentById(student.id);
+      setCurrentStudent({
+        ...fullStudent,
+        password: 'Icim@2025', // Always set default password for edit
+      });
+    } catch (error) {
+      setError('Failed to fetch student details');
+      setCurrentStudent(initialStudent);
+    }
   };
 
   const handleClose = () => {
@@ -135,7 +143,7 @@ export default function StudentsManagement() {
       />
       <DeleteConfirmDialog
         open={deleteDialogOpen}
-        studentName={studentToDelete?.studentName || ''}
+        studentName={studentToDelete?.first_name || ''}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />

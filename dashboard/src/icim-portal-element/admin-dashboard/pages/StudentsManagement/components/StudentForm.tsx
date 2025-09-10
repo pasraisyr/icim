@@ -47,8 +47,8 @@ const StudentForm = ({ open, editMode, currentStudent,onChange, onClose, onSave 
         label="Guardian Phone"
         fullWidth
         margin="normal"
-        value={currentStudent.phone_number}
-        onChange={e => onChange('phone_number', e.target.value)}
+        value={currentStudent.guardianPhone}
+        onChange={e => onChange('guardianPhone', e.target.value)}
       />
       <TextField
         label="Student's First Name"
@@ -84,6 +84,65 @@ const StudentForm = ({ open, editMode, currentStudent,onChange, onClose, onSave 
         margin="normal"
         value={currentStudent.level}
         onChange={e => onChange('level', e.target.value)}
+      />
+      <TextField
+        label="Class Method"
+        select
+        fullWidth
+        margin="normal"
+        value={currentStudent.class_method}
+        onChange={e => onChange('class_method', e.target.value)}
+        SelectProps={{ native: true }}
+      >
+        <option value="Physical Classes">Physical Classes</option>
+        <option value="Online Classes">Online Classes</option>
+        <option value="Hybrid Classes">Hybrid Classes</option>
+        <option value="Weekend Classes">Weekend Classes</option>
+      </TextField>
+
+      <TextField
+        label="Total Fees"
+        type="number"
+        fullWidth
+        margin="normal"
+        value={currentStudent.total_fees}
+        onChange={e => onChange('total_fees', Number(e.target.value))}
+      />
+      <TextField
+        label="Initial Payment"
+        type="number"
+        fullWidth
+        margin="normal"
+        value={currentStudent.initial_payment}
+        onChange={e => onChange('initial_payment', Number(e.target.value))}
+      />
+      <TextField
+        label="Payment Reference"
+        fullWidth
+        margin="normal"
+        value={currentStudent.payment_reference || ''}
+        onChange={e => onChange('payment_reference', e.target.value)}
+      />
+      <TextField
+        label="Payment Method"
+        select
+        fullWidth
+        margin="normal"
+        value={currentStudent.payment_method }
+        onChange={e => onChange('payment_method', e.target.value)}
+        SelectProps={{ native: true }}
+      >
+        <option value="Cash">Cash</option>
+        <option value="Online Banking">Online Banking</option>
+      </TextField>
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        margin="normal"
+        value={currentStudent.password || "Icim@2025"}
+        onChange={e => onChange('password', e.target.value)}
+        style={{ display: 'none' }} // Hide the field from UI
       />
       <TextField
         label="Status"
