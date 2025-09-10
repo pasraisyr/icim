@@ -37,7 +37,7 @@ const StudentsTable = ({ students, onEdit, onDelete }: StudentsTableProps) => (
             <TableCell>
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Profile2User size={20} />
-                <Typography variant="subtitle2">{student.studentName}</Typography>
+                {student.first_name} {student.last_name}
               </Stack>
             </TableCell>
             <TableCell>{student.guardianName}</TableCell>

@@ -1,15 +1,12 @@
-// Do not import Class here, just use fetchClasses return type inline
-
-
-// API utility for StudentsManagement
 const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface Student {
   id: number;
   guardianName: string;
   guardianIC: string;
-  guardianPhone: string;
-  studentName: string;
+  phone_number: string;
+  first_name: string;
+  last_name: string;
   studentIC: string;
   address: string;
   level: string;
@@ -22,8 +19,9 @@ export interface StudentPayload {
   id: number;
   guardianName: string;
   guardianIC: string;
-  guardianPhone: string;
-  studentName: string;
+  phone_number: string;
+  first_name: string;
+  last_name: string;
   studentIC: string;
   address: string;
   level: string;
