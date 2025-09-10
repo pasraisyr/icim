@@ -110,23 +110,20 @@ class ClientInput(APIView):
             outstanding_fees = total_fees - initial_payment
 
             # Create Client
-            client = Client.objects.create(
-                admin=user.id,
-                user_id=user.objects.get(id=user.id),
-                phone_number=inputs.get('phone_number'),
-                status=inputs.get('status', 'active'),
-                address=inputs.get('address'),
-                studentIC=inputs.get('studentIC'),
-                guardianName=inputs.get('guardianName'),
-                guardianIC=inputs.get('guardianIC'),
-                guardianPhone=inputs.get('guardianPhone'),
-                level=inputs.get('level'),
-                class_method=inputs.get('class_method'),
-                total_fees=total_fees,
-                outstanding_fees=outstanding_fees,
-                enrollmentDate=datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date() if 'enrollmentDate' in inputs else None
-            )
-
+            client = Client.objects.get(admin=user)
+            client.phone_number=inputs.get('phone_number'),
+            client.status=inputs.get('status', 'active'),
+            client.address=inputs.get('address'),
+            client.studentIC=inputs.get('studentIC'),
+            client.guardianName=inputs.get('guardianName'),
+            client.guardianIC=inputs.get('guardianIC'),
+            client.guardianPhone=inputs.get('guardianPhone'),
+            client.level=inputs.get('level'),
+            client.class_method=inputs.get('class_method'),
+            client.total_fees=total_fees,
+            client.outstanding_fees=outstanding_fees,
+            client.enrollmentDate=datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date() if 'enrollmentDate' in inputs else None
+            client.save()
             # Create initial payment if provided
             if initial_payment > 0:
                 payment = Payments.objects.create(
