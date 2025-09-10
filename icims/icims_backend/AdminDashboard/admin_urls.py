@@ -1,7 +1,7 @@
 from django.urls import path
 from .About import AboutDelete, AboutView, AboutEdit, AboutInput
 from .Subject import SubjectView, SubjectInput, SubjectEdit, SubjectDelete
-from .Client import ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView
+from .Client import ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView, ClientPayment
 from .Classrooms import ClassroomsView, ClassroomsInput, ClassroomsEdit, ClassroomsDelete, ClassroomView
 from .Staffs import StaffsView, StaffInput, StaffEdit, StaffDelete, StaffView
 from .TeacherAllocation import TeacherAllocationView, TeacherAllocationInput, TeacherAllocationEdit, TeacherAllocationDelete, TeacherAllocationsView
@@ -27,6 +27,7 @@ urlpatterns = [
     path('client/edit/', ClientEdit.as_view(), name='client_edit'),
     path('client/delete/<int:client_id>/', ClientDelete.as_view(), name='client_delete'),
     path('clients/', ClientsView.as_view(), name='clients'),
+    path('client/payment/', ClientPayment.as_view(), name='client_payment'),
 
     # Classrooms
     path('classrooms/', ClassroomsView.as_view(), name='classrooms'),
