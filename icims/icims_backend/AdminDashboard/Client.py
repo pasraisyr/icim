@@ -108,9 +108,10 @@ class ClientInput(APIView):
             total_fees = float(inputs.get('total_fees', 0))
             initial_payment = float(inputs.get('initial_payment', 0))
             outstanding_fees = total_fees - initial_payment
-
+            registerar = "admin"
             # Create Client
             client = Client.objects.get(admin=user)
+            client.registerar = registerar
             client.phone_number = inputs.get('phone_number')
             client.status = inputs.get('status', 'active')
             client.address = inputs.get('address')
@@ -124,15 +125,30 @@ class ClientInput(APIView):
             client.outstanding_fees = outstanding_fees
             client.enrollmentDate = datetime.strptime(inputs['enrollmentDate'], '%Y-%m-%d').date() if 'enrollmentDate' in inputs else None
             client.save()
-            # Create initial payment if provided
-            if initial_payment > 0:
-                payment = Payments.objects.create(
-                    student_id=client,
-                    amount=initial_payment,
-                    payment_reference=inputs.get('payment_reference'),
-                    payment_method=inputs.get('payment_method'),
-                    receipt=request.FILES.get('receipt')
-                )
+            # Create initial payment(s) if provided
+            # This can be one or it might be multiple payments
+            payments_data = inputs.get('payments', [])
+            
+            # Handle legacy single payment format for backward compatibility
+            if initial_payment > 0 and not payments_data:
+                payments_data = [{
+                    'amount': initial_payment,
+                    'payment_reference': inputs.get('payment_reference'),
+                    'payment_method': inputs.get('payment_method'),
+                    'receipt': request.FILES.get('receipt')
+                }]
+            
+            # Create multiple payments
+            for payment_data in payments_data:
+                payment_amount = float(payment_data.get('amount', 0))
+                if payment_amount > 0:
+                    payment = Payments.objects.create(
+                        student_id=client,
+                        amount=payment_amount,
+                        payment_reference=payment_data.get('payment_reference'),
+                        payment_method=payment_data.get('payment_method'),
+                        receipt=payment_data.get('receipt')
+                    )
 
             return Response({
                 "id": client.id,
