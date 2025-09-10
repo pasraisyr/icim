@@ -50,11 +50,8 @@ class Client(models.Model):
     level = models.CharField(max_length=100, blank=True, null=True)
     enrollmentDate = models.DateField(blank=True, null=True)
     class_method = models.CharField(max_length=100, blank=True, null=True)
-    payment_method = models.CharField(max_length=100, blank=True, null=True)
-    payment_receipt = models.FileField(upload_to='payment_receipts/', blank=True, null=True)
-    selected_payment = models.JSONField(blank=True, null=True)
-    total_payment = models.FloatField(default=0)
-    current_payments = models.JSONField(blank=True, null=True)
+    total_fees = models.FloatField(blank=True, null=True)
+    outstanding_fees = models.FloatField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -90,6 +87,27 @@ class Classrooms(models.Model):
 
     def __str__(self):
         return self.name
+    
+class OtherPayments(models.Model):
+    name = models.CharField(max_length=255)
+    price = models.FloatField()
+    status = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+class Payments(models.Model):
+    student_id = models.ForeignKey(Client, on_delete=models.CASCADE)
+    amount = models.FloatField()
+    payment_reference = models.CharField(max_length=255, blank=True, null=True)
+    payment_date = models.DateField(auto_now_add=True)
+    payment_method = models.CharField(max_length=100)
+    receipt = models.FileField(upload_to='payment_receipts/', blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payment: {self.student_id} - {self.amount} on {self.payment_date}"
 
 class TeacherAllocation(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
