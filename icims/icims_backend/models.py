@@ -52,6 +52,7 @@ class Client(models.Model):
     class_method = models.CharField(max_length=100, blank=True, null=True)
     total_fees = models.FloatField(blank=True, null=True)
     outstanding_fees = models.FloatField(blank=True, null=True)
+    registerar = models.CharField(max_length=100, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
