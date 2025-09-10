@@ -1,6 +1,5 @@
 // Do not import Class here, just use fetchClasses return type inline
 
-import { co } from "@fullcalendar/core/internal-common";
 
 // API utility for StudentsManagement
 const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
@@ -33,14 +32,14 @@ export interface StudentPayload {
 }
 
 export async function fetchClasses(): Promise<{ id: number; name: string }[]> {
-  const res = await fetch(`${BASE_URL}/admin/classes/`);
+  const res = await fetch(`${BASE_URL}/admin/classrooms/`);
   if (!res.ok) throw new Error('Failed to fetch classes');
   return res.json();
 }
 
 // Replace with real API calls
 export async function fetchStudents(): Promise<Student[]> {
-  const res = await fetch(`${BASE_URL}/admin/students/`);
+  const res = await fetch(`${BASE_URL}/admin/clients/`);
   if (!res.ok) throw new Error('Failed to fetch students');
   return res.json();
 }

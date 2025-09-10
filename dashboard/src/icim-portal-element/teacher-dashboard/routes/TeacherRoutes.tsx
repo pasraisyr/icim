@@ -17,9 +17,9 @@ const TeacherAttendance = Loadable(lazy(() => import('../pages/teacher-attendanc
 const TeacherRoutes = {
   path: '/teacher',
   element: (
-    <ProtectedRoute requiredRole='teacher'>
+    // <ProtectedRoute requiredRole='teacher'>
       <TeacherLayout />
-    </ProtectedRoute>
+    // </ProtectedRoute>
   ),
   children: [
     {
