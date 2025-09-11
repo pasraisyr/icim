@@ -41,12 +41,12 @@ class ClientAddFrontEnd(APIView):
             total_fees = float(inputs.get('total_fees', 0))
             initial_payment = float(inputs.get('initial_payment', 0))
             outstanding_fees = total_fees - initial_payment
-            registerar = "admin"
+            registerar = "self-registered"
             # Create Client
             client = Client.objects.get(admin=user)
             client.registerar = registerar
             client.phone_number = inputs.get('phone_number')
-            client.status = inputs.get('status', 'active')
+            client.status = inputs.get('status', 'inactive')
             client.address = inputs.get('address')
             client.studentIC = inputs.get('studentIC')
             client.guardianName = inputs.get('guardianName')
