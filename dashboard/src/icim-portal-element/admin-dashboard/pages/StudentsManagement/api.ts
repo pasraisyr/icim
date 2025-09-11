@@ -1,6 +1,7 @@
 const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 export interface Student {
+  guardianPhone: string;
   id: number;
   guardianName: string;
   guardianIC: string;
@@ -16,7 +17,7 @@ export interface Student {
 
 
 export interface StudentPayload {
-  id: number;
+  id?: number;
   guardianName: string;
   guardianIC: string;
   phone_number: string;
@@ -27,6 +28,13 @@ export interface StudentPayload {
   level: string;
   status: 'active' | 'inactive';
   enrollmentDate: string;
+  password: string;
+  guardianPhone: string;
+  class_method: string;
+  total_fees: number;
+  initial_payment: number;
+  payment_reference?: string;
+  payment_method?: string;
 }
 
 export async function fetchClasses(): Promise<{ id: number; name: string }[]> {
@@ -81,4 +89,17 @@ export async function deleteStudent(id: number): Promise<void> {
     body: JSON.stringify({ id }),
   });
   if (!res.ok) throw new Error('Failed to delete student');
+}
+
+export async function fetchStudentById(id: number): Promise<StudentPayload> {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/admin/client/${id}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error('Failed to fetch student');
+  return res.json();
 }

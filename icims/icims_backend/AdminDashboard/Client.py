@@ -273,6 +273,47 @@ class ClientPayment(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class ClientPaymentView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, client_id=None):
+        try:
+            if client_id:
+                client = Client.objects.get(id=client_id)
+                payments = Payments.objects.filter(student_id=client).order_by('-payment_date')
+                payment_list = [{
+                    "id": payment.id,
+                    "amount": payment.amount,
+                    "payment_reference": payment.payment_reference,
+                    "payment_date": payment.payment_date,
+                    "payment_method": payment.payment_method,
+                    "receipt": payment.receipt.url if payment.receipt else None,
+                    "updated_at": payment.updated_at
+                } for payment in payments]
+                return Response({
+                    "client_id": client.id,
+                    "studentIC": client.studentIC,
+                    "payments": payment_list,
+                    "outstanding_fees": client.outstanding_fees
+                }, status=status.HTTP_200_OK)
+            else:
+                payments = Payments.objects.all().order_by('-payment_date')
+                payment_list = [{
+                    "id": payment.id,
+                    "student_id": payment.student_id.id if payment.student_id else None,
+                    "amount": payment.amount,
+                    "payment_reference": payment.payment_reference,
+                    "payment_date": payment.payment_date,
+                    "payment_method": payment.payment_method,
+                    "receipt": payment.receipt.url if payment.receipt else None,
+                    "updated_at": payment.updated_at
+                } for payment in payments]
+                return Response({"payments": payment_list}, status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class ClientDelete(APIView):
     permission_classes = [permissions.IsAdminUser]
 
