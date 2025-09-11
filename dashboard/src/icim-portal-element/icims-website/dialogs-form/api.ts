@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 export const fetchClasses = async () => {
-  const res = await axios.get('http://localhost:8000/api/Academic/classes/');
+  const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/admin/classrooms/`);
   return res.data || [];
 };
 
 export const submitRegistration = async (form: FormData) => {
   return axios.post(
-    'http://localhost:8000/api/Frontend/self-registration/',
+    `${import.meta.env.VITE_APP_API_URL}/admin/client/input/`,
     form,
     { headers: { 'Content-Type': 'multipart/form-data' } }
   );
