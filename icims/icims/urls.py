@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from icims_backend.LoginApi import UserLoginAPI, ObtainTokenView
 from icims_backend.AdminDashboard import admin_urls
+from icims_backend.Frontend import frontend_urls
 
 
 urlpatterns = [
@@ -11,6 +12,7 @@ urlpatterns = [
     path('api/login/', UserLoginAPI.as_view(), name='user_login'),
     path('api/obtain-token/', ObtainTokenView.as_view(), name='obtain_token'),
     path('api/admin/', include(admin_urls)),
+    path('api/frontend/', include(frontend_urls)),
 ]
 
 # Serve static and media files during development
