@@ -9,11 +9,12 @@ export interface IcimsWebsiteLayoutProps {
 export interface GuardianDetails {
   fullName: string;
   ic: string;
-  phoneNumber: string;
+  phone_number: string;
 }
 
 export interface StudentDetails {
-  fullName: string;
+  first_name: string;
+  last_name: string;
   ic: string;
   address: string;
 }
@@ -56,10 +57,11 @@ export const initialFormData: StudentRegistration = {
   guardian: {
     fullName: '',
     ic: '',
-    phoneNumber: ''
+    phone_number: ''
   },
   student: {
-    fullName: '',
+    first_name: '',
+    last_name: '',
     ic: '',
     address: ''
   },

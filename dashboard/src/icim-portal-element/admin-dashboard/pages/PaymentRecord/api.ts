@@ -29,7 +29,7 @@ export interface PaymentRecordPayload {
 
 
 export async function fetchPaymentRecords(): Promise<PaymentRecordData[]> {
-  const res = await fetch(`${BASE_URL}/admin/payments/`);
+  const res = await fetch(`${BASE_URL}/admin/clientpayments/`);
   if (!res.ok) throw new Error('Failed to fetch payment records');
   return res.json();
 }

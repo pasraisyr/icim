@@ -87,7 +87,7 @@ const AvailableStudentsTable = ({
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={2}>
                     <Profile2User size={20} />
-                    {student.studentName}
+                    {student.first_name} {student.last_name}
                   </Stack>
                 </TableCell>
                 <TableCell>{student.level}</TableCell>

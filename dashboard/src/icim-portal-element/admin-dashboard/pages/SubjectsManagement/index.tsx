@@ -8,7 +8,6 @@ const initialSubject: SubjectPayload = {
   id: 0, 
   name: '', 
   status: 'active' 
-  
 };
 
 export default function SubjectsManagement() {

@@ -7,7 +7,7 @@ export const fetchClasses = async () => {
 
 export const submitRegistration = async (form: FormData) => {
   return axios.post(
-    `${import.meta.env.VITE_APP_API_URL}/admin/client/input/`,
+    `${import.meta.env.VITE_APP_API_URL}/frontend/client/input/`,
     form,
     { headers: { 'Content-Type': 'multipart/form-data' } }
   );

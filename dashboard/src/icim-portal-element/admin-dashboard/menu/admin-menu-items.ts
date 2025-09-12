@@ -219,6 +219,14 @@ const adminMenuItems: { items: NavItemType[] } = {
           url: '/admin-icims/website-management',
           icon: icons.global,
           breadcrumbs: true
+        },
+        {
+          id: 'other-payments',
+          title: 'Other Payments',
+          type: 'item',
+          url: '/admin-icims/other-payments',
+          icon: icons.dollarCircle,
+          breadcrumbs: true
         }
       ]
     }

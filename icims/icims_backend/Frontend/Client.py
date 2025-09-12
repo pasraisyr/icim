@@ -19,7 +19,7 @@ def get_payment_details(client):
         "updated_at": payment.updated_at
     } for payment in payments]
 
-@csrf_exempt
+# @csrf_exempt
 class ClientAddFrontEnd(APIView):
     permission_classes = [permissions.AllowAny]
 
