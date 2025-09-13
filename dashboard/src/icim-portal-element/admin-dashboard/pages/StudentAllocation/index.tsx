@@ -59,13 +59,16 @@ const StudentAllocation = () => {
 
   // Load allocations when class is selected
   useEffect(() => {
-    if (selectedClass && allocations.length > 0) {
-      // Filter allocations for the selected class
-      const classAllocations = allocations.filter(allocation => allocation.class_obj.id === selectedClass.id);
-      
-      // Filter available students (not already allocated to this class)
+    console.log('selectedClass:', selectedClass);
+    console.log('students:', students);
+    console.log('allocations:', allocations);
+
+    if (selectedClass) {
+      const classAllocations = allocations.filter(allocation => allocation.classroom_id.id === selectedClass.id);
       const allocatedStudentIds = classAllocations.map((a: StudentAllocation) => a.student.id);
       const available = students.filter(student => !allocatedStudentIds.includes(student.id));
+      console.log('Allocated student IDs:', allocatedStudentIds);
+      console.log('Available students:', available);
       setAvailableStudents(available);
     } else {
       setAvailableStudents([]);
@@ -80,7 +83,7 @@ const StudentAllocation = () => {
         selectedStudents.map(studentId => 
           allocateStudent({
             student_id: studentId,
-            class_obj_id: selectedClass.id
+            classroom_id: selectedClass.id
           })
         )
       );
@@ -193,7 +196,7 @@ const StudentAllocation = () => {
             <Stack spacing={2}>
               <Typography variant="h6">Allocated Students</Typography>
               <AllocatedStudentsTable
-                allocations={allocations.filter(allocation => allocation.class_obj.id === selectedClass.id)}
+                allocations={allocations.filter(allocation => allocation.classroom_id.id === selectedClass.id)}
                 selectedAllocations={selectedAllocations}
                 onAllocationSelect={handleAllocationSelect}
                 onSelectAll={handleAllocationSelectAll}

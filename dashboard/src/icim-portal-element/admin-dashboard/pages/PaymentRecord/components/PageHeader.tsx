@@ -11,10 +11,10 @@ const PageHeader = ({ onAdd }: PageHeaderProps) => (
   <Stack direction="row" justifyContent="space-between" alignItems="center">
     <Stack spacing={1}>
       <Typography variant="h4" color="primary">
-        Payment Record
+       Monthly Payment Record
       </Typography>
       <Typography variant="body2" color="textSecondary">
-        Manage payment records for students
+        Record of monthly payments made by users.
       </Typography>
     </Stack>
     <Button 

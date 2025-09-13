@@ -140,10 +140,18 @@ const adminMenuItems: { items: NavItemType[] } = {
         //   breadcrumbs: true
         // },
         {
-          id: 'student-payment-view',
-          title: 'Student Payment Record',
+          id: 'monthly-payment-record',
+          title: 'Monthly Payment Record',
           type: 'item',
-          url: '/admin-icims/payment-record',
+          url: '/admin-icims/monthly-payment-record',
+          icon: icons.dollarCircle,
+          breadcrumbs: true
+        },
+        {
+          id: 'first-payment-record',
+          title: 'First Payment Record',
+          type: 'item',
+          url: '/admin-icims/first-payment-record',
           icon: icons.dollarCircle,
           breadcrumbs: true
         }

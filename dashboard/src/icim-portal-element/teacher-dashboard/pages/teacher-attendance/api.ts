@@ -2,10 +2,10 @@
 import axios from 'axios';
 
 // Base API configuration
-const API_BASE_URL = 'http://localhost:8000/api';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -98,7 +98,7 @@ export const attendanceAPI = {
   // Get all teachers (for teacher selection)
   getAllTeachers: async (): Promise<any[]> => {
     try {
-      const response = await api.get('/Academic/teachers/');
+      const response = await api.get('/admin/staffs/');
       return response.data;
     } catch (error) {
       console.error('Error fetching teachers:', error);

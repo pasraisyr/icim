@@ -37,7 +37,7 @@ const OtherPaymentTable = ({ otherPayments, onEdit, onDelete }: OtherPaymentTabl
                 <Typography variant="subtitle2">{otherPayment.name}</Typography>
               </Stack>
             </TableCell>
-            <TableCell>RM{otherPayment.price.toFixed(2)}</TableCell>
+            <TableCell>RM{Number(otherPayment.price).toFixed(2)}</TableCell>
             <TableCell>
               <Chip 
                 label={otherPayment.status ? 'Active' : 'Inactive'}
