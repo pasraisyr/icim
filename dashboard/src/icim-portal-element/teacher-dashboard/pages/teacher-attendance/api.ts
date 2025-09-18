@@ -1,4 +1,3 @@
-// ...existing code...
 import axios from 'axios';
 
 // Base API configuration
@@ -11,131 +10,85 @@ const api = axios.create({
   },
 });
 
-// Types for API responses
-export interface AttendanceSession {
-  id: number;
-  teacher: number;
-  class_obj: number;
-  date: string;
-  start_time: string;
-  end_time?: string;
-  status: 'active' | 'completed' | 'cancelled';
-  notes?: string;
-  created_at: string;
-}
+// Add this to your api.ts
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // or wherever you store your token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
+// Types for API responses
 export interface AttendanceRecord {
   id: number;
-  session: number;
-  student: number;
-  status: 'present' | 'absent' | 'late' | 'excused';
-  time_marked?: string;
-  notes?: string;
-  marked_by: number;
-}
-
-export interface StudentForAttendance {
-  id: number;
-  name: string;
-  ic: string;
-  guardian_name: string;
-  guardian_phone: string;
+  student_id: number;
+  student_name?: string;
+  teacher_id?: number;
+  teacher_name?: string;
+  classroom_id: number;
+  classroom_name?: string;
   status: string;
-  enrollment_date: string;
-  allocated_date: string;
-  address: string;
+  date: string; // <-- Add this line
+  updated_at: string;
 }
 
-export interface ClassForAttendance {
+export interface AttendanceInputPayload {
+  student_id: number;
+  classroom_id: number;
+  status: string;
+  date: string; // <-- Add this line
+}
+
+export interface AttendanceEditPayload {
   id: number;
-  name: string;
-  room: string;
-  schedule: string;
+  status?: string;
+  classroom_id?: number;
+  date?: string; // <-- Add this line
 }
-
-
 
 // API functions
 export const attendanceAPI = {
-  // Submit attendance for a class (used by AttendanceForm)
-  submitAttendance: async (payload: {
-    teacher_id: number;
-    class_id: number;
-    date: string;
-    attendance: { student_id: number; status: string }[];
-  }): Promise<any> => {
-    try {
-      const response = await api.post('/Teacher/attendance/submit/', payload);
-      return response.data;
-    } catch (error: any) {
-      throw error;
-    }
+  // Get all attendance records for the logged-in teacher
+  getMyAttendance: async (): Promise<AttendanceRecord[]> => {
+    const response = await api.get('/teacher/attendance/');
+    return response.data;
+  },
+
+  // Get all attendance records (admin only)
+  getAllAttendance: async (): Promise<AttendanceRecord[]> => {
+    const response = await api.get('/teacher/attendance/all/');
+    return response.data;
+  },
+
+  // Input (create) a new attendance record
+  inputAttendance: async (payload: AttendanceInputPayload): Promise<AttendanceRecord> => {
+    const response = await api.post('/teacher/attendance/input/', payload);
+    return response.data;
+  },
+
+  // Edit an attendance record
+  editAttendance: async (payload: AttendanceEditPayload): Promise<AttendanceRecord> => {
+    const response = await api.put('/teacher/attendance/edit/', payload);
+    return response.data;
+  },
+
+  // Delete an attendance record
+  deleteAttendance: async (attendanceId: number): Promise<{ message: string }> => {
+    const response = await api.delete(`/teacher/attendance/delete/${attendanceId}/`);
+    return response.data;
   },
 
 
-  // Get teacher classes (for class selection)
-  getTeacherClasses: async (teacherId: number): Promise<any[]> => {
-    try {
-      const response = await api.get(`/Teacher/${teacherId}/classes/`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teacher classes:', error);
-      throw error;
-    }
+  // Get all classes for the teacher
+  getTeacherClasses: async (): Promise<{id: number, name: string, level: string}[]> => {
+    const response = await api.get('/teacher/classes/');
+    return response.data;
   },
 
-  // Get students for a teacher and class (verifies teacher allocation)
-  getTeacherClassStudents: async (teacherId: number, classId: number): Promise<StudentForAttendance[]> => {
-    try {
-      const response = await api.get(`/Teacher/${teacherId}/class/${classId}/students/`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching students for teacher and class:', error);
-      throw error;
-    }
-  },
-
-  // Get all teachers (for teacher selection)
-  getAllTeachers: async (): Promise<any[]> => {
-    try {
-      const response = await api.get('/admin/staffs/');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teachers:', error);
-      throw error;
-    }
-  },
-};
-
-// Simple API for attendance form
-export const simpleAttendanceAPI = {
-  getTeachers: async () => {
-    return await attendanceAPI.getAllTeachers();
-  },
-  getTeacherClasses: async (teacherId: string) => {
-    return await attendanceAPI.getTeacherClasses(Number(teacherId));
-  },
-  getClassStudents: async (teacherId: string, classId: string) => {
-    const res = await attendanceAPI.getTeacherClassStudents(Number(teacherId), Number(classId));
-    if (Array.isArray(res)) {
-      return res;
-    } else if (res && typeof res === 'object' && 'students' in res) {
-      return (res as any).students || [];
-    }
-    return [];
-  },
-  submitAttendance: async (payload: {
-    teacher_id: number;
-    class_id: number;
-    date: string;
-    attendance: { student_id: number; status: string }[];
-  }) => {
-    return await attendanceAPI.submitAttendance(payload);
-  },
-  getSubmittedAttendance: async (teacherId?: string | number) => {
-    // Fetch attendance records for a specific teacher
-    if (!teacherId) return [];
-    const response = await api.get(`/Teacher/${teacherId}/attendance/list/`);
+  // Get all students in a selected class
+  getStudentsInClass: async (classroomId: number): Promise<{id: number, studentName: string, studentIC: string, email: string}[]> => {
+    const response = await api.get(`/teacher/class/${classroomId}/students/`);
     return response.data;
   },
 };

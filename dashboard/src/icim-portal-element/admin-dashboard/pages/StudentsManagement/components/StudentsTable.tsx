@@ -7,7 +7,6 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { Edit, Trash, Profile2User, Eye } from 'iconsax-react';
 import { Student } from '../api';
 
@@ -15,15 +14,19 @@ interface StudentsTableProps {
   students: Student[];
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
+  getClassroomName: (student_id: number) => string; // Add this line
 }
 
-const StudentsTable = ({ students, onEdit, onDelete }: StudentsTableProps) => (
+const StudentsTable = ({ students, onEdit, onDelete, getClassroomName }: StudentsTableProps) => (
   <TableContainer>
     <Table>
       <TableHead>
         <TableRow>
           <TableCell>Student Name</TableCell>
+          <TableCell>Student IC</TableCell>
+          <TableCell>Class</TableCell>
           <TableCell>Guardian Name</TableCell>
+          <TableCell>Phone</TableCell>
           {/* <TableCell>Class</TableCell> */}
           <TableCell>Level</TableCell>
           <TableCell>Status</TableCell>
@@ -40,7 +43,10 @@ const StudentsTable = ({ students, onEdit, onDelete }: StudentsTableProps) => (
                 {student.first_name} {student.last_name}
               </Stack>
             </TableCell>
+            <TableCell>{student.studentIC}</TableCell>
+            <TableCell>{getClassroomName(student.id) || "Not Allocate Yet"}</TableCell>
             <TableCell>{student.guardianName}</TableCell>
+            <TableCell>{student.phone_number}</TableCell>
             {/* <TableCell>
               {typeof student.studentClass === 'object' && student.studentClass !== null && 'name' in student.studentClass
                 ? (student.studentClass as { name: string }).name

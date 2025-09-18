@@ -16,13 +16,12 @@ interface StudentsWithClassTableProps {
   classes: Class[];
 }
 
-
 const StudentClassAllocationTable = ({ allocations, classes }: StudentsWithClassTableProps) => {
   const [selectedClassId, setSelectedClassId] = useState<string>('all');
 
   const filteredAllocations = selectedClassId === 'all'
     ? allocations
-    : allocations.filter(a => String(a.class_obj.id) === selectedClassId);
+    : allocations.filter(a => String(a.classroom_id) === selectedClassId);
 
   return (
     <Box>
@@ -47,24 +46,18 @@ const StudentClassAllocationTable = ({ allocations, classes }: StudentsWithClass
             <TableHead>
               <TableRow>
                 <TableCell>Student Name</TableCell>
-                <TableCell>Guardian Name</TableCell>
+                <TableCell>Student Email</TableCell>
                 <TableCell>Class Name</TableCell>
-                <TableCell>Subjects</TableCell>
-                <TableCell>Schedule</TableCell>
-                <TableCell>Price</TableCell>
                 <TableCell>Allocated Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredAllocations.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.student.studentName}</TableCell>
-                  <TableCell>{row.student.guardianName}</TableCell>
-                  <TableCell>{row.class_obj.name}</TableCell>
-                  <TableCell>{row.class_obj.subjects.map((sub) => sub.name).join(', ')}</TableCell>
-                  <TableCell>{row.class_obj.scheduleDay} {row.class_obj.startTime} - {row.class_obj.endTime}</TableCell>
-                  <TableCell>{row.class_obj.price}</TableCell>
-                  <TableCell>{new Date(row.allocatedDate).toLocaleDateString()}</TableCell>
+              {filteredAllocations.map((allocation) => (
+                <TableRow key={allocation.id}>
+                  <TableCell>{allocation.student_name}</TableCell>
+                  <TableCell>{allocation.student_email}</TableCell>
+                  <TableCell>{allocation.classroom_name}</TableCell>
+                  <TableCell>{new Date(allocation.updated_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -75,4 +68,4 @@ const StudentClassAllocationTable = ({ allocations, classes }: StudentsWithClass
   );
 };
 
-  export default StudentClassAllocationTable;
+export default StudentClassAllocationTable;

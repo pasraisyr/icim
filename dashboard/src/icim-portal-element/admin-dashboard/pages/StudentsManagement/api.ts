@@ -80,13 +80,11 @@ export async function updateStudent(editingId: number, payload: StudentPayload):
 
 export async function deleteStudent(id: number): Promise<void> {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${BASE_URL}/admin/client/delete/`, {
+  const res = await fetch(`${BASE_URL}/admin/client/delete/${id}/`, {
     method: 'DELETE',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({ id }),
+    }
   });
   if (!res.ok) throw new Error('Failed to delete student');
 }

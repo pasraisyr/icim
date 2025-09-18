@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchClasses, submitRegistration } from './api';
+import { fetchClasses, fetchOtherPayments, submitRegistration } from './api';
 import {
   Dialog,
   DialogTitle,
@@ -72,13 +72,14 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
 
   // fetched classes
   const [classes, setClasses] = useState<{ id: number; name: string; price: number; description: string; level?: string }[]>([]);
+  const [otherPayments, setOtherPayments] = useState<{ key: string; label: string; amount: number }[]>([]);
 
   // Map frontend level value to backend class level
   const levelMap: Record<string, string> = {
-  'Tahap Rendah': 'Tahap Rendah',
-  'Tahap Menengah': 'Tahap Menengah',
-  'Kelas Tuisyen': 'Kelas Tuisyen',
-  'Aktiviti Kokurikulum': 'Aktiviti Kokurikulum'
+    'Tahap Rendah': 'Tahap Rendah',
+    'Tahap Menengah': 'Tahap Menengah',
+    'Kelas Tuisyen': 'Kelas Tuisyen',
+    'Aktiviti Kokurikulum': 'Aktiviti Kokurikulum'
   };
 
   const theme = useTheme();
@@ -89,6 +90,21 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
       fetchClasses()
         .then(setClasses)
         .catch(() => setClasses([]));
+      // Fetch dynamic other_payments
+      fetchOtherPayments()
+        .then((data) => {
+          setOtherPayments(
+            Array.isArray(data)
+              ? data.map((item: any) => ({
+                key: item.id,              // gunakan id utk key
+                label: item.name,          // API bagi "name"
+                amount: item.price || 0,   // API bagi "price"
+              }))
+              : []
+          );
+
+        })
+        .catch(() => setOtherPayments([]));
     }
   }, [open]);
 
@@ -98,11 +114,9 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
 
   // --- NEW: centralize payment options and compute total ---
   const paymentOptions = useMemo(() => ([
-    { key: 'registration', label: 'Registration', amount: 20 },
-    { key: 'depo',         label: 'Depo',         amount: 50 },
-    { key: 'modul',        label: 'Modul',        amount: 80 },
-    { key: 'class',        label: 'Class',        amount: formData.academic.price || 0 }
-  ]), [formData.academic.price]);
+    { key: 'class', label: 'Class', amount: formData.academic.price || 0 },
+    ...otherPayments
+  ]), [formData.academic.price, otherPayments]);
 
   const totalPayment = useMemo(() => {
     const sum = selectedPayments.reduce((sum, key) => {
@@ -205,29 +219,36 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
     const form = new FormData();
     form.append('guardianName', formData.guardian.fullName);
     form.append('guardianIC', formData.guardian.ic);
+    form.append('guardianPhone', formData.guardian.phone_number);
     form.append('phone_number', formData.guardian.phone_number);
     form.append('first_name', formData.student.first_name);
     form.append('last_name', formData.student.last_name);
     form.append('studentIC', formData.student.ic);
     form.append('address', formData.student.address);
     form.append('level', formData.academic.level);
-    form.append('studentClass', formData.academic.class);
     form.append('class_method', formData.classMethod.type);
-    form.append('payment_method', formData.payment.paymentMethod);
-    form.append('payment_reference', formData.payment.reference);
-    if (formData.payment.receipt) form.append('payment_receipt', formData.payment.receipt);
     form.append('status', 'inactive');
 
-    // Build selected_payments as array of objects with type and amount
-    const selectedPaymentsDetailed = selectedPayments.map(key => {
-      const item = paymentOptions.find(p => p.key === key);
-      return { type: key, amount: item?.amount || 0 };
-    });
-    form.append('selected_payments', JSON.stringify(selectedPaymentsDetailed));
-    form.append('total_payment', String(totalPayment));
+    // Payment data as JSON string
+    const paymentData = {
+      class_package: formData.academic.class,
+      payment_method: formData.payment.paymentMethod,
+      payment_reference: formData.payment.reference,
+      selected_payments: selectedPayments.map(key => {
+        const item = paymentOptions.find(p => p.key === key);
+        return { type: key, amount: item?.amount || 0 };
+      }),
+      total_payment: totalPayment,
+    };
+    form.append('payment', JSON.stringify(paymentData));
+
+    // Attach file if present
+    if (formData.payment.receipt) {
+      form.append('payment_receipt', formData.payment.receipt);
+    }
 
     try {
-      await submitRegistration(form);
+      await submitRegistration(form); // Make sure your api.ts uses FormData
       setSubmitted(true);
     } catch (error: any) {
       alert('Registration failed: ' + JSON.stringify(error?.response?.data));
@@ -475,12 +496,12 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
                 ))}
                 <Divider />
                 <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 600 }}>
-                    Total: RM {
-                      paymentOptions
-                        .filter(opt => selectedPayments?.includes(opt.key))
-                        .reduce((sum, opt) => sum + Number(opt.amount || 0), 0)
-                        .toFixed(2)
-                    }
+                  Total: RM {
+                    paymentOptions
+                      .filter(opt => selectedPayments?.includes(opt.key))
+                      .reduce((sum, opt) => sum + Number(opt.amount || 0), 0)
+                      .toFixed(2)
+                  }
                 </Typography>
               </Stack>
             </Grid>
@@ -493,8 +514,8 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
                   onChange={(e) => handlePaymentMethodChange(e.target.value)}
                   label="Payment Method"
                 >
-                  <MenuItem value="bank_transfer">Bank Transfer</MenuItem>
-                  <MenuItem value="qr_payment">QR Code Payment</MenuItem>
+                  <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
+                  <MenuItem value="QR Code Payment">QR Code Payment</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

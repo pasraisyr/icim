@@ -7,20 +7,49 @@ import ConfirmationDialog from './components/ConfirmationDialog';
 import { handleVerify } from './api';
 
 const initialStudent: StudentPayload = {
-  id: 0,
+  first_name: '',
+  last_name: '',
+  studentIC: '',
+  phone_number: '',
+  address: '',
   guardianName: '',
   guardianIC: '',
   guardianPhone: '',
-  studentName: '',
-  studentIC: '',
-  address: '',
-  class_name: '',
   level: '',
-  status: 'active',
   enrollmentDate: '',
+  password: '',
+  payment: {
+    payment_method: '',
+    payment_reference: '',
+    payment_receipt: null,
+    selected_payments: [],
+    total_payment: 0,
+    class_package: null
+  }
 };
 
 import { fetchClasses } from './api';
+
+function mapClientPaymentToStudent(item: any): Student {
+  const client = item.client;
+  const payment = item.payment || {};
+  return {
+    id: client.id,
+    guardianName: client.guardianName,
+    guardianIC: client.guardianIC,
+    guardianPhone: client.guardianPhone,
+    studentName: `${client.first_name} ${client.last_name}`,
+    studentIC: client.studentIC,
+    address: client.address,
+    class_name: payment.class_package_name || '',
+    level: client.level,
+    status: client.status,
+    enrollmentDate: client.enrollmentDate,
+    submitted_at: payment.submitted_at || '',
+    payment_receipt: payment.payment_receipt || '',
+    selected_payments: payment.selected_payments || [],
+  };
+}
 
 const VerificationStatus = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -44,7 +73,8 @@ const VerificationStatus = () => {
     setError(null);
     Promise.all([fetchStudents(), fetchClasses()])
       .then(([studentData, classData]) => {
-        setStudents(studentData);
+        // studentData = [{client, payment}, ...]
+        setStudents(studentData.map(mapClientPaymentToStudent));
         setAvailableClasses(classData.map(cls => ({ ...cls, id: String(cls.id) })));
       })
       .catch(() => setError('Failed to fetch classes or subjects'))
@@ -63,17 +93,25 @@ const VerificationStatus = () => {
     setEditMode(true);
     setEditingId(student.id);
     setCurrentStudent({
-      id: student.id,
+      first_name: student.studentName.split(' ')[0] || '',
+      last_name: student.studentName.split(' ').slice(1).join(' ') || '',
+      studentIC: student.studentIC,
+      phone_number: student.guardianPhone,
+      address: student.address,
       guardianName: student.guardianName,
       guardianIC: student.guardianIC,
       guardianPhone: student.guardianPhone,
-      studentName: student.studentName,
-      studentIC: student.studentIC,
-      address: student.address,
-      class_name: student.class_name,
       level: student.level,
-      status: student.status,
-      enrollmentDate: student.submitted_at,
+      enrollmentDate: student.enrollmentDate,
+      password: '',
+      payment: {
+        payment_method: '',
+        payment_reference: '',
+        payment_receipt: student.payment_receipt || null,
+        selected_payments: student.selected_payments || [],
+        total_payment: 0,
+        class_package: null
+      }
     });
   };
 
@@ -87,10 +125,11 @@ const VerificationStatus = () => {
   const handleSave = async () => {
     if (editMode && editingId) {
       const updated = await updateStudent(editingId, currentStudent);
-      setStudents(students.map(s => (s.id === editingId ? updated : s)));
+      // Always map backend response to Student interface
+      setStudents(students.map(s => (s.id === editingId ? mapClientPaymentToStudent(updated) : s)));
     } else {
       const created = await createStudent(currentStudent);
-      setStudents([...students, created]);
+      setStudents([...students, mapClientPaymentToStudent(created)]);
     }
     handleClose();
   };

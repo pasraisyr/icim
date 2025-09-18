@@ -9,8 +9,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-
-import { PaymentRecordPayload, fetchStudents } from '../api';
+import { Student } from "../../StudentsManagement/api";
+import { PaymentRecordPayload } from "../api";
+import { Class } from '../../ClassesManagement/api';
 
 interface PaymentRecordFormProps {
   open: boolean;
@@ -19,6 +20,8 @@ interface PaymentRecordFormProps {
   onChange: (field: keyof PaymentRecordPayload, value: any) => void;
   onClose: () => void;
   onSave: () => void;
+  students: Student[];
+  classrooms: Class[];
 }
 
 const ITEM_HEIGHT = 48;
@@ -32,27 +35,20 @@ const MenuProps = {
   },
 };
 
-
 const PaymentRecordForm = ({
   open,
   editMode,
   currentAllocation,
   onChange,
   onClose,
-  onSave
+  onSave,
+  students,
+  classrooms
 }: PaymentRecordFormProps) => {
-  const [students, setStudents] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (open) {
-      fetchStudents()
-        .then(setStudents)
-        .catch(() => setStudents([]));
-    }
-  }, [open]);
-
-  // Find selected student object
-  const selectedStudent = students.find(s => s.studentName === currentAllocation.studentName);
+  // Ensure selected_payments is always an array
+  const selected_payments = Array.isArray(currentAllocation.selected_payments)
+  ? currentAllocation.selected_payments
+  : [];
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -61,62 +57,73 @@ const PaymentRecordForm = ({
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          {/* Student Name Dropdown */}
+          {/* Student Dropdown by ID */}
           <TextField
             select
-            label="Student Name"
+            label="Student"
             fullWidth
-            value={currentAllocation.studentName || ''}
+            required
+            value={currentAllocation.student_id || ''}
             onChange={e => {
-              const name = e.target.value;
-              const student = students.find(s => s.studentName === name);
-              onChange('studentName', name);
-              onChange('studentIC', student ? student.studentIC : '');
+              const id = Number(e.target.value);
+              onChange('student_id', id);
             }}
             SelectProps={{ MenuProps }}
+            helperText="Select a student"
           >
             {students.map(student => (
-              <MenuItem key={student.id} value={student.studentName}>
-                {student.studentName}
+              <MenuItem key={student.id} value={student.id}>
+                {student.first_name} {student.last_name}
               </MenuItem>
             ))}
           </TextField>
-          {/* Student IC auto-filled */}
+         
           <TextField
-            label="Student IC"
+            select
+            label="Class Package"
             fullWidth
-            value={currentAllocation.studentIC || ''}
-            onChange={e => onChange('studentIC', e.target.value)}
-            disabled
-          />
-          <TextField
-            label="Student Class"
-            fullWidth
-            value={currentAllocation.studentClass || ''}
-            onChange={e => onChange('studentClass', e.target.value)}
-          />
+           
+            value={currentAllocation.class_package ?? ''}
+            onChange={e => onChange('class_package', Number(e.target.value))}
+            helperText="Select a class package"
+          >
+            {classrooms.map(classroom => (
+              <MenuItem key={classroom.id} value={classroom.id}>
+                {classroom.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             select
             label="Payment Method"
             fullWidth
+            required
             value={currentAllocation.payment_method || ''}
             onChange={e => onChange('payment_method', e.target.value)}
+            helperText="Select payment method"
           >
             <MenuItem value="Online Banking">Online Banking</MenuItem>
             <MenuItem value="Cash">Cash</MenuItem>
           </TextField>
+          {/* Payment Reference */}
           <TextField
             label="Payment Reference"
             fullWidth
+            required
             value={currentAllocation.payment_reference || ''}
             onChange={e => onChange('payment_reference', e.target.value)}
+            helperText="Enter payment reference"
           />
+          {/* Total Payment */}
           <TextField
             label="Total Payment"
             type="number"
             fullWidth
-            value={currentAllocation.total_payment || 0}
+            required
+            value={currentAllocation.total_payment ?? 0}
             onChange={e => onChange('total_payment', parseFloat(e.target.value))}
+            inputProps={{ min: 0 }}
+            helperText="Enter total payment amount"
           />
           {/* File upload for payment_receipt */}
           <Button
@@ -136,18 +143,19 @@ const PaymentRecordForm = ({
           </Button>
           {/* selected_payments as dynamic month/amount fields */}
           <Stack spacing={2}>
-            {(currentAllocation.selected_payments || []).map((payment, idx) => (
+            {selected_payments.map((payment, idx) => (
               <Stack direction="row" spacing={2} key={idx} alignItems="center">
                 <TextField
                   select
                   label="Month"
                   value={payment.type || ""}
                   onChange={e => {
-                    const updated = [...currentAllocation.selected_payments];
+                    const updated = [...selected_payments];
                     updated[idx].type = e.target.value;
                     onChange('selected_payments', updated);
                   }}
                   sx={{ minWidth: 120 }}
+                  required
                 >
                   {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(month => (
                     <MenuItem key={month} value={month}>{month}</MenuItem>
@@ -156,18 +164,20 @@ const PaymentRecordForm = ({
                 <TextField
                   label="Amount"
                   type="number"
-                  value={payment.amount || ""}
+                  value={payment.amount ?? ""}
                   onChange={e => {
-                    const updated = [...currentAllocation.selected_payments];
+                    const updated = [...selected_payments];
                     updated[idx].amount = parseFloat(e.target.value);
                     onChange('selected_payments', updated);
                   }}
                   sx={{ minWidth: 100 }}
+                  required
+                  inputProps={{ min: 0 }}
                 />
                 <Button
                   color="error"
                   onClick={() => {
-                    const updated = currentAllocation.selected_payments.filter((_, i) => i !== idx);
+                    const updated = selected_payments.filter((_, i) => i !== idx);
                     onChange('selected_payments', updated);
                   }}
                 >
@@ -179,7 +189,7 @@ const PaymentRecordForm = ({
               variant="outlined"
               onClick={() => {
                 onChange('selected_payments', [
-                  ...(currentAllocation.selected_payments || []),
+                  ...selected_payments,
                   { type: "", amount: 0 }
                 ]);
               }}
@@ -187,6 +197,7 @@ const PaymentRecordForm = ({
               Add Payment
             </Button>
           </Stack>
+          {/* Class Package Dropdown */}
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -195,8 +206,7 @@ const PaymentRecordForm = ({
           onClick={onSave} 
           variant="contained"
           disabled={
-            !currentAllocation.studentName || 
-            !currentAllocation.studentIC ||
+            !currentAllocation.student_id ||
             !currentAllocation.payment_method ||
             !currentAllocation.payment_reference
           }

@@ -1,19 +1,15 @@
-
 import React from 'react';
 import { Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, Typography, RadioGroup, FormControlLabel, Radio, Grid, Box, Alert, TextField } from '@mui/material';
 
 interface AttendanceFormProps {
-  teachers: any[];
   classes: any[];
   students: any[];
-  selectedTeacher: string;
   selectedClass: string;
   date: string;
   attendance: { [studentId: string]: string };
   loading: boolean;
   error: string | null;
   success: string | null;
-  onTeacherChange: (id: string) => void;
   onClassChange: (id: string) => void;
   onDateChange: (date: string) => void;
   onAttendanceChange: (studentId: string, status: string) => void;
@@ -21,17 +17,14 @@ interface AttendanceFormProps {
 }
 
 const AttendanceForm: React.FC<AttendanceFormProps> = ({
-  teachers,
   classes,
   students,
-  selectedTeacher,
   selectedClass,
   date,
   attendance,
   loading,
   error,
   success,
-  onTeacherChange,
   onClassChange,
   onDateChange,
   onAttendanceChange,
@@ -44,18 +37,10 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({
       {success && <Alert severity="success">{success}</Alert>}
       <Box mb={2}>
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel>Teacher</InputLabel>
-          <Select value={selectedTeacher} onChange={e => onTeacherChange(e.target.value)} label="Teacher">
-            {teachers.map((t) => (
-              <MenuItem key={t.id} value={t.id}>{t.first_name} {t.last_name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth sx={{ mb: 2 }} disabled={!selectedTeacher}>
           <InputLabel>Class</InputLabel>
           <Select value={selectedClass} onChange={e => onClassChange(e.target.value)} label="Class">
             {classes.map((c: any) => (
-              <MenuItem key={c.class_obj.id} value={c.class_obj.id}>{c.class_obj.name}</MenuItem>
+              <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -91,12 +76,15 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({
           </Grid>
         </Box>
       )}
+      {selectedClass && students.length === 0 && (
+        <Typography color="textSecondary">No students found for this class.</Typography>
+      )}
       <Box mt={3}>
         <Button
           variant="contained"
           color="primary"
           onClick={onSubmit}
-          disabled={loading || !selectedTeacher || !selectedClass || !date || students.length === 0}
+          disabled={loading || !selectedClass || !date || students.length === 0}
         >
           {loading ? <CircularProgress size={24} /> : 'Submit Attendance'}
         </Button>

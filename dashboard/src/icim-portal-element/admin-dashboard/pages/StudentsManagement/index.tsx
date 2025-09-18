@@ -26,6 +26,9 @@ const initialStudent: StudentPayload = {
 };
 
 import { fetchClasses } from './api';
+import { StudentAllocation } from '../StudentAllocation/api';
+import { fetchStudentAllocations } from "../StudentAllocation/api";
+
 
 export default function StudentsManagement() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -38,6 +41,7 @@ export default function StudentsManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [availableClasses, setAvailableClasses] = useState<{ id: string; name: string }[]>([]);
+  const [studentAllocations, setStudentAllocations] = useState<StudentAllocation[]>([]);
 
 
   useEffect(() => {
@@ -50,6 +54,10 @@ export default function StudentsManagement() {
       })
       .catch(() => setError('Failed to fetch classes or subjects'))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchStudentAllocations().then(setStudentAllocations);
   }, []);
 
   const handleOpen = () => {
@@ -119,7 +127,10 @@ export default function StudentsManagement() {
     setCurrentStudent({ ...currentStudent, [field]: value });
   };
 
-
+  function getClassroomName(student_id: number) {
+    const allocation = studentAllocations.find(a => a.student.id === student_id);
+    return allocation ? allocation.classroom_id.name : 'N/A';
+  }
 
   return (
     <Grid container spacing={3}>
@@ -130,7 +141,7 @@ export default function StudentsManagement() {
       </Grid>
       <Grid item xs={12}>
         <MainCard title="Students List">
-          <StudentsTable students={students} onEdit={handleEdit} onDelete={handleDelete} />
+          <StudentsTable students={students} onEdit={handleEdit} onDelete={handleDelete} getClassroomName={getClassroomName} />
         </MainCard>
       </Grid>
       <StudentForm 
@@ -143,7 +154,7 @@ export default function StudentsManagement() {
       />
       <DeleteConfirmDialog
         open={deleteDialogOpen}
-        studentName={studentToDelete?.first_name || ''}
+        studentName={studentToDelete?.first_name || studentToDelete?.last_name || ''}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />
