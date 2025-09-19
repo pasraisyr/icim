@@ -62,9 +62,9 @@ export const simpleAttendanceAPI = {
   },
   
   getSubmittedAttendance: async (studentID?: string | number) => {
-    // Fetch attendance records for a specific student
+    // Fetch attendance records for a specific student using the admin endpoint
     if (!studentID) return [];
-    const response = await api.get(`/Academic/students/${studentID}/attendance/list/`);
+    const response = await api.get(`/admin/attendance/by_student/${studentID}/`);
     return response.data;
   },
 };

@@ -16,7 +16,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, students, se
   let studentName = '';
   if (selectedStudent && students && students.length > 0) {
     const found = students.find((s: any) => String(s.id) === String(selectedStudent));
-    studentName = found ? (found.studentName || found.id) : '';
+    // Prefer full name if available, fallback to name, then id
+    studentName = found
+      ? (found.name || (found.first_name && found.last_name ? `${found.first_name} ${found.last_name}` : found.id))
+      : '';
   }
 
   const [open, setOpen] = useState(false);
@@ -24,16 +27,11 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, students, se
 
   // Helper to get class name
   const getClassName = (record: any) => {
+    if (record.classroom_name) return record.classroom_name;
     if (record.class_obj && typeof record.class_obj === 'object') {
       return record.class_obj.name || record.class_obj.className || record.class_obj.id;
     }
-    if (Array.isArray(students) && students.length > 0) {
-      const found = students.find((s: any) => s.id === record.class_obj || s.id === record.class_obj);
-      if (found) {
-        return found.studentName || found.id;
-      }
-    }
-    return record.class_obj;
+    return record.classroom_id || '';
   };
 
   const getStatus = (record: any) => {
@@ -42,6 +40,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, students, se
     }
     return 'Unknown';
   };
+
   // Group records by date and class
   const grouped: { [key: string]: any[] } = {};
   records.forEach((rec: any) => {
@@ -57,9 +56,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, students, se
       date: first.date,
       className: getClassName(first),
       status: 'Submitted',
-      statusAtt : getStatus(first),
+      statusAtt: getStatus(first),
       students: group.map((g: any) => ({
-        name: g.student || '',
+        name: g.student_name || g.name || g.student || g.id,
         status: g.status || '',
       })),
     };
@@ -93,22 +92,21 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, students, se
                   <TableCell>Date</TableCell>
                   <TableCell>Class</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
+                  {/* <TableCell>Actions</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row: any, idx: number) => {
-                  console.log('Row students:', row.students);
                   return (
                     <TableRow key={row.date + '_' + row.className} hover>
                       <TableCell>{row.date}</TableCell>
                       <TableCell>{row.className}</TableCell>
                       <TableCell>{row.statusAtt}</TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         <Button variant="outlined" size="small" onClick={() => handleView(row)}>
                           View
                         </Button>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   );
                 })}

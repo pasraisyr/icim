@@ -63,9 +63,9 @@ export const simpleAttendanceAPI = {
   },
   
   getSubmittedAttendance: async (classID?: string | number) => {
-    // Fetch attendance records for a specific class
+    // Fetch attendance records for a specific class using the admin endpoint
     if (!classID) return [];
-    const response = await api.get(`/Academic/classes/${classID}/attendance/list/`);
+    const response = await api.get(`/admin/attendance/by_class/${classID}/`);
     return response.data;
   },
 };

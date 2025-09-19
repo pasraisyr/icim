@@ -8,6 +8,7 @@ from .TeacherAllocation import TeacherAllocationView, TeacherAllocationInput, Te
 from .StudentAllocation import StudentAllocationView, StudentAllocationInput, StudentAllocationEdit, StudentAllocationDelete, StudentAllocationsView
 from .OtherPayments import OtherPaymentInput, OtherPaymentView, OtherPaymentEdit, OtherPaymentDelete
 from .Payment import PaymentsView, PaymentView, PaymentInput, PaymentEdit, PaymentDelete
+from .Attendance import AttendanceByTeacherView, AttendanceByStudentView, AttendanceByClassView
 
 urlpatterns = [
 
@@ -70,5 +71,9 @@ urlpatterns = [
     path('other_payments/edit/', OtherPaymentEdit.as_view(), name='other_payment_edit'),
     path('other_payments/delete/', OtherPaymentDelete.as_view(), name='other_payment_delete'),
     path('other_payments/', OtherPaymentView.as_view(), name='other_payments'),
-
+    
+    # Attendance Views
+    path('attendance/by_teacher/<int:teacher_id>/', AttendanceByTeacherView.as_view(), name='attendance_by_teacher'),
+    path('attendance/by_student/<int:student_id>/', AttendanceByStudentView.as_view(), name='attendance_by_student'),
+    path('attendance/by_class/<int:classroom_id>/', AttendanceByClassView.as_view(), name='attendance_by_class'),
 ]

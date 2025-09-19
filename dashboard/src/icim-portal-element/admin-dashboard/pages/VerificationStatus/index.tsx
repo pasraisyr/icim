@@ -18,6 +18,7 @@ const initialStudent: StudentPayload = {
   level: '',
   enrollmentDate: '',
   password: '',
+  status: 'inactive',
   payment: {
     payment_method: '',
     payment_reference: '',
@@ -104,6 +105,7 @@ const VerificationStatus = () => {
       level: student.level,
       enrollmentDate: student.enrollmentDate,
       password: '',
+      status: student.status,
       payment: {
         payment_method: '',
         payment_reference: '',
