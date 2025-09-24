@@ -21,6 +21,7 @@ export interface Student {
 }
 
 export interface StudentPayload {
+  id?: number;
   first_name: string;
   last_name: string;
   studentIC: string;
@@ -31,6 +32,7 @@ export interface StudentPayload {
   guardianPhone: string;
   level: string;
   enrollmentDate: string;
+  status : 'active' | 'inactive';
   password?: string;
   payment?: {
     payment_method: string;

@@ -164,7 +164,7 @@ export default function PaymentRecord() {
   function getStudentInfo(student_id: number) {
     const student = students.find((s) => s.id === student_id);
     return student
-      ? `${student.first_name} ${student.last_name} (${student.studentIC}) `
+      ? `${student.first_name} ${student.last_name} `
       : String(student_id);
   }
 

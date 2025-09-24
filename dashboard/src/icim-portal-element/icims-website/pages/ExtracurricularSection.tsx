@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Stack, Typography, Button, Card, CardContent, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
-import { Class, fetchClasses } from 'icim-portal-element/academic-manager-dashboard/pages/ClassesManagement/api';
+import { Class, fetchClasses } from 'icim-portal-element/admin-dashboard/pages/ClassesManagement/api';
 import {  Award } from 'iconsax-react';
 import { useState, useEffect } from 'react';
 

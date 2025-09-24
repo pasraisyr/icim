@@ -69,7 +69,7 @@ export const simpleAttendanceAPI = {
   getSubmittedAttendance: async (teacherID?: string | number) => {
     // Fetch attendance records for a specific teacher
     if (!teacherID) return [];
-    const response = await api.get(`/Academic/teachers/${teacherID}/attendance/list/`);
+    const response = await api.get(`${BASE_URL}/admin/attendance/by_teacher/${teacherID}/`);
     return response.data;
   },
 };

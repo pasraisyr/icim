@@ -24,16 +24,11 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, teachers, se
 
   // Helper to get class name
   const getClassName = (record: any) => {
+    if (record.classroom_name) return record.classroom_name;
     if (record.class_obj && typeof record.class_obj === 'object') {
       return record.class_obj.name || record.class_obj.className || record.class_obj.id;
     }
-    if (Array.isArray(teachers) && teachers.length > 0) {
-      const found = teachers.find((t: any) => t.id === record.class_obj || t.id === record.class_obj);
-      if (found) {
-        return found.teacherName || found.id;
-      }
-    }
-    return record.class_obj;
+    return record.classroom_id || '';
   };
 
   const getStatus = (record: any) => {
@@ -59,7 +54,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, teachers, se
       status: 'Submitted',
       subject: first.subject || '',
       students: group.map((g: any) => ({
-        name: g.student || '',
+        name: g.student_name,
         status: g.status || '',
       })),
     };
@@ -79,7 +74,11 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ records, teachers, se
       <Box mt={2}>
         {name && (
           <Typography variant="subtitle1" color="primary" gutterBottom>
-            Teacher: {name}
+            Teacher: {
+              teachers?.find(t => String(t.id) === String(selectedTeacher)) 
+                ? `${teachers.find(t => String(t.id) === String(selectedTeacher)).first_name} ${teachers.find(t => String(t.id) === String(selectedTeacher)).last_name}` 
+                : selectedTeacher
+            }
           </Typography>
         )}
         {records.length === 0 ? (
