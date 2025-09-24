@@ -121,8 +121,9 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
     return !!(
       formData.guardian.fullName &&
       formData.guardian.ic &&
-      formData.guardian.phoneNumber &&
-      formData.student.fullName &&
+      formData.guardian.phone_number &&
+      formData.student.first_name &&
+      formData.student.last_name &&
       formData.student.ic &&
       formData.student.address &&
       formData.academic.level &&
@@ -204,8 +205,9 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
     const form = new FormData();
     form.append('guardianName', formData.guardian.fullName);
     form.append('guardianIC', formData.guardian.ic);
-    form.append('guardianPhone', formData.guardian.phoneNumber);
-    form.append('studentName', formData.student.fullName);
+    form.append('phone_number', formData.guardian.phone_number);
+    form.append('first_name', formData.student.first_name);
+    form.append('last_name', formData.student.last_name);
     form.append('studentIC', formData.student.ic);
     form.append('address', formData.student.address);
     form.append('level', formData.academic.level);
@@ -268,8 +270,8 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
               <TextField
                 fullWidth
                 label="Nombor Telefon"
-                value={formData.guardian.phoneNumber}
-                onChange={(e) => handleGuardianChange('phoneNumber', e.target.value)}
+                value={formData.guardian.phone_number}
+                onChange={(e) => handleGuardianChange('phone_number', e.target.value)}
                 placeholder="+60 12-345 6789"
                 required
                 helperText="Wajib diisi"
@@ -290,9 +292,19 @@ export default function RegistrationDialog({ open, onClose }: RegistrationDialog
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Nama Penuh"
-                value={formData.student.fullName}
-                onChange={(e) => handleStudentChange('fullName', e.target.value)}
+                label="Nama Penuh Pertama"
+                value={formData.student.first_name}
+                onChange={(e) => handleStudentChange('first_name', e.target.value)}
+                required
+                helperText="Wajib diisi"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Nama Penuh Akhir"
+                value={formData.student.last_name}
+                onChange={(e) => handleStudentChange('last_name', e.target.value)}
                 required
                 helperText="Wajib diisi"
               />

@@ -80,11 +80,19 @@ const StudentForm = ({ open, editMode, currentStudent,onChange, onClose, onSave 
       />
       <TextField
         label="Level"
+        select
         fullWidth
         margin="normal"
         value={currentStudent.level}
         onChange={e => onChange('level', e.target.value)}
-      />
+        SelectProps={{ native: true }}
+      >
+        <option value="">Select Level</option>
+        <option value="Tahap Rendah">Tahap Rendah</option>
+        <option value="Tahap Menengah">Tahap Menengah</option>
+        <option value="Kelas Tuisyen">Kelas Tuisyen</option>
+        <option value="Aktiviti Kokurikulum">Aktiviti Kokurikulum</option>
+      </TextField>
       <TextField
         label="Class Method"
         select

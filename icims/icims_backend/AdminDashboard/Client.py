@@ -274,7 +274,7 @@ class ClientPayment(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class ClientPaymentView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, client_id=None):
         try:

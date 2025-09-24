@@ -5,7 +5,7 @@ from rest_framework import status, permissions
 
 
 class StudentAllocationsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         allocations = StudentAllocation.objects.all()

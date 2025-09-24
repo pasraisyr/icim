@@ -10,7 +10,8 @@ export interface StudentAllocation {
   id: number;
   student: {
     id: number;
-    studentName: string;
+    first_name: string;
+    last_name: string;
     guardianName: string;
     guardianPhone: string;
     // will add other field when its needed
@@ -31,13 +32,13 @@ export interface StudentAllocationPayload {
 
 // API Functions
 export async function fetchStudents(): Promise<Student[]> {
-  const res = await fetch(`${BASE_URL}/admin/students/`);
+  const res = await fetch(`${BASE_URL}/admin/clients/`);
   if (!res.ok) throw new Error('Failed to fetch students');
   return res.json();
 }
 
 export async function fetchClasses(): Promise<Class[]> {
-  const res = await fetch(`${BASE_URL}/admin/classes/`);
+  const res = await fetch(`${BASE_URL}/admin/classrooms/`);
   if (!res.ok) throw new Error('Failed to fetch classes');
   return res.json();
 }

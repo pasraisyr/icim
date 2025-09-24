@@ -85,7 +85,7 @@ const AllocatedStudentsTable = ({
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={2}>
                     <Profile2User size={20} />
-                    {allocation.student.studentName}
+                    {allocation.student.first_name} {allocation.student.last_name}
                   </Stack>
                 </TableCell>
                 <TableCell>

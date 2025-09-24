@@ -1,11 +1,12 @@
 from django.urls import path
 from .About import AboutDelete, AboutView, AboutEdit, AboutInput
 from .Subject import SubjectView, SubjectInput, SubjectEdit, SubjectDelete
-from .Client import ClientPaymentView, ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView, ClientPayment
+from .Client import ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView, ClientPayment
 from .Classrooms import ClassroomsView, ClassroomsInput, ClassroomsEdit, ClassroomsDelete, ClassroomView
 from .Staffs import StaffsView, StaffInput, StaffEdit, StaffDelete, StaffView
 from .TeacherAllocation import TeacherAllocationView, TeacherAllocationInput, TeacherAllocationEdit, TeacherAllocationDelete, TeacherAllocationsView
 from .StudentAllocation import StudentAllocationView, StudentAllocationInput, StudentAllocationEdit, StudentAllocationDelete, StudentAllocationsView
+from .OtherPayments import OtherPaymentInput, OtherPaymentView, OtherPaymentEdit, OtherPaymentDelete
 
 urlpatterns = [
 
@@ -28,9 +29,6 @@ urlpatterns = [
     path('client/delete/<int:client_id>/', ClientDelete.as_view(), name='client_delete'),
     path('clients/', ClientsView.as_view(), name='clients'),
     path('client/payment/', ClientPayment.as_view(), name='client_payment'),
-    path('clientpayments/', ClientPaymentView.as_view(), name='client_payments_all'),
-    path('clientpayments/<int:client_id>/', ClientPaymentView.as_view(), name='client_payment'),
-
 
     # Classrooms
     path('classrooms/', ClassroomsView.as_view(), name='classrooms'),
@@ -59,5 +57,11 @@ urlpatterns = [
     path('student_allocation/input/', StudentAllocationInput.as_view(), name='student_allocation_input'),
     path('student_allocation/edit/', StudentAllocationEdit.as_view(), name='student_allocation_edit'),
     path('student_allocation/delete/', StudentAllocationDelete.as_view(), name='student_allocation_delete'),
+    
+    # Other Payments
+    path('other_payments/input/', OtherPaymentInput.as_view(), name='other_payment_input'),
+    path('other_payments/edit/', OtherPaymentEdit.as_view(), name='other_payment_edit'),
+    path('other_payments/delete/', OtherPaymentDelete.as_view(), name='other_payment_delete'),
+    path('other_payments/', OtherPaymentView.as_view(), name='other_payments'),
 
 ]
