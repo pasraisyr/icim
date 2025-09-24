@@ -1,7 +1,7 @@
 // Utility to get subjects for a class
 import { Student } from "../StudentsManagement/api";
 
-const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
+const BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 export interface PaymentRecordData {
   id: number;
