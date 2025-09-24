@@ -73,14 +73,14 @@ const adminMenuItems: { items: NavItemType[] } = {
               icon: icons.students,
               breadcrumbs: true
             },
-            {
-              id: 'student-class-allocation',
-              title: "Student Class Allocation",
-              type: 'item',
-              url: '/admin-icims/student-class-allocation',
-              icon: icons.students,
-              breadcrumbs: true
-            }
+            // {
+            //   id: 'student-class-allocation',
+            //   title: "Student Class Allocation",
+            //   type: 'item',
+            //   url: '/admin-icims/student-class-allocation',
+            //   icon: icons.students,
+            //   breadcrumbs: true
+            // }
           ]
         },
         {
@@ -140,18 +140,10 @@ const adminMenuItems: { items: NavItemType[] } = {
         //   breadcrumbs: true
         // },
         {
-          id: 'monthly-payment-record',
-          title: 'Monthly Payment Record',
+          id: 'student-payment-record',
+          title: 'Student Payment Record',
           type: 'item',
-          url: '/admin-icims/monthly-payment-record',
-          icon: icons.dollarCircle,
-          breadcrumbs: true
-        },
-        {
-          id: 'first-payment-record',
-          title: 'First Payment Record',
-          type: 'item',
-          url: '/admin-icims/first-payment-record',
+          url: '/admin-icims/student-payment-record',
           icon: icons.dollarCircle,
           breadcrumbs: true
         }

@@ -18,7 +18,7 @@ import HistoryTable from './HistoryTable';
 import { Student } from '../api';
 
 interface StudentsTableProps {
-  students: Student[];
+  students: Student[]; // <-- Add this line
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
   onVerify: (id: number) => void;
@@ -36,12 +36,11 @@ const StudentsTable = ({ students, onEdit, onDelete, onVerify }: StudentsTablePr
   const [historyOpen, setHistoryOpen] = useState(false);
   const tabLabels = ['Bayar Penuh', 'Bayar Ansuran'];
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => setTab(newValue);
+
   let displayedStudents: Student[] = [];
   if (tab === 0) {
-    // Bayar Penuh: students with all 4 payments and inactive status
     displayedStudents = students.filter(s => (s.selected_payments?.length ?? 0) === 4 && s.status === 'inactive');
   } else if (tab === 1) {
-    // Bayar Ansuran: students with 1-3 payments and inactive status
     displayedStudents = students.filter(s => {
       const len = s.selected_payments?.length ?? 0;
       return len > 0 && len < 4 && s.status === 'inactive';
@@ -85,22 +84,35 @@ const StudentsTable = ({ students, onEdit, onDelete, onVerify }: StudentsTablePr
             {displayedStudents.map((student) => (
               <TableRow key={student.id}>
                 <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <Profile2User size={10} />
-                    <Typography variant="subtitle2">{student.studentName}</Typography>
-                  </Stack>
+
+                  {student.studentName}
+
                 </TableCell>
                 <TableCell>{student.guardianName}</TableCell>
                 <TableCell>{student.guardianPhone}</TableCell>
                 <TableCell>{student.class_name}</TableCell>
                 <TableCell>{student.level}</TableCell>
                 <TableCell>
-                  {student.selected_payments?.length
-                    ? student.selected_payments.map(p => paymentLabels[p] || p).join(', ')
-                    : 'No Payment'}
+                  {(() => {
+                    let payments = student.selected_payments;
+                    if (typeof payments === 'string') {
+                      try {
+                        payments = JSON.parse(payments);
+                      } catch {
+                        payments = [];
+                      }
+                    }
+                    return Array.isArray(payments) && payments.length > 0
+                      ? payments.map((p: any, idx: number) => (
+                        <div key={idx}>
+                          {paymentLabels[p.type] || p.type}{p.amount !== undefined ? `: RM ${p.amount}` : ''}
+                        </div>
+                      ))
+                      : 'N/A';
+                  })()}
                 </TableCell>
                 <TableCell>
-                  <Chip 
+                  <Chip
                     label={student.status}
                     color={student.status === 'active' ? 'success' : 'error'}
                     size="small"
@@ -123,15 +135,15 @@ const StudentsTable = ({ students, onEdit, onDelete, onVerify }: StudentsTablePr
                 <TableCell>{student.submitted_at}</TableCell>
                 <TableCell align="center">
                   <Stack direction="row" spacing={1} justifyContent="center">
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => onEdit(student)}
                       color="primary"
                     >
                       <Edit size={16} />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => onDelete(student.id)}
                       color="error"
                     >

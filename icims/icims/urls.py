@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from icims_backend.Teacher import teacher_urls
 from icims_backend.LoginApi import UserLoginAPI, ObtainTokenView
 from icims_backend.AdminDashboard import admin_urls
 from icims_backend.Frontend import frontend_urls
@@ -13,6 +14,8 @@ urlpatterns = [
     path('api/obtain-token/', ObtainTokenView.as_view(), name='obtain_token'),
     path('api/admin/', include(admin_urls)),
     path('api/frontend/', include(frontend_urls)),
+    path('api/teacher/', include(teacher_urls)),
+
 ]
 
 # Serve static and media files during development

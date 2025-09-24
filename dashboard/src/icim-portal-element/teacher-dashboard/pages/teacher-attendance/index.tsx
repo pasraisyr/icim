@@ -3,15 +3,13 @@ import Grid from '@mui/material/Grid';
 import MainCard from '../../../../components/MainCard';
 import AttendanceForm from './components/AttendanceForm';
 import AttendanceTable from './components/AttendanceTable';
-import { simpleAttendanceAPI } from './api';
+import attendanceAPI from './api';
 
 const initialAttendance = {};
 
 const TeacherAttendance = () => {
-  const [teachers, setTeachers] = useState<any[]>([]);
   const [classes, setClasses] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
-  const [selectedTeacher, setSelectedTeacher] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [attendance, setAttendance] = useState<{ [studentId: string]: string }>(initialAttendance);
@@ -21,65 +19,30 @@ const TeacherAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch teachers on mount
     setLoading(true);
-    simpleAttendanceAPI.getTeachers()
-      .then((teacherData) => {
-        setTeachers(teacherData);
+    Promise.all([
+      attendanceAPI.getMyAttendance(),
+      attendanceAPI.getTeacherClasses()
+    ])
+      .then(([attendanceData, classData]) => {
+        setAttendanceRecords(attendanceData);
+        setClasses(classData);
       })
-      .catch(() => setError('Failed to fetch teachers'))
+      .catch(() => setError('Failed to fetch attendance records or classes'))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    // Fetch attendance records for selected teacher
-    if (selectedTeacher) {
+    if (selectedClass) {
       setLoading(true);
-      simpleAttendanceAPI.getSubmittedAttendance(selectedTeacher)
-        .then((attendanceData) => {
-          setAttendanceRecords(attendanceData);
-        })
-        .catch(() => setError('Failed to fetch attendance records'))
+      attendanceAPI.getStudentsInClass(Number(selectedClass))
+        .then(setStudents)
+        .catch(() => setError('Failed to fetch students for this class'))
         .finally(() => setLoading(false));
     } else {
-      setAttendanceRecords([]);
+      setStudents([]);
     }
-  }, [selectedTeacher]);
-
-  useEffect(() => {
-    // Fetch classes when teacher changes
-    if (selectedTeacher) {
-      setLoading(true);
-      simpleAttendanceAPI.getTeacherClasses(selectedTeacher)
-        .then((classData) => {
-          setClasses(classData);
-          setStudents([]);
-          setSelectedClass('');
-        })
-        .catch(() => setError('Failed to fetch classes'))
-        .finally(() => setLoading(false));
-    }
-  }, [selectedTeacher]);
-
-  useEffect(() => {
-    // Fetch students when class changes
-    if (selectedTeacher && selectedClass) {
-      setLoading(true);
-      simpleAttendanceAPI.getClassStudents(selectedTeacher, selectedClass)
-        .then((studentData) => {
-          setStudents(studentData);
-        })
-        .catch(() => setError('Failed to fetch students'))
-        .finally(() => setLoading(false));
-    }
-  }, [selectedClass, selectedTeacher]);
-
-  const handleTeacherChange = (id: string) => {
-    setSelectedTeacher(id);
-    setAttendance({});
-    setSuccess(null);
-    setError(null);
-  };
+  }, [selectedClass]);
 
   const handleClassChange = (id: string) => {
     setSelectedClass(id);
@@ -101,20 +64,23 @@ const TeacherAttendance = () => {
     setError(null);
     setSuccess(null);
     try {
-      const payload = {
-        teacher_id: Number(selectedTeacher),
-        class_id: Number(selectedClass),
-        date,
-        attendance: students.map((s) => ({
-          student_id: (s as any).id,
-          status: attendance[(s as any).id] || 'absent',
-        })),
-      };
-      await simpleAttendanceAPI.submitAttendance(payload);
-  setSuccess('Attendance submitted successfully!');
+      // Submit attendance for each student
+      await Promise.all(
+        students.map((s: any) =>
+          attendanceAPI.inputAttendance({
+            student_id: s.id,
+            classroom_id: Number(selectedClass),
+            status: attendance[s.id] || 'absent',
+            date,
+          })
+        )
+      );
+      setSuccess('Attendance submitted successfully!');
       // Refresh attendance records
+      const attendanceData = await attendanceAPI.getMyAttendance();
+      setAttendanceRecords(attendanceData);
     } catch (err) {
-  setError('Failed to submit attendance');
+      setError('Failed to submit attendance');
     } finally {
       setLoading(false);
     }
@@ -125,17 +91,14 @@ const TeacherAttendance = () => {
       <Grid item xs={12}>
         <MainCard title="Teacher Attendance">
           <AttendanceForm
-            teachers={teachers}
             classes={classes}
             students={students}
-            selectedTeacher={selectedTeacher}
             selectedClass={selectedClass}
             date={date}
             attendance={attendance}
             loading={loading}
             error={error}
             success={success}
-            onTeacherChange={handleTeacherChange}
             onClassChange={handleClassChange}
             onDateChange={handleDateChange}
             onAttendanceChange={handleAttendanceChange}
@@ -149,8 +112,6 @@ const TeacherAttendance = () => {
             records={attendanceRecords}
             students={students}
             classes={classes}
-            selectedTeacher={selectedTeacher}
-            teachers={teachers}
           />
         </MainCard>
       </Grid>

@@ -1,12 +1,13 @@
 from django.urls import path
 from .About import AboutDelete, AboutView, AboutEdit, AboutInput
 from .Subject import SubjectView, SubjectInput, SubjectEdit, SubjectDelete
-from .Client import ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView, ClientPayment
+from .Client import ClientView, ClientInput, ClientEdit, ClientDelete, ClientsView
 from .Classrooms import ClassroomsView, ClassroomsInput, ClassroomsEdit, ClassroomsDelete, ClassroomView
 from .Staffs import StaffsView, StaffInput, StaffEdit, StaffDelete, StaffView
 from .TeacherAllocation import TeacherAllocationView, TeacherAllocationInput, TeacherAllocationEdit, TeacherAllocationDelete, TeacherAllocationsView
 from .StudentAllocation import StudentAllocationView, StudentAllocationInput, StudentAllocationEdit, StudentAllocationDelete, StudentAllocationsView
 from .OtherPayments import OtherPaymentInput, OtherPaymentView, OtherPaymentEdit, OtherPaymentDelete
+from .Payment import PaymentsView, PaymentView, PaymentInput, PaymentEdit, PaymentDelete
 
 urlpatterns = [
 
@@ -28,7 +29,13 @@ urlpatterns = [
     path('client/edit/', ClientEdit.as_view(), name='client_edit'),
     path('client/delete/<int:client_id>/', ClientDelete.as_view(), name='client_delete'),
     path('clients/', ClientsView.as_view(), name='clients'),
-    path('client/payment/', ClientPayment.as_view(), name='client_payment'),
+
+    # Payment
+    path('payments/', PaymentsView.as_view(), name='payments'),
+    path('payment/<int:payment_id>/', PaymentView.as_view(), name='payment'),
+    path('payment/input/', PaymentInput.as_view(), name='payment_input'),
+    path('payment/edit/', PaymentEdit.as_view(), name='payment_edit'),
+    path('payment/delete/<int:payment_id>/', PaymentDelete.as_view(), name='payment_delete'),
 
     # Classrooms
     path('classrooms/', ClassroomsView.as_view(), name='classrooms'),

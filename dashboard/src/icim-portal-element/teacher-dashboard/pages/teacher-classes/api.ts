@@ -1,29 +1,50 @@
 import axios from 'axios';
 
 // Base API configuration
-const API_BASE_URL = 'http://localhost:8000/api';
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
+// Add this to your api.ts
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // or wherever you store your token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Types for API responses
-export interface Teacher {
+export interface AttendanceRecord {
   id: number;
-  name: string;
-  email: string;
-  phone: string;
+  student_id: number;
+  student_name?: string;
+  teacher_id?: number;
+  teacher_name?: string;
+  classroom_id: number;
+  classroom_name?: string;
   status: string;
-  joinDate: string;
+  date: string; // <-- Add this line
+  updated_at: string;
 }
 
-export interface Subject {
-  id: number;
-  name: string;
+export interface AttendanceInputPayload {
+  student_id: number;
+  classroom_id: number;
   status: string;
+  date: string; // <-- Add this line
+}
+
+export interface AttendanceEditPayload {
+  id: number;
+  status?: string;
+  classroom_id?: number;
+  date?: string; // <-- Add this line
 }
 
 export interface ClassInfo {
@@ -39,66 +60,26 @@ export interface ClassInfo {
   students_count: number;
 }
 
-export interface TeacherAllocation {
-  id: number;
-  teacher: {
-    id: number;
-    name: string;
-  };
-  class_obj: ClassInfo;
-  teacher_subjects: string[];
-}
-
-export interface TeacherClassesResponse {
-  teacher: Teacher;
-  classes: TeacherAllocation[];
-}
-
 // API functions
-export const teacherAPI = {
-  // Get all classes for a specific teacher
-  getTeacherClasses: async (teacherId: number): Promise<TeacherAllocation[]> => {
-    try {
-      const response = await api.get(`/Teacher/${teacherId}/classes/`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teacher classes:', error);
-      throw error;
-    }
+export const attendanceAPI = {
+  // Get all attendance records for the logged-in teacher
+  
+  // Get all classes for the teacher
+  getTeacherClasses: async (): Promise<{id: number, name: string, level: string}[]> => {
+    const response = await api.get('/teacher/classes/');
+    return response.data;
   },
 
-  // Get specific class details for a teacher
-  getTeacherClassDetail: async (teacherId: number, classId: number): Promise<TeacherAllocation> => {
-    try {
-      const response = await api.get(`/Teacher/${teacherId}/classes/${classId}/`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teacher class detail:', error);
-      throw error;
-    }
+  // Get all students in a selected class
+  getStudentsInClass: async (classroomId: number): Promise<{id: number, studentName: string, studentIC: string, email: string}[]> => {
+    const response = await api.get(`/teacher/class/${classroomId}/students/`);
+    return response.data;
   },
 
-  // Get students for a teacher and class (verifies teacher allocation)
-  getTeacherClassStudents: async (teacherId: number, classId: number): Promise<any> => {
-    try {
-      const response = await api.get(`/Teacher/${teacherId}/class/${classId}/students/`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching students for teacher and class:', error);
-      throw error;
-    }
-  },
-
-  // Get all teachers (for selection)
-  getAllTeachers: async (): Promise<Teacher[]> => {
-    try {
-      const response = await api.get('/Academic/teachers/');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teachers:', error);
-      throw error;
-    }
+    getTeacherClassDetail: async (classId: number): Promise<ClassInfo> => {
+    const response = await api.get(`/teacher/classes/${classId}/details/`);
+    return response.data;
   },
 };
 
-export default api;
+export default attendanceAPI;

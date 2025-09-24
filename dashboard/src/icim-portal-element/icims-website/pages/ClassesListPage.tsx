@@ -1,7 +1,8 @@
 
 import { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, Card, CardContent, Grid, Button } from '@mui/material';
-import { fetchClasses, Class } from 'icim-portal-element/academic-manager-dashboard/pages/ClassesManagement/api';
+import { Class, fetchClasses } from 'icim-portal-element/admin-dashboard/pages/ClassesManagement/api';
+
 
 interface ClassesListDialogProps {
     open: boolean;

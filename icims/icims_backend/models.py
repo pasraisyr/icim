@@ -49,12 +49,7 @@ class Client(models.Model):
     guardianPhone = models.CharField(max_length=25, blank=True, null=True)
     level = models.CharField(max_length=100, blank=True, null=True)
     enrollmentDate = models.DateField(blank=True, null=True)
-    class_method = models.CharField(max_length=100, blank=True, null=True)
-    total_fees = models.FloatField(blank=True, null=True)
-    outstanding_fees = models.FloatField(blank=True, null=True)
     registerar = models.CharField(max_length=100, blank=True, null=True)
-    # selected_payments = models.ManyToManyField(OtherPayments, blank=True)
-    # class_package = models.CharField(max_length=100, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -102,16 +97,15 @@ class OtherPayments(models.Model):
 
 class Payments(models.Model):
     student_id = models.ForeignKey(Client, on_delete=models.CASCADE)
-    amount = models.FloatField()
-    payment_reference = models.CharField(max_length=255, blank=True, null=True)
-    payment_date = models.DateField(auto_now_add=True)
-    payment_method = models.CharField(max_length=100)
-    receipt = models.FileField(upload_to='payment_receipts/', blank=True, null=True)
-    monthly_fees = models.JSONField(blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+    class_package = models.ForeignKey(Classrooms, on_delete=models.SET_NULL, blank=True, null=True)
+    payment_method = models.CharField(max_length=50)
+    payment_reference = models.CharField(max_length=100)
+    payment_receipt = models.FileField(upload_to='receipts/')
+    selected_payments = models.JSONField(default=list)
+    total_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    submitted_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return f"Payment: {self.student_id} - {self.amount} on {self.payment_date}"
+        return f"Payment: {self.student_id} - {self.total_payment} on {self.submitted_at}"
 
 class TeacherAllocation(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
@@ -135,10 +129,11 @@ class Attendance(models.Model):
     teacher_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
     classroom_id = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
     status = models.CharField(max_length=100, blank=True, null=True)
+    date = models.DateField()  # <-- Add this line
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Attendance: {self.student_id} - {self.classroom_id} - {self.status}"
+        return f"Attendance: {self.student_id} - {self.classroom_id} - {self.status} - {self.date}"
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
