@@ -1,6 +1,6 @@
 import type { Subject } from '../SubjectsManagement/api';
 
-const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api';
+const BASE_URL = import.meta.env.VITE_APP_API_URL ;
 
 export interface Class {
   id: number;
