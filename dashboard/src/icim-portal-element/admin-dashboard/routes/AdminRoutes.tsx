@@ -99,7 +99,7 @@ const AdminRoutes = {
       element: <OtherPayments />
     },
     {
-      path:'payment-record',
+      path:'monthly-payment-record',
       element: <PaymentRecord />
     }
   ]

@@ -53,6 +53,8 @@ class Client(models.Model):
     total_fees = models.FloatField(blank=True, null=True)
     outstanding_fees = models.FloatField(blank=True, null=True)
     registerar = models.CharField(max_length=100, blank=True, null=True)
+    # selected_payments = models.ManyToManyField(OtherPayments, blank=True)
+    # class_package = models.CharField(max_length=100, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -104,8 +106,8 @@ class Payments(models.Model):
     payment_reference = models.CharField(max_length=255, blank=True, null=True)
     payment_date = models.DateField(auto_now_add=True)
     payment_method = models.CharField(max_length=100)
-    # selected_payments = models.ManyToManyField(OtherPayments, blank=True)
     receipt = models.FileField(upload_to='payment_receipts/', blank=True, null=True)
+    monthly_fees = models.JSONField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

@@ -29,7 +29,7 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({
           <InputLabel>Student</InputLabel>
           <Select value={selectedStudent} onChange={e => onStudentChange(e.target.value)} label="Student">
             {students.map((s) => (
-              <MenuItem key={s.id} value={s.id}>{s.studentName}</MenuItem>
+              <MenuItem key={s.id} value={s.id}>{s.first_name} {s.last_name}</MenuItem>
             ))}
           </Select>
         </FormControl>

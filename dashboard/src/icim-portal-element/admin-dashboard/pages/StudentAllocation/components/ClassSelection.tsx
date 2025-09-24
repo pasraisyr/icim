@@ -18,7 +18,7 @@ interface ClassSelectionProps {
 const ClassSelection = ({ classes, selectedClassId, allocations, onClassSelect }: ClassSelectionProps) => {
   // Get allocated student count for a class
   const getAllocatedCount = (classId: number): number => {
-    return allocations.filter(alloc => alloc.class_obj.id === classId).length;
+    return allocations.filter(alloc => alloc.classroom_id.id === classId).length;
   };
 
   // Get selected class details

@@ -16,7 +16,7 @@ export interface StudentAllocation {
     guardianPhone: string;
     // will add other field when its needed
   };
-  class_obj: {
+  classroom_id: {
     id: number;
     name: string;
     level: string;
@@ -27,7 +27,7 @@ export interface StudentAllocation {
 
 export interface StudentAllocationPayload {
   student_id: number;
-  class_obj_id: number;
+  classroom_id: number; // <-- update this field name
 }
 
 // API Functions
@@ -44,13 +44,29 @@ export async function fetchClasses(): Promise<Class[]> {
 }
 
 export async function fetchStudentAllocations(classId?: number): Promise<StudentAllocation[]> {
-  // Note: You may need to create this endpoint in your backend
   const url = classId
     ? `${BASE_URL}/admin/student_allocations/?class_id=${classId}`
     : `${BASE_URL}/admin/student_allocations/`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch student allocations');
-  return res.json();
+  const data = await res.json();
+
+  // Map flat API response to expected structure
+  return data.map((item: any) => ({
+    id: item.id,
+    student: {
+      id: item.student_id,
+      first_name: item.student_name,
+      email: item.student_email,
+      // add other fields if needed
+    },
+    classroom_id: {
+      id: item.classroom_id,
+      name: item.classroom_name,
+      // add other fields if needed
+    },
+    allocatedDate: item.updated_at,
+  }));
 }
 
 

@@ -11,10 +11,10 @@ const PageHeader = ({ onAdd }: PageHeaderProps) => (
   <Stack direction="row" justifyContent="space-between" alignItems="center">
     <Stack spacing={1}>
       <Typography variant="h4" color="primary">
-        Subjects Management
+        Other Payments
       </Typography>
       <Typography variant="body2" color="textSecondary">
-        Manage subject details, pricing, and availability
+        Set Up and manage other payment items for students.
       </Typography>
     </Stack>
     <Button 
@@ -22,7 +22,7 @@ const PageHeader = ({ onAdd }: PageHeaderProps) => (
       startIcon={<Add />} 
       onClick={onAdd}
     >
-      Add Subject
+      Add Other Payment
     </Button>
   </Stack>
 );
