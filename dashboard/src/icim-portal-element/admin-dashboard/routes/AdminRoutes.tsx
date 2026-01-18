@@ -7,6 +7,7 @@ import ProtectedRoute from 'icim-portal-element/auth/ProtectedRoute';
 import TeachersAttendance from 'icim-portal-element/admin-dashboard/pages/TeachersAttendance';
 import StudentsAttendance from 'icim-portal-element/admin-dashboard/pages/StudentsAttendance';
 import ClassesAttendance from 'icim-portal-element/admin-dashboard/pages/ClassesAttendance';
+// import DentalChart from '../pages/TestTrudental/DentalChart';
 
 
 // render - admin pages
@@ -19,6 +20,7 @@ const TeacherAllocation = Loadable(lazy(() => import('../pages/TeacherAllocation
 const StudentAllocation = Loadable(lazy(() => import('../pages/StudentAllocation')));
 const PaymentCalculator = Loadable(lazy(() => import('../pages/PaymentCalculator')));
 const FrontendManagement = Loadable(lazy(() => import('../pages/AboutSetup')));
+const GalleryManagement = Loadable(lazy(() => import('../pages/GalleryManagement')));
 const VerificationStatus = Loadable(lazy(() => import('../pages/VerificationStatus')));
 const StudentClassAllocation = Loadable(lazy(() => import('../pages/StudentClassAllocation')));
 const PaymentRecord = Loadable(lazy(() => import('../pages/PaymentRecord')));
@@ -95,13 +97,21 @@ const AdminRoutes = {
       element: <FrontendManagement />
     },
     {
+      path: 'gallery-management',
+      element: <GalleryManagement />
+    },
+    {
       path:'other-payments',
       element: <OtherPayments />
     },
     {
       path:'student-payment-record',
       element: <PaymentRecord />
-    }
+    },
+    // {
+    //   path: 'dental-chart',
+    //   element: <DentalChart />
+    // }
   ]
 };
 

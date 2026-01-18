@@ -2,40 +2,40 @@
 
 const icimsWebsiteMenuItems = {
   id: 'icims-website',
-  title: 'ICIMS Website',
+  title: 'icims-website',
   type: 'group',
   children: [
     {
       id: 'home',
-      title: 'Home',
+      title: 'home',
       type: 'item',
       url: '#home',
       icon: 'home'
     },
     {
       id: 'about',
-      title: 'About Us',
+      title: 'about-us',
       type: 'item',
       url: '#about',
       icon: 'info'
     },
     {
       id: 'programs',
-      title: 'Programs',
+      title: 'programs',
       type: 'item',
       url: '#programs',
       icon: 'school'
     },
     {
       id: 'registration',
-      title: 'Registration',
+      title: 'registration',
       type: 'item',
       url: '#registration',
       icon: 'person_add'
     },
     {
       id: 'contact',
-      title: 'Contact',
+      title: 'contact',
       type: 'item',
       url: '#contact',
       icon: 'contact_mail'

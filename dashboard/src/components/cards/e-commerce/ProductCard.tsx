@@ -48,7 +48,7 @@ export default function ProductCard({
   const { cart } = useGetCart();
 
   const addCart = () => {
-    addToCart({ id, name, image, salePrice, offerPrice, color, size: 8, quantity: 1, description }, cart.products);
+    addToCart({ id, name, image, salePrice, offerPrice, color, size: 8, quantity: 1, description }, cart?.products || []);
     openSnackbar({
       open: true,
       message: 'Product added to cart',

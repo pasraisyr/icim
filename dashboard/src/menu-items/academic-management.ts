@@ -28,13 +28,13 @@ const icons = {
 
 const academicManagement: NavItemType = {
   id: 'group-academic-management',
-  title: 'Academic Management',
+  title: 'academic-management',
   icon: icons.management,
   type: 'group',
   children: [
     {
       id: 'academic-manager-portal',
-      title: 'Academic Manager Portal',
+      title: 'academic-manager-portal',
       type: 'item',
       icon: icons.dashboard,
       url: '/academic-manager/students',
@@ -42,7 +42,7 @@ const academicManagement: NavItemType = {
     },
     {
       id: 'teacher-portal',
-      title: 'Teacher Portal',
+      title: 'teacher-portal',
       type: 'item',
       icon: icons.teachers,
       url: '/teacher/classes',
