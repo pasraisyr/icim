@@ -2,7 +2,7 @@ services:
   - type: web
     name: icims-backend
     runtime: python
-    buildCommand: "./build.sh"
+    buildCommand: "bash build.sh"
     startCommand: "cd icims && gunicorn icims.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
