@@ -78,7 +78,7 @@ interface Props {
 export default function NavCollapse({ menu, level, parentId, setSelectedItems, selectedItems, setSelectedLevel, selectedLevel }: Props) {
   const navigation = useNavigate();
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 

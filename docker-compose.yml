@@ -20,9 +20,9 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
-      PGADMIN_LISTEN_PORT: 8085
+      PGADMIN_LISTEN_PORT: 8086
     ports:
-      - "8085:8085"
+      - "8086:8086"
     networks:
       - mynetwork
 

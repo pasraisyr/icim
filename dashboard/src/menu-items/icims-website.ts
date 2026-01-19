@@ -13,13 +13,13 @@ const icons = {
 
 const icimsWebsite: NavItemType = {
   id: 'group-icims-website',
-  title: 'ICIM Website',
+  title: 'icims-website',
   icon: icons.home,
   type: 'group',
   children: [
     {
       id: 'icims-website-item',
-      title: 'ICIMS Website',
+      title: 'icims-website',
       type: 'item',
       url: '/icims-website',
       icon: icons.home,
@@ -27,7 +27,7 @@ const icimsWebsite: NavItemType = {
     },
     {
       id: 'admin-icims-dahboard',
-      title: 'Admin ICIM Dashboard',
+      title: 'admin-icim-dashboard',
       type: 'item',
       url: '/admin-icims',
       icon: icons.home,

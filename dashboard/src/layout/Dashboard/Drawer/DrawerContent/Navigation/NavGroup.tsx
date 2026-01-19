@@ -93,7 +93,7 @@ export default function NavGroup({
 
   const { menuOrientation, menuCaption } = useConfig();
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 

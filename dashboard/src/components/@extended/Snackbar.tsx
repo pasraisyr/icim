@@ -61,6 +61,8 @@ export default function Snackbar() {
     closeSnackbar();
   };
 
+  if (!snackbar) return null;
+
   return (
     <>
       {/* default snackbar */}

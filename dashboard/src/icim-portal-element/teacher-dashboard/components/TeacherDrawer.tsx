@@ -23,7 +23,7 @@ export default function TeacherDrawer({ window }: Props) {
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   // responsive drawer container
   const container = window !== undefined ? () => window().document.body : undefined;

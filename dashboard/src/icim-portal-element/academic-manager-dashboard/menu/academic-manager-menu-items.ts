@@ -49,19 +49,19 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
     // },
     {
       id: 'management',
-      title: 'Management',
+      title: 'management',
       icon: icons.chart,
       type: 'group',
       children: [
         {
           id: 'students-management',
-          title: 'Students Management',
+          title: 'students-management',
           type: 'collapse',
           icon: icons.students,
           children: [
             {
               id: 'student-details',
-              title: "Student Details",
+              title: "student-details",
               type: 'item',
               url: '/academic-manager/students',
               icon: icons.students,
@@ -69,7 +69,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
             },
             {
               id: 'student-class-allocation',
-              title: "Student Class Allocation",
+              title: "student-class-allocation",
               type: 'item',
               url: '/academic-manager/student-class-allocation',
               icon: icons.students,
@@ -79,7 +79,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'teachers-management',
-          title: 'Teachers Management',
+          title: 'teachers-management',
           type: 'item',
           url: '/academic-manager/teachers',
           icon: icons.teachers,
@@ -87,7 +87,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'classes-management',
-          title: 'Classes Management',
+          title: 'classes-management',
           type: 'item',
           url: '/academic-manager/classes',
           icon: icons.classes,
@@ -95,7 +95,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'subjects-management',
-          title: 'Subjects Management',
+          title: 'subjects-management',
           type: 'item',
           url: '/academic-manager/subjects',
           icon: icons.subjects,
@@ -105,13 +105,13 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
     },
     {
       id: 'verification',
-      title: 'Verification',
+      title: 'verification',
       icon: icons.allocation,
       type: 'group',
       children: [
         {
           id: 'verification-status',
-          title: 'Student Verification Status',
+          title: 'student-verification-status',
           type: 'item',
           url: '/academic-manager/verification-status',
           icon: icons.teacherAllocation,
@@ -121,13 +121,13 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
     },
     {
       id: 'allocation',
-      title: 'Allocation',
+      title: 'allocation',
       icon: icons.allocation,
       type: 'group',
       children: [
         {
           id: 'teacher-allocation',
-          title: 'Teacher Allocation',
+          title: 'teacher-allocation',
           type: 'item',
           url: '/academic-manager/teacher-allocation',
           icon: icons.teacherAllocation,
@@ -135,7 +135,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'student-allocation',
-          title: 'Student Allocation',
+          title: 'student-allocation',
           type: 'item',
           url: '/academic-manager/student-allocation',
           icon: icons.allocation,
@@ -145,13 +145,13 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
     },
     {
       id: 'attendance-reports',
-      title: 'Attendance Reports',
+      title: 'attendance-reports',
       icon: icons.attendance,
       type: 'group',
       children: [
         {
           id: 'teacher-attendance-view',
-          title: 'Teacher Attendance',
+          title: 'teacher-attendance',
           type: 'item',
           url: '/academic-manager/teacher-attendance',
           icon: icons.teachers,
@@ -159,7 +159,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'student-attendance-view',
-          title: 'Student Attendance',
+          title: 'student-attendance',
           type: 'item',
           url: '/academic-manager/student-attendance',
           icon: icons.students,
@@ -167,7 +167,7 @@ const academicManagerMenuItems: { items: NavItemType[] } = {
         },
         {
           id: 'class-attendance-view',
-          title: 'Class Attendance',
+          title: 'class-attendance',
           type: 'item',
           url: '/academic-manager/classes-attendance',
           icon: icons.classes,

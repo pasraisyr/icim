@@ -45,7 +45,7 @@ export default function UserList() {
   const navigate = useNavigate();
 
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   const { logout, user } = useAuth();
   const handleLogout = async () => {

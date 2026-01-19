@@ -18,13 +18,13 @@ const teacherMenuItems: { items: NavItemType[] } = {
   items: [
     {
       id: 'teacher-dashboard',
-      title: 'Teacher Dashboard',
+      title: 'teacher-dashboard',
       icon: icons.classes,
       type: 'group',
       children: [
         {
           id: 'teacher-classes',
-          title: 'My Classes',
+          title: 'my-classes',
           type: 'item',
           url: '/teacher/classes',
           icon: icons.classes,
@@ -40,7 +40,7 @@ const teacherMenuItems: { items: NavItemType[] } = {
         // },
         {
           id: 'teacher-attendance',
-          title: 'Attendance',
+          title: 'attendance',
           type: 'item',
           url: '/teacher/attendance',
           icon: icons.attendance,

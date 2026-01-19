@@ -8,6 +8,7 @@ import AboutSection from './pages/AboutSection';
 import ClassesSection from './pages/ClassesSection';
 import ContactSection from './pages/ContactSection';
 import ExtracurricularSection from './pages/ExtracurricularSection';
+import GallerySection from './pages/GallerySection';
 
 // utilities
 import { triggerRegistrationDialog, triggerContactDialog } from './utils';
@@ -20,6 +21,7 @@ export default function IcimsWebsite() {
       <HeroSection onRegistrationOpen={triggerRegistrationDialog} />
       {/* <StatsSection /> */}
       <AboutSection />
+      <GallerySection />
       {/* <ProgramsSection /> */}
       <ClassesSection onRegistrationOpen={triggerRegistrationDialog} />
       <ExtracurricularSection onRegistrationOpen={triggerRegistrationDialog} />

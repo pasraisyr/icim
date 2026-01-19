@@ -157,3 +157,19 @@ def save_user_profile(sender, instance, **kwargs):
         instance.agent.save()
     if instance.user_type == 4:
         instance.client.save()
+
+class Gallery(models.Model):
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='gallery/')
+    description = models.TextField(blank=True, null=True)
+    order = models.IntegerField(default=0)
+    status = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name_plural = 'Galleries'
+
+    def __str__(self):
+        return self.title

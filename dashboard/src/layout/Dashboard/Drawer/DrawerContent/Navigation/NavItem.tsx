@@ -37,7 +37,7 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
   const { menuOrientation } = useConfig();
 
   let itemTarget: LinkTarget = '_self';

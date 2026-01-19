@@ -23,7 +23,7 @@ export default function AdminNavigation() {
 
   const { menuOrientation } = useConfig();
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 

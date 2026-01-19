@@ -9,6 +9,7 @@ from .StudentAllocation import StudentAllocationView, StudentAllocationInput, St
 from .OtherPayments import OtherPaymentInput, OtherPaymentView, OtherPaymentEdit, OtherPaymentDelete
 from .Payment import PaymentsView, PaymentView, PaymentInput, PaymentEdit, PaymentDelete
 from .Attendance import AttendanceByTeacherView, AttendanceByStudentView, AttendanceByClassView
+from .Gallery import GalleryView, GalleryInput, GalleryUpdate, GalleryDelete
 
 urlpatterns = [
 
@@ -76,4 +77,10 @@ urlpatterns = [
     path('attendance/by_teacher/<int:teacher_id>/', AttendanceByTeacherView.as_view(), name='attendance_by_teacher'),
     path('attendance/by_student/<int:student_id>/', AttendanceByStudentView.as_view(), name='attendance_by_student'),
     path('attendance/by_class/<int:classroom_id>/', AttendanceByClassView.as_view(), name='attendance_by_class'),
+    
+    # Gallery
+    path('gallery/', GalleryView.as_view(), name='gallery'),
+    path('gallery/input/', GalleryInput.as_view(), name='gallery_input'),
+    path('gallery/edit/<int:gallery_id>/', GalleryUpdate.as_view(), name='gallery_update'),
+    path('gallery/delete/<int:gallery_id>/', GalleryDelete.as_view(), name='gallery_delete'),
 ]

@@ -4,11 +4,13 @@ from datetime import timedelta
 TIME_ZONE = 'Asia/Kuala_Lumpur'
 USE_TZ = True
 
-# Load environment variables from .env file
-from dotenv import load_dotenv
-load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+# Load .env from project root (2 levels up from settings.py)
+load_dotenv(BASE_DIR.parent / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -78,11 +80,11 @@ WSGI_APPLICATION = 'icims.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),  # Use environment variable or default to 'icim'
-        'USER': os.getenv('DB_USER'),  # Use environment variable or default to 'icim'
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Use environment variable or default to 'icim'
-        'HOST': 'localhost',  # Or your PostgreSQL host
-        'PORT': '5432',       # Or your PostgreSQL port
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Supports both local and remote
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -121,6 +123,11 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (User uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

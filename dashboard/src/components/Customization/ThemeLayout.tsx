@@ -27,7 +27,7 @@ export default function ThemeLayout() {
 
   const { miniDrawer, themeDirection, onChangeMiniDrawer, onChangeThemeLayout, menuOrientation } = useConfig();
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster?.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened || false;
 
   let initialTheme = 'default';
   if (miniDrawer === true) initialTheme = 'mini';
